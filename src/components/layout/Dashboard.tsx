@@ -1,4 +1,5 @@
 import * as React from "react";
+import { LogOut } from "@/global/auth"
 import AppBar from "@mui/material/AppBar";
 import { useTheme } from '@mui/material/styles';
 import Box from "@mui/material/Box";
@@ -14,7 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { NavLink } from "react-router-dom";
-import { IconButton, Slide, styled, useScrollTrigger } from "@mui/material";
+import { Divider, IconButton, Slide, styled, useScrollTrigger } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import StoreIcon from '@mui/icons-material/Store';
@@ -35,6 +36,7 @@ import Driver from "@/pages/drivers/driver"
 import Notifiation from "@/pages/notifications/notifiation"
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { Badge, Button } from '@mui/material';
 import FullScreen from './FullScreen';
 import Dashboard from './Dashboard';
@@ -117,13 +119,7 @@ export const sidebarList = [
         component: Setting,
         layout: Dashboard
     },
-    {
-        name: "تسجيل الدخول",
-        path: "/login",
-        icon: LoginIcon,
-        component: Login,
-        layout: FullScreen
-    },
+
 
 ]
 interface Props {
@@ -149,36 +145,13 @@ function HideOnScroll(props: React.PropsWithChildren & any) {
         </Slide>
     );
 }
-// const useStyles = makeStyles(() => ({
-//     'MuiPaper-root::-webkit-scrollbar-thumb ': {
-//         background: 'rgba(58, 114, 60, 1)',
-//     },
-//     'MuiPaper-root::-webkit-scrollbar-track': {
-//         borderRadius: '5px',
-//     },
-//     'MuiPaper-root::-webkit-scrollbar': {
-//         width: '20px'
-//     }
-// }));
-// const Drawer = styled(MuiPaper, {})(
-//     () => ({
-//         'MuiPaper-root::-webkit-scrollbar-thumb ': {
-//             background: 'rgba(58, 114, 60, 1)',
-//         },
-//         'MuiPaper-root::-webkit-scrollbar-track': {
-//             borderRadius: '5px',
-//         },
-//         'MuiPaper-root::-webkit-scrollbar': {
-//             width: '20px'
-//         }
-//     }),
-// );
+
+
 export const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 export default function sidebar(props: React.PropsWithChildren & any) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const theme = useTheme();
-    // const classes = useStyles();
     const colorMode = React.useContext(ColorModeContext);
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -192,9 +165,11 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                 justifyContent: 'center',
                 gap: 2
             }}>
-                <Typography fontWeight={'bold'} fontSize={24}>Stay Home</Typography>
+                <Typography fontWeight={'bold'} fontSize={24} sx={{ color: '#41444A' }}>Stay Home</Typography>
                 {/* <img alt='logo' width={'56'} src='/Asset 1.svg'></img> */}
             </Toolbar>
+            <Divider />
+
             <List>
                 {sidebarList.map((item, index) => (
                     <NavLink
@@ -231,7 +206,59 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                         }}
                     </NavLink>
                 ))}
+                <Divider sx={{ marginTop: '2rem' }} />
+                <NavLink to={{ pathname: '/login' }} end
+                    key='login'>
+                    <ListItem sx={{ padding: '0px' }}>
+                        <ListItemButton
+                            sx={({ palette }: any) => ({
+                                py: 0.8,
+                                px: 2,
+                                borderRadius: "0.5rem",
+                                color: palette.grey["700"],
+                                "&.Mui-selected , &.Mui-selected:hover": {
+                                    backgroundColor: palette.primary.main,
+                                },
+                            })}
+                        >
+                            <ListItemIcon
+                                sx={({ palette }) => ({
+                                    color: palette.grey["700"]
+                                })}
+                            >
+                                < LoginIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={'تسجيل الدخول'} />
+                        </ListItemButton>
+                    </ListItem>
+                </NavLink>
+                <ListItem sx={{ padding: '0px' }}>
+                    <ListItemButton
+                        sx={({ palette }: any) => ({
+                            py: 0.8,
+                            px: 2,
+                            borderRadius: "0.5rem",
+                            color: palette.grey["700"],
+                            "&.Mui-selected , &.Mui-selected:hover": {
+                                backgroundColor: palette.primary.main,
+                            },
+                        })}
+                        onClick={LogOut}
+
+                    >
+                        <ListItemIcon
+                            sx={({ palette }) => ({
+                                color: palette.grey["700"]
+                            })}
+                        >
+                            < LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'تسجيل الخروج'} />
+                    </ListItemButton>
+                </ListItem>
+
             </List>
+
         </Box>
     );
 

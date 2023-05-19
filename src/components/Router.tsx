@@ -4,6 +4,7 @@ import { sidebarList } from "@/components/layout/Dashboard"
 import FullScreen from "@/components/layout/FullScreen"
 import ResetPassword from "@/pages/resetPassword"
 import Signup from "@/pages/signup"
+import { Login } from '@mui/icons-material'
 function Router() {
     return (
         <Routes>
@@ -23,6 +24,15 @@ function Router() {
                 ))
             }
 
+            <Route key='login' path='/login' element={
+                <div className='h-screen'>
+                    <FullScreen>
+                        <Login />
+                    </FullScreen>
+                </div>
+            }
+            >
+            </Route>
             <Route key='resetPassword' path='/resetPassword' element={
                 <div className='h-screen'>
                     <FullScreen>

@@ -9,7 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Checkbox, IconButton, Pagination, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, IconButton, Pagination, Stack, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from "@tanstack/react-query";
 import { EmployeeApi } from "@/api/auth/endpoints"
@@ -17,7 +17,11 @@ import { GetEmployee } from "@/api/auth/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { employeeActions } from '@/store/employee';
-
+import { Add, Close } from '@mui/icons-material';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 const DEFAULT_ROWS_PER_PAGE = 5;
 
@@ -75,12 +79,56 @@ export default function Employee() {
                         <SearchText label='ابحث عن موظف' text='employee' list={employees} filterList={((e) => console.log(e)
                         )}></SearchText>
 
-                        <DialogComponent isOpen={openDialog} setIsOpen={setOpenDialog} textDialog="اضافة موظف"
+                        {/* <DialogComponent isOpen={openDialog} setIsOpen={setOpenDialog} textDialog="اضافة موظف"
                             textBtn="اضافة موظف"
                             content={
                                 <DialogEmployee isOpenDialog={openDialog} />
                             }
-                        ></DialogComponent>
+                        ></DialogComponent> */}
+
+
+                        <Button variant="text" onClick={() => setOpenDialog(() => true)}>
+                            إضافة سيارة
+                            <Add></Add>
+                        </Button>
+
+                        <Dialog open={openDialog}>
+                            <Box>
+
+
+                                <form className='overflow-hidden'>
+                                    <div className="flex justify-between items-center pl-4 ">
+                                        <DialogTitle
+                                        >إضافة سيارة
+
+                                        </DialogTitle>
+
+
+                                        <IconButton onClick={() => setOpenDialog(() => false)}><Close /></IconButton>
+                                    </div>
+                                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4 '>
+
+
+
+
+                                    </DialogContent>
+                                    <DialogActions sx={{ justifyContent: 'space-between' }}>
+
+                                        <Box gap={2} display='flex' >
+                                            <Button variant='contained' type='submit'>إضافة السيارة</Button>
+                                            <Button onClick={() => setOpenDialog(() => false)}>الغاء</Button>
+
+                                        </Box >
+                                        {/* {
+                                            carModifyDto && <Button variant='text' color='error' onClick={() => deleteCar.mutate(carModifyDto.id)}>حذف السيارة</Button>
+                                        } */}
+
+                                    </DialogActions>
+                                </form>
+                            </Box>
+
+                        </Dialog>
+
 
 
                     </div>
