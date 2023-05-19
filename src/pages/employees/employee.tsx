@@ -74,6 +74,7 @@ export default function Employee() {
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
                         <SearchText label='ابحث عن موظف' text='employee' list={employees} filterList={((e) => console.log(e)
                         )}></SearchText>
+
                         <DialogComponent isOpen={openDialog} setIsOpen={setOpenDialog} textDialog="اضافة موظف"
                             textBtn="اضافة موظف"
                             content={

@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, FormControl, FormHelperText, InputLabel, TextField, Select, MenuItem, Table } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Divider from '@mui/material/Divider';
+import { DesktopDatePicker } from '@mui/x-date-pickers';
 
 interface PropsType {
     isOpenDialog: boolean
@@ -64,6 +65,15 @@ export default function DialogEmployee(props: PropsType) {
                     />
                 }
                 />
+                <FormControl   >
+                    <DesktopDatePicker
+                        label="تاريخ الإضافة"
+                        format="MM/DD/YYYY"
+
+                        slotProps={{ textField: { size: 'small' } }}
+
+                    />
+                </FormControl>
                 {/* <Controller rules={{ required: 'يرجى اختيار المدينة' }} name='cityId' control={control} render={({ field, fieldState }) =>
                                     <FormControl className='py-4 my-5 ' sx={{ marginTop: '10px' }} error={!!fieldState.error}>
                                         <InputLabel id="brand-id-label">المدينة</InputLabel>

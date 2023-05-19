@@ -27,12 +27,11 @@ import Login from "@/pages/login"
 import Home from "@/pages/home"
 import Customer from "@/pages/customers/customer"
 import Employee from "@/pages/employees/employee"
-import Contact from "@/pages/contacts/contact"
+import Shop from "@/pages/shops/shop"
 import Order from "@/pages/orders/order"
+import Rating from "@/pages/ratings/rating"
 import Setting from "@/pages/settings/setting"
 import Driver from "@/pages/drivers/driver"
-import User from "@/pages/users/user"
-import Statistic from "@/pages/statistics/statistic"
 import Notifiation from "@/pages/notifications/notifiation"
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import LoginIcon from '@mui/icons-material/Login';
@@ -68,17 +67,24 @@ export const sidebarList = [
     },
 
     {
-        name: "الطلبات",
-        path: "/orders",
-        icon: ShoppingCartIcon,
-        component: Order,
-        layout: Dashboard
-    },
-    {
         name: "السائقين",
         path: "/drivers",
         icon: StoreIcon,
         component: Driver,
+        layout: Dashboard
+    },
+    {
+        name: "المتاجر",
+        path: "/shops",
+        icon: ShoppingCartIcon,
+        component: Shop,
+        layout: Dashboard
+    },
+    {
+        name: "الطلبات",
+        path: "/orders",
+        icon: ShoppingCartIcon,
+        component: Order,
         layout: Dashboard
     },
     {
@@ -88,21 +94,13 @@ export const sidebarList = [
         component: Vehicle,
         layout: Dashboard
     },
+
     {
-        name: "المستخدمون",
-        path: "/users",
-        icon: PersonIcon,
-        component: User,
-        layout: Dashboard
-    },
-    {
-        name: "الاحصائيات",
-        path: "/statistics",
+        name: "تقييمات",
+        path: "/ratings",
         icon: BarChartIcon,
-        component: Statistic,
+        component: Rating,
         layout: Dashboard
-
-
     },
     {
         name: "الاشعارات",
@@ -111,13 +109,7 @@ export const sidebarList = [
         component: Notifiation,
         layout: Dashboard
     },
-    {
-        name: "تواصل معنا",
-        path: "/contact",
-        icon: ContactsIcon,
-        component: Contact,
-        layout: Dashboard
-    },
+
     {
         name: "الاعدادات",
         path: "/settings",
@@ -212,7 +204,7 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                     >
                         {({ isActive }) => {
                             return (
-                                <ListItem>
+                                <ListItem sx={{ padding: '4px' }}>
                                     <ListItemButton
                                         sx={({ palette }: any) => ({
                                             py: 0.8,
@@ -336,9 +328,7 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                 sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
                 aria-label="mailbox folders"
             >
-                {/* classes={{
-                    paper: classes.drawerPaper,
-                }} */}
+
                 <Drawer
                     dir="rtl"
                     container={container}

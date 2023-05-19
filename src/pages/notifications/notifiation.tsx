@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function notifiation() {
+export default function Notifiation() {
     return (
         <div>notifiation</div>
     )
