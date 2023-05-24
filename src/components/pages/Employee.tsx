@@ -1,28 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, FormControl, FormHelperText, InputLabel, TextField, Select, MenuItem, Table } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
-import Divider from '@mui/material/Divider';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
+import { Add } from '@mui/icons-material';
+import Upload from '../shared/Upload';
+import { AddEmployee } from '@/api/employee/dto';
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
-interface PropsType {
-    isOpenDialog: boolean
-}
-export default function DialogEmployee(props: PropsType) {
 
-    const { handleSubmit, control } = useForm();
+export default function DialogEmployee() {
+
+    const { handleSubmit, control, setValue } = useForm<Omit<AddEmployee, 'imageUrl'>>({
+        defaultValues: { ...new AddEmployee() }
+    });
     const onSubmit = (data: any) => console.log(data);
-    const saveData = () => {
-        console.log("save data and more");
-    }
-    const closeDialog = () => {
-        props.isOpenDialog = false
-    }
-    const resetDialog = () => {
-        console.log("reset dialog");
+    const [phoneNumbers, setPhoneNumbers] = useState<string[]>([''])
+    const [imageUrl, setImageUrl] = useState('');
+    // const saveData = () => {
+    //     console.log("save data and more");
+    // }
+    // const closeDialog = () => {
+    //     props.isOpenDialog = false
+    // }
+    // const resetDialog = () => {
+    //     console.log("reset dialog");
+    // }
+    const addMorePhone = () => {
+        setPhoneNumbers(prevItems => [...prevItems, ''])
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className='grid grid-cols-2 gap-5 p-8'>
+            <div className='grid grid-cols-2 gap-5 '>
                 <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='firstName' control={control} render={({ field, fieldState }) =>
                     <TextField error={!!fieldState.error}
                         helperText={fieldState.error?.message}
@@ -37,13 +46,32 @@ export default function DialogEmployee(props: PropsType) {
                     />
                 }
                 />
-                <Controller rules={{ required: 'رقم الهاتف مطلوب' }} name='phoneNumber' control={control} render={({ field, fieldState }) =>
-                    <TextField error={!!fieldState.error}
+                <div>
+                    <Button variant='text' onClick={addMorePhone}><Add></Add></Button>
+                    {
+                        phoneNumbers.map((ele, index) =>
+
+                            <Controller key={index} rules={{ required: 'رقم الهاتف مطلوب' }} name='phoneNumbers' control={control} render={({ field, fieldState }) =>
+                                <TextField sx={{ width: '100%', marginTop: index == 0 ? '0px' : '20px' }} error={!!fieldState.error}
+                                    helperText={fieldState.error?.message}
+                                    {...field} name='phoneNumber' id='phone-number' label='رقم الهاتف'
+                                />
+                            }
+                            />
+                        )
+
+                    }
+
+                </div>
+                <Controller rules={{ required: 'المنصب مطلوب' }} name='roleName' control={control} render={({ field, fieldState }) =>
+                    <TextField sx={{ marginTop: '35px' }} error={!!fieldState.error}
                         helperText={fieldState.error?.message}
-                        {...field} name='phoneNumber' id='phone-number' label='رقم الهاتف'
+                        {...field} name='roleName' id='employee-roleName' label='المنصب الوظيفي'
                     />
                 }
                 />
+
+
                 <Controller rules={{ required: 'كلمة المرور مطلوبة' }} name='password' control={control} render={({ field, fieldState }) =>
                     <TextField error={!!fieldState.error}
                         helperText={fieldState.error?.message}
@@ -65,15 +93,16 @@ export default function DialogEmployee(props: PropsType) {
                     />
                 }
                 />
-                <FormControl   >
-                    <DesktopDatePicker
-                        label="تاريخ الإضافة"
-                        format="MM/DD/YYYY"
 
-                        slotProps={{ textField: { size: 'small' } }}
+                <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
+                    <TextField type='date' label='تاريح الميللاد ' />
+                }
+                />
+                <div className='col-span-2'>
+                    <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label>
+                    <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload>
+                </div>
 
-                    />
-                </FormControl>
                 {/* <Controller rules={{ required: 'يرجى اختيار المدينة' }} name='cityId' control={control} render={({ field, fieldState }) =>
                                     <FormControl className='py-4 my-5 ' sx={{ marginTop: '10px' }} error={!!fieldState.error}>
                                         <InputLabel id="brand-id-label">المدينة</InputLabel>
@@ -97,12 +126,7 @@ export default function DialogEmployee(props: PropsType) {
                                     </FormControl>
                                 } /> */}
             </div>
-            <Divider></Divider>
-            <div className='p-3 pl-6 flex justify-start items-center gap-4'>
-                <Button onClick={saveData} variant="contained" type='submit'>حفظ</Button>
-                <Button color='primary' variant="outlined" onClick={resetDialog}>تهيئة</Button>
-                <Button onClick={closeDialog} color='error' variant="outlined">اغلاق</Button>
-            </div>
+
         </form>
 
     )

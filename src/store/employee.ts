@@ -1,5 +1,5 @@
 
-import { GetEmployee } from "@/api/auth/dto"
+import { GetEmployee } from "@/api/employee/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface initialState {
     employees: GetEmployee[]
