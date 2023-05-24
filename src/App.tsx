@@ -54,7 +54,7 @@ export default function App() {
   }, [])
 
   const theme = React.useMemo(() => createTheme(isDarkMode(mode)), [mode]);
-
+  const [isAuth, setIsAuth] = React.useState(false)
   return (
     <div className="App">
 

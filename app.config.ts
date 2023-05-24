@@ -5,8 +5,8 @@ const HOST_DOMAIN = localHost
 
     // ? Production Domain
 
-    : 'http://194.32.76.82:8225'
+    : 'http://stayhome22-001-site1.ftempurl.com'
 
-const API_URL = `${HOST_DOMAIN}/api`
+const API_URL = `${HOST_DOMAIN}/api/Dashboard/`
 
 export { API_URL, HOST_DOMAIN }

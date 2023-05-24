@@ -1,22 +1,17 @@
-export interface GetEmployee {
-    fullName: string;
-    id: string;
-    phoneNumber: string;
-    email: string;
-    dateCreated: string;
-    orderHandledCount: number;
-    isBlocked: boolean;
+export class GetEmployee {
+    id = '';
+    name = '';
+    phoneNumber = '';
+    cityId = '';
+    orderCount = 0;
+    birthDate = '';
 }
 export class AddEmployee {
-    firstName = '';
-    lastName = '';
+    fullName = '';
     email = '';
-    roleName = '';
     password = '';
-    countryId = '';
-    phoneNumbers: Number[] = [];
+    phoneNumber = '';
     imageFile: File | null = null;
-    address = '';
     birthDate = '';
 
 }

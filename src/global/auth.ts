@@ -5,34 +5,34 @@ import { API_USER } from "@/api/auth/endpoints"
 import { AxiosError } from "axios";
 import { API_URL } from "app.config";
 import { useNavigate } from "react-router-dom"
-export interface RefreshTokenDecoded {
-    aud: string
-    exp: number
-    'generate-date': string
-    'generation-stamp': string
-    'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': string
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string
-    'iss': string
-}
 // export interface RefreshTokenDecoded {
-//     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string,
-//     " http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string,
-//     Type: string,
-//     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string,
-//     exp: number,
-//     iss: string,
 //     aud: string
+//     exp: number
+//     'generate-date': string
+//     'generation-stamp': string
+//     'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': string
+//     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string
+//     'iss': string
 // }
+export interface RefreshTokenDecoded {
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string,
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string,
+    Type: string,
+    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string,
+    exp: number,
+    iss: string,
+    aud: string
+}
 
 export async function LoginUser(payload: LoginRequest) {
-    // const navigation = useNavigate()
+    const navigation = useNavigate()
 
     try {
         const response = await axiosIns.post(API_USER.Login, payload)
         console.log(response)
         if (response.status === 200) {
             SetUserData(response.data)
-            // navigation('/')
+            navigation('/')
 
             return response
         }

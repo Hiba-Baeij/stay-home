@@ -206,32 +206,8 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                         }}
                     </NavLink>
                 ))}
-                <Divider sx={{ marginTop: '2rem' }} />
-                <NavLink to={{ pathname: '/login' }} end
-                    key='login'>
-                    <ListItem sx={{ padding: '0px' }}>
-                        <ListItemButton
-                            sx={({ palette }: any) => ({
-                                py: 0.8,
-                                px: 2,
-                                borderRadius: "0.5rem",
-                                color: palette.grey["700"],
-                                "&.Mui-selected , &.Mui-selected:hover": {
-                                    backgroundColor: palette.primary.main,
-                                },
-                            })}
-                        >
-                            <ListItemIcon
-                                sx={({ palette }) => ({
-                                    color: palette.grey["700"]
-                                })}
-                            >
-                                < LoginIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'تسجيل الدخول'} />
-                        </ListItemButton>
-                    </ListItem>
-                </NavLink>
+                <Divider sx={{ marginTop: '5rem' }} />
+
                 <ListItem sx={{ padding: '0px' }}>
                     <ListItemButton
                         sx={({ palette }: any) => ({

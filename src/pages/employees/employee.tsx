@@ -158,19 +158,16 @@ export default function Employee() {
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 checked={isItemSelected}
-
                                                 color="primary"
-
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            {row.fullName}
+                                            {row.name}
                                         </TableCell>
                                         <TableCell align="center">{row.phoneNumber}</TableCell>
-                                        <TableCell align="center">{row.email}</TableCell>
-                                        <TableCell align="center">{new Date(row.dateCreated).toLocaleDateString()}</TableCell>
-                                        <TableCell align="center">{row.orderHandledCount}</TableCell>
-                                        <TableCell align="center">{row.isBlocked ? 'block' : 'unblock'}</TableCell>
+                                        <TableCell align="center">{row.orderCount}</TableCell>
+                                        <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
+                                        <TableCell align="center">{row.cityId}</TableCell>
                                     </TableRow>
                                 )
                             }
