@@ -1,17 +1,21 @@
 export class GetEmployee {
-    id = '';
-    name = '';
+    id?= '';
+    fullName = "";
+    imageUrl = "";
     phoneNumber = '';
-    cityId = '';
-    orderCount = 0;
+    email = "";
     birthDate = '';
+    dateCreated?= "";
+    handledOrdersCount?= 0;
+    isBlock?= false;
 }
 export class AddEmployee {
     fullName = '';
     email = '';
-    password = '';
+    password?= '';
     phoneNumber = '';
-    imageFile: File | null = null;
+    imageFile?: File | null = null;
+    imageUrl?= "";
     birthDate = '';
 
 }

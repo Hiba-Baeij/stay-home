@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import FullScreen from "@/components/layout/FullScreen"
 import Dashboard from "@/components/layout/Dashboard"
 import ResetPassword from "@/pages/resetPassword"
@@ -15,6 +15,7 @@ import Setting from '@/pages/settings/setting'
 import Shop from '@/pages/shops/shop'
 import Vehicle from '@/pages/vehicles/vehicle'
 import Rating from '@/pages/ratings/rating'
+import { IsLoggedIn } from '@/global/auth'
 const routeList = [
     {
         path: '/',
@@ -94,6 +95,12 @@ const routeList = [
         component: Vehicle,
         layout: Dashboard
     },
+    {
+        path: '/vehicles',
+        key: 'vehicle',
+        component: Vehicle,
+        layout: Dashboard
+    },
 
 
 ]
@@ -102,21 +109,19 @@ function Router() {
         <Routes>
             {
                 routeList.map(ele => (
-
                     <Route key={ele.key} path={`/${ele.path}`} element={
                         <div className='h-screen'>
                             <ele.layout>
                                 <ele.component />
                             </ele.layout>
                         </div>
-                    }
-                    >
-
+                    }>
                     </Route>
                 ))
             }
 
         </Routes>
+
     )
 }
 

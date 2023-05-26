@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DialogEmployee from "@/components/pages/Employee"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,37 +7,43 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Checkbox, Divider, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from "@tanstack/react-query";
 import { EmployeeApi } from "@/api/employee/endpoints"
-import { GetEmployee } from "@/api/employee/dto"
+import { AddEmployee, GetEmployee } from "@/api/employee/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { employeeActions } from '@/store/employee';
 import { Add, Close } from '@mui/icons-material';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+
+import { IMAGE_URL } from '@/../app.config';
 
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
-    const [openDialog, setOpenDialog] = React.useState(false);
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+
+    const [employee, setEmployee] = React.useState<GetEmployee>();
+    const [selected, setSelected] = React.useState<string[]>([]);
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
     const dispatch = useDispatch<AppDispatch>()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(0);
-    const stateEmployee = useSelector<RootState>(state => state.employee.employees);
-    console.log(stateEmployee);
+    let employees = useSelector<RootState>(state => state.employee.employees) as GetEmployee[];
 
-    const { data: employees } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
-        onSuccess: (data) => {
-            dispatch(employeeActions.setEmployee(data))
-        }
-    })
+
+    function getEmployees() {
+        EmployeeApi.fetchEmpolyee().then((data: { response: GetEmployee[]; }) => {
+            console.log(data);
+            dispatch(employeeActions.setEmployee(data.response))
+
+        })
+    }
+
+    useEffect(() => {
+        getEmployees();
+    }, [])
+
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -47,12 +53,12 @@ export default function Employee() {
         }
         setSelected([]);
     };
-    const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+        const selectedIndex = selected.indexOf(id);
         let newSelected: readonly string[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -60,12 +66,16 @@ export default function Employee() {
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(
                 selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
+                selected.slice(selectedIndex + 1)
             );
         }
-
-        setSelected(newSelected);
+        setSelected([id]);
     };
+    const deleteEmployee = () => {
+        EmployeeApi.DeleteEmpolyee(selected).then(() =>
+            employees = employees.filter(ele => !selected.includes(ele.id))
+        )
+    }
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
@@ -75,34 +85,8 @@ export default function Employee() {
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
                         <TextField label='ابحث عن موظف' title='employee' name='employeeSearch'></TextField>
+                        <DialogEmployee></DialogEmployee>
 
-                        <Button variant="contained" onClick={() => setOpenDialog(() => true)}>
-                            إضافة موظف
-                            <Add></Add>
-                        </Button>
-
-                        <Dialog open={openDialog}>
-                            <Box>
-                                <form className='overflow-hidden'>
-                                    <div className="flex justify-between items-center pl-4 ">
-                                        <DialogTitle>إضافة موظف</DialogTitle>
-                                        <IconButton onClick={() => setOpenDialog(() => false)}><Close /></IconButton>
-                                    </div>
-                                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4 '>
-
-                                        <DialogEmployee />
-                                    </DialogContent>
-                                    <Divider />
-                                    <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
-
-                                        <Box gap={2} display='flex' >
-                                            <Button variant='contained' type='submit'>إضافة موظف</Button>
-                                            <Button onClick={() => setOpenDialog(() => false)}>الغاء</Button>
-                                        </Box>
-                                    </DialogActions>
-                                </form>
-                            </Box>
-                        </Dialog>
                     </div>
                     {
                         selected.length > 0 ?
@@ -111,7 +95,7 @@ export default function Employee() {
                                 <div className='flex justify-end items-center w-full px-2'>
 
                                     <Tooltip title="Delete">
-                                        <IconButton>
+                                        <IconButton onClick={deleteEmployee}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -132,22 +116,24 @@ export default function Employee() {
                                         }}
                                     />
                                 </TableCell>
+                                <TableCell>الصورة</TableCell>
                                 <TableCell>الاسم</TableCell>
                                 <TableCell align="center">رقم الموبايل</TableCell>
-                                <TableCell align="center">البريد الالكتروني</TableCell>
                                 <TableCell align="center">تاريخ الميلاد</TableCell>
-                                <TableCell align="center">الطلبات المعالجة</TableCell>
+                                <TableCell align="center">تاريخ الطلبات المعالجة</TableCell>
+                                <TableCell align="center">عدد الطلبات المعالجة</TableCell>
+                                <TableCell align="center">البريد الالكتروني</TableCell>
                                 <TableCell align="center">الحالة</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {employees ? employees.map((row: GetEmployee, index: number) => {
-                                const isItemSelected = isSelected(row.id);
-                                const labelId = `enhanced-table-checkbox-${index}`;
+                                const isItemSelected = isSelected(row.id ? row.id : '');
+
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id)}
+                                        onClick={(event) => handleClick(event, row.id ? row.id : '')}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
@@ -162,12 +148,29 @@ export default function Employee() {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            {row.name}
+                                            {/* {IMAGE_URL + row.imageUrl}d */}
+                                            <img width={30} height={30} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" />
+                                            {/* {IMAGE_URL + row.imageUrl}
+                                            <Box
+                                                component="img"
+                                                sx={{
+                                                    height: 30,
+                                                    width: 30,
+                                                }}
+                                                alt="The house from the offer."
+                                                src={`${IMAGE_URL + row.imageUrl}`}
+                                            /> */}
+                                        </TableCell>
+
+                                        <TableCell component="th" scope="row" align="left">
+                                            {row.fullName}
                                         </TableCell>
                                         <TableCell align="center">{row.phoneNumber}</TableCell>
-                                        <TableCell align="center">{row.orderCount}</TableCell>
                                         <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
-                                        <TableCell align="center">{row.cityId}</TableCell>
+                                        <TableCell align="center">{new Date(row.dateCreated ? row.dateCreated : '').toLocaleDateString()} </TableCell>
+                                        <TableCell align="center">{row.handledOrdersCount} </TableCell>
+                                        <TableCell align="center">{row.email}</TableCell>
+                                        <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
                                     </TableRow>
                                 )
                             }

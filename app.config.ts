@@ -8,5 +8,6 @@ const HOST_DOMAIN = localHost
     : 'http://stayhome22-001-site1.ftempurl.com'
 
 const API_URL = `${HOST_DOMAIN}/api/Dashboard/`
+const IMAGE_URL = `${HOST_DOMAIN}/`
 
-export { API_URL, HOST_DOMAIN }
+export { API_URL, HOST_DOMAIN, IMAGE_URL }
