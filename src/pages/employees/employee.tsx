@@ -7,43 +7,45 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Box, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useQuery } from "@tanstack/react-query";
 import { EmployeeApi } from "@/api/employee/endpoints"
-import { AddEmployee, GetEmployee } from "@/api/employee/dto"
+import { Employee as TypeEmployee } from "@/api/employee/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { employeeActions } from '@/store/employee';
-import { Add, Close } from '@mui/icons-material';
-
 import { IMAGE_URL } from '@/../app.config';
-
+import moment from 'moment';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
-
-    const [employee, setEmployee] = React.useState<GetEmployee>();
-    const [selected, setSelected] = React.useState<string[]>([]);
-    const isSelected = (name: string) => selected.indexOf(name) !== -1;
+    const [selected, setSelected] = React.useState<readonly string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(0);
-    let employees = useSelector<RootState>(state => state.employee.employees) as GetEmployee[];
+    const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as TypeEmployee;
+    const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
 
+    useEffect(() => {
+        getEmployees();
+    }, [])
 
     function getEmployees() {
-        EmployeeApi.fetchEmpolyee().then((data: { response: GetEmployee[]; }) => {
+        EmployeeApi.fetchEmpolyee().then((data: { response: TypeEmployee[]; }) => {
             console.log(data);
             dispatch(employeeActions.setEmployee(data.response))
 
         })
     }
 
-    useEffect(() => {
-        getEmployees();
-    }, [])
-
+    function getDetails(item: TypeEmployee) {
+        dispatch(employeeActions.setEmployeeDialog(true))
+        EmployeeApi.getEmpolyeeDetails(item.id as string).then((data: { response: TypeEmployee }) => {
+            console.log(data);
+            dispatch(employeeActions.setEmployeeFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
+        })
+    }
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -53,12 +55,21 @@ export default function Employee() {
         }
         setSelected([]);
     };
-    const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+    const handleClick = (id: string) => {
+        // setSelected();
+        console.log(id);
+
+        // setSelected(prevVal => [...prevVal, id]);
+        // console.log(selected);
+
         const selectedIndex = selected.indexOf(id);
         let newSelected: readonly string[] = [];
+        console.log(selectedIndex);
 
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, id);
+            console.log(newSelected);
+
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -69,17 +80,18 @@ export default function Employee() {
                 selected.slice(selectedIndex + 1)
             );
         }
-        setSelected([id]);
+        setSelected(newSelected);
+        console.log(selected);
     };
     const deleteEmployee = () => {
-        EmployeeApi.DeleteEmpolyee(selected).then(() =>
-            employees = employees.filter(ele => !selected.includes(ele.id))
-        )
+        // EmployeeApi.DeleteEmpolyee(selected).then(() =>
+        //     employees = employees.filter(ele => !selected.includes(ele.id))
+        // )
     }
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-
+                {JSON.stringify(employees)}
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
@@ -124,42 +136,31 @@ export default function Employee() {
                                 <TableCell align="center">عدد الطلبات المعالجة</TableCell>
                                 <TableCell align="center">البريد الالكتروني</TableCell>
                                 <TableCell align="center">الحالة</TableCell>
+                                <TableCell align="center">تفاصيل</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {employees ? employees.map((row: GetEmployee, index: number) => {
-                                const isItemSelected = isSelected(row.id ? row.id : '');
+                            {employees ? employees.map((row: TypeEmployee, index: number) => {
 
+
+                                // onClick={(event) => handleClick(event, row.id ? row.id : '')}
                                 return (
                                     <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.id ? row.id : '')}
                                         role="checkbox"
-                                        aria-checked={isItemSelected}
                                         tabIndex={-1}
                                         key={row.id}
-                                        selected={isItemSelected}
-                                        sx={{ cursor: 'pointer' }}
+
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox
-                                                checked={isItemSelected}
+                                                onChange={() => handleClick(row.id ? row.id : '')}
+
                                                 color="primary"
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            {/* {IMAGE_URL + row.imageUrl}d */}
                                             <img width={30} height={30} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" />
-                                            {/* {IMAGE_URL + row.imageUrl}
-                                            <Box
-                                                component="img"
-                                                sx={{
-                                                    height: 30,
-                                                    width: 30,
-                                                }}
-                                                alt="The house from the offer."
-                                                src={`${IMAGE_URL + row.imageUrl}`}
-                                            /> */}
                                         </TableCell>
 
                                         <TableCell component="th" scope="row" align="left">
@@ -171,6 +172,9 @@ export default function Employee() {
                                         <TableCell align="center">{row.handledOrdersCount} </TableCell>
                                         <TableCell align="center">{row.email}</TableCell>
                                         <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
+                                        <TableCell align="center">
+                                            <MoreVertIcon onClick={() => getDetails(row)} />
+                                        </TableCell>
                                     </TableRow>
                                 )
                             }

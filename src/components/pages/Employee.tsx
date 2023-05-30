@@ -1,41 +1,77 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, TextField, Select, MenuItem, Box, Divider, IconButton } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Upload from '../shared/Upload';
-import { AddEmployee, GetEmployee } from '@/api/employee/dto';
+import { Employee } from '@/api/employee/dto';
 import { EmployeeApi } from '@/api/employee/endpoints';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { Add, Close } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-export default function DialogEmployee() {
-    const [openDialog, setOpenDialog] = React.useState(false);
-    const [imageUrl, setImageUrl] = useState('');
-    const employees = useSelector<RootState>(state => state.employee.employees) as GetEmployee[];
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import employee, { employeeActions } from '@/store/employee';
+import { toast } from 'react-toastify';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-    const { handleSubmit, control, setValue } = useForm<Omit<AddEmployee, 'imageUrl'>>({
-        defaultValues: { ...new AddEmployee() }
+export default function DialogEmployee() {
+    const [imageUrl, setImageUrl] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const isOpen = useSelector<RootState>(state => state.employee.openDialogEmployee) as boolean;
+    const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as Employee;
+    const dispatch = useDispatch<AppDispatch>()
+    const { handleSubmit, control, setValue, reset } = useForm<Employee>({
+        defaultValues: { ...new Employee() }
     });
-    const onSubmit = (data: AddEmployee) => {
-        EmployeeApi.AddEmpolyee(data).then((res) => {
-            employees.unshift(res.response)
-        })
+    useEffect(() => {
+        if (employeeDto.id) {
+            console.log("in Effect modify");
+            setImageUrl(employeeDto.imageUrl)
+        }
+    }, [])
+    const onSubmit = (data: Employee) => {
+        if (data.id) {
+            // EmployeeApi.(data).then((res) => {
+            //     employees.unshift(res.response)
+            // })
+        }
+        else {
+            setIsLoading(true)
+            EmployeeApi.AddEmpolyee(data).then(() => {
+                employeeActions.setEmployeeFormDto(data)
+                setIsLoading(false)
+                resetForm();
+                toast('تمت الاضافة بنجاح', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                    type: 'success'
+                })
+            })
+        }
     };
+    const resetForm = () => {
+        reset({ ...new Employee() });
+        setImageUrl('')
+        dispatch(employeeActions.setEmployeeDialog(false));
+    }
 
     return (
         <div>
-            <Button variant="contained" onClick={() => setOpenDialog(() => true)}>
+            <Button variant="contained" onClick={() => dispatch(employeeActions.setEmployeeDialog(true))}>
                 إضافة موظف
                 <Add></Add>
             </Button>
-            <Dialog open={openDialog}>
+            <Dialog open={isOpen}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center pl-4 ">
                         <DialogTitle>إضافة موظف</DialogTitle>
-                        <IconButton onClick={() => setOpenDialog(() => false)}><Close /></IconButton>
+                        <IconButton onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}><Close /></IconButton>
                     </div>
                     <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4 '>
                         <div className='grid grid-cols-2 gap-5 '>
@@ -43,6 +79,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='fullName' id='employee-fullName' label='اسم الموظف'
+                                    value={employeeDto.fullName}
                                 />
                             }
                             />
@@ -50,6 +87,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
+                                    value={employeeDto.phoneNumber}
                                 />
                             }
                             />
@@ -58,6 +96,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='password' id='password' label='كلمة المرور'
+                                    value={employeeDto.password}
                                 />
                             }
                             />
@@ -66,6 +105,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='email' id='email' label='البريد الالكتروني'
+                                    value={employeeDto.email}
                                 />
                             }
                             />
@@ -73,7 +113,7 @@ export default function DialogEmployee() {
                                 <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
                                     <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
-                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
+                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} value={employeeDto.birthDate} />
                                 }
                                 />
                             </div>
@@ -88,8 +128,13 @@ export default function DialogEmployee() {
                     <Divider />
                     <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
                         <Box gap={2} display='flex'>
-                            <Button variant='contained' type="submit">إضافة موظف</Button>
-                            <Button onClick={() => setOpenDialog(() => false)}>الغاء</Button>
+                            {
+                                isLoading ?
+                                    <LoadingButton loading variant='contained'></LoadingButton>
+                                    :
+                                    <Button variant='contained' type="submit">إضافة موظف</Button>
+                            }
+                            <Button onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
                         </Box>
                     </DialogActions>
 

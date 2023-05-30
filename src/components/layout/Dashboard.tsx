@@ -1,5 +1,4 @@
 import * as React from "react";
-import { LogOut } from "@/global/auth"
 import AppBar from "@mui/material/AppBar";
 import { useTheme } from '@mui/material/styles';
 import Box from "@mui/material/Box";
@@ -44,6 +43,7 @@ import Vehicle from '@/pages/vehicles/vehicle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import { useNavigate } from "react-router-dom"
 const drawerWidth = 240;
 export const sidebarList = [
     {
@@ -152,10 +152,15 @@ export default function sidebar(props: React.PropsWithChildren & any) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const theme = useTheme();
+    const navigation = useNavigate();
     const colorMode = React.useContext(ColorModeContext);
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    function LogOut() {
+        localStorage.removeItem('user-data')
+        navigation('/login')
+    }
 
     const drawer = (
 

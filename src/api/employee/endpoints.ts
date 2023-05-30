@@ -1,6 +1,6 @@
 
 import { axiosIns } from "@/lib/axios"
-import { AddEmployee } from "./dto";
+import { Employee } from "./dto";
 import { serialize } from "object-to-formdata";
 
 export enum API_EMPLOYEE {
@@ -22,7 +22,19 @@ export class EmployeeApi {
         }
 
     }
-    static AddEmpolyee = async (payload: AddEmployee) => {
+    static getEmpolyeeDetails = async (id: string) => {
+        try {
+            const res = await axiosIns.get(API_EMPLOYEE.GetById + `?id=${id}`);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+
+    static AddEmpolyee = async (payload: Employee) => {
         try {
             const res = await axiosIns.post(API_EMPLOYEE.Add, serialize(payload));
             return res.data
@@ -33,17 +45,30 @@ export class EmployeeApi {
         }
 
     }
+
+    // static ModifyEmpolyee = async (payload: Employee) => {
+    //     try {
+    //         const res = await axiosIns.post(API_EMPLOYEE., serialize(payload));
+    //         return res.data
+    //     }
+
+    //     catch (er) {
+    //         throw er
+    //     }
+
+    // }
+
     static DeleteEmpolyee = async (ids: string[]) => {
         console.log(ids);
-        try {
+        // try {
 
-            const res = await axiosIns.delete(API_EMPLOYEE.Delete, ids);
-            return res.data
-        }
+        //     const res = await axiosIns.delete(API_EMPLOYEE.Delete, ids);
+        //     return res.data
+        // }
 
-        catch (er) {
-            throw er
-        }
+        // catch (er) {
+        //     throw er
+        // }
 
     }
 }
