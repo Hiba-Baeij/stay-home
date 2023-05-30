@@ -8,15 +8,18 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomerApi } from "@/api/customer/endpoints"
 import { Address, Customer as TypeCustomer } from "@/api/customer/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { customerActions } from '@/store/customer';
+import CustomerPage from '@/components/pages/Customer'
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
+import { Add } from '@mui/icons-material';
+import { NavLink, Route } from 'react-router-dom';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Customer() {
@@ -101,7 +104,10 @@ export default function Customer() {
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
                         <TextField label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
-                        {/* <Dial></Dial> */}
+                        <Button variant="contained" onClick={() => dispatch(customerActions.setCustomerDialog(true))}>
+                            إضافة زبون
+                            <Add></Add>
+                        </Button>
 
                     </div>
                     {
@@ -171,7 +177,7 @@ export default function Customer() {
                                         <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
                                         <TableCell align="center">{row.orderCount} </TableCell>
                                         <TableCell align="center">
-                                            <MoreVertIcon onClick={() => getDetails(row)} />
+                                            <NavLink to={`/customer/${row.id}`}> <MoreVertIcon /></NavLink>
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -185,6 +191,7 @@ export default function Customer() {
                     <Pagination count={10} />
                 </Stack>
             </Paper>
+
         </Box>
 
     )

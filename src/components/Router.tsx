@@ -15,6 +15,7 @@ import Setting from '@/pages/settings/setting'
 import Shop from '@/pages/shops/shop'
 import Vehicle from '@/pages/vehicles/vehicle'
 import Rating from '@/pages/ratings/rating'
+import CustomerDetails from '@/pages/customers/customerDetails';
 import { IsLoggedIn } from '@/global/auth'
 const routeList = [
     {
@@ -119,6 +120,14 @@ function Router() {
                     </Route>
                 ))
             }
+            <Route path={`/customer/:id`} element={
+                <div className='h-screen'>
+                    <Dashboard>
+                        <CustomerDetails />
+                    </Dashboard>
+                </div>
+            }>
+            </Route>
 
         </Routes>
 
