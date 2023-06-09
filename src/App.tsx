@@ -11,6 +11,7 @@ import { prefixer } from 'stylis';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import { ToastContainer } from 'react-toastify';
 // import 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap';
 
 const stylisPlugins = [prefixer];
@@ -65,6 +66,7 @@ export default function App() {
               <Router></Router>
             </RTL>
           </QueryClientProvider>
+          <ToastContainer />
         </ThemeProvider>
       </ColorModeContext.Provider>
 

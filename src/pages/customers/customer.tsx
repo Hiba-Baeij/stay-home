@@ -37,7 +37,6 @@ export default function Customer() {
 
     function getCustomers() {
         CustomerApi.fetchCustomer().then((data: { response: TypeCustomer[]; }) => {
-            console.log(data);
             dispatch(customerActions.setCustomer(data.response))
 
         })
@@ -46,7 +45,6 @@ export default function Customer() {
     function getDetails(item: TypeCustomer) {
         dispatch(customerActions.setCustomerDialog(true))
         CustomerApi.getCustomerDetails(item.id as string).then((data: { response: TypeCustomer }) => {
-            console.log(data);
             dispatch(customerActions.setCustomerFormDto({
                 ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD'),
                 email: '',
@@ -99,7 +97,7 @@ export default function Customer() {
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                {JSON.stringify(customers)}
+                {/* {JSON.stringify(customers)} */}
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>

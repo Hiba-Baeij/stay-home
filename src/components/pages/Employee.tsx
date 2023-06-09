@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, TextField, Select, MenuItem, Box, Divider, IconButton } from '@mui/material'
+import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, FormControlLabel, Switch } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Upload from '../shared/Upload';
 import { Employee } from '@/api/employee/dto';
@@ -12,34 +12,61 @@ import { Add, Close } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import employee, { employeeActions } from '@/store/employee';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function DialogEmployee() {
     const [imageUrl, setImageUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.employee.openDialogEmployee) as boolean;
     const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as Employee;
     const dispatch = useDispatch<AppDispatch>()
     const { handleSubmit, control, setValue, reset } = useForm<Employee>({
         defaultValues: { ...new Employee() }
     });
+
     useEffect(() => {
-        if (employeeDto.id) {
+        console.log(employeeDto);
+        if (employeeDto && employeeDto.id) {
             console.log("in Effect modify");
-            setImageUrl(employeeDto.imageUrl)
+            setImageUrl(employeeDto.imageUrl);
+            reset({ ...employeeDto })
         }
-    }, [])
+    }, [employeeDto])
     const onSubmit = (data: Employee) => {
         if (data.id) {
-            // EmployeeApi.(data).then((res) => {
-            //     employees.unshift(res.response)
-            // })
+            setIsLoading(true)
+            EmployeeApi.ModifyEmpolyee(data).then((res) => {
+                dispatch(employeeActions.modifyEmployee({ ...res.response }))
+                setIsLoading(false)
+                resetForm();
+                toast('تم التعديل بنجاح', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                    type: 'success'
+                })
+            }).catch((er: Error) => {
+                setIsLoading(false);
+                toast.error(er.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                    type: 'success'
+                })
+            })
         }
         else {
-            console.log(data);
-
             setIsLoading(true)
             EmployeeApi.AddEmpolyee(data).then(() => {
                 dispatch(employeeActions.setEmployeeFormDto({ ...data }))
@@ -63,22 +90,29 @@ export default function DialogEmployee() {
         setImageUrl('')
         dispatch(employeeActions.setEmployeeDialog(false));
     }
+    const blockedEmployee = () => {
+        setIsBlocked(!isBlocked);
+        console.log(isBlocked);
 
+        // dispatch(employeeActions.setBlocked(isBlocked))
+    }
     return (
         <div>
             <Button variant="contained" onClick={() => dispatch(employeeActions.setEmployeeDialog(true))}>
                 إضافة موظف
                 <Add></Add>
             </Button>
-            <ToastContainer />
             <Dialog open={isOpen}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center pl-4 ">
-                        <DialogTitle>إضافة موظف</DialogTitle>
+                        <DialogTitle>
+                            {
+                                employeeDto.id ? 'تعديل الموظف' : 'اضافة موظف'
+                            }
+                        </DialogTitle>
                         <IconButton onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}><Close /></IconButton>
                     </div>
-                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4 '>
-
+                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
                         <div className='grid grid-cols-2 gap-5 '>
                             <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
                                 <TextField error={!!fieldState.error}
@@ -137,9 +171,17 @@ export default function DialogEmployee() {
                                 isLoading ?
                                     <LoadingButton loading variant='contained'></LoadingButton>
                                     :
-                                    <Button variant='contained' type="submit">إضافة موظف</Button>
+                                    <Button variant='contained' type="submit">
+                                        {
+                                            employeeDto.id ? 'تعديل الموظف' : 'اضافة موظف'
+                                        }
+                                    </Button>
                             }
-                            <Button onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
+                            {
+                                employeeDto.id ?
+                                    <Button variant='outlined' color='secondary' onClick={blockedEmployee}>{employeeDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
+                            }
+                            <Button variant='outlined' onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
                         </Box>
                     </DialogActions>
 

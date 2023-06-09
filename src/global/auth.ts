@@ -30,7 +30,6 @@ export async function LoginUser(payload: LoginRequest) {
 
     try {
         const { data } = await axiosIns.post(API_USER.Login, payload)
-        console.log(data)
         if (data.isSuccess) {
             SetUserData(data.response)
             return data
@@ -60,7 +59,6 @@ export async function LoginUser(payload: LoginRequest) {
         // }
     }
     catch (error) {
-        console.log('CATCH', error)
         HandlerError(error as AxiosError)
 
     }

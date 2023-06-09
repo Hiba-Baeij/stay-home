@@ -1,5 +1,4 @@
 import React from 'react'
-import DialogEmployee from "@/components/pages/Employee"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,59 +7,87 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, DialogContent, Divider, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { EmployeeApi } from "@/api/employee/endpoints"
-import { Employee as TypeEmployee } from "@/api/employee/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
-import { employeeActions } from '@/store/employee';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LinearProgress from '@mui/material/LinearProgress';
-import { IMAGE_URL } from '@/../app.config';
-import moment from 'moment';
-import { useQuery } from '@tanstack/react-query';
+import { SettingApi } from '@/api/setting/endpoints';
+import { settingActions } from '@/store/setting';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import { LoadingButton } from '@mui/lab';
 const DEFAULT_ROWS_PER_PAGE = 5;
-
-export default function Employee() {
+interface typeProps {
+    loading: boolean
+}
+interface initialDto {
+    name: string, id: string
+}
+export default function Countries(props: typeProps) {
     const [selected, setSelected] = React.useState<string[]>([]);
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [dto, setDto] = React.useState({
+        id: '',
+        name: '',
+    });
     const dispatch = useDispatch<AppDispatch>()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(1);
-    const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as TypeEmployee;
-    const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
+    const cities = useSelector<RootState>(state => state.setting.cities) as initialDto[];
 
-    const { isLoading } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
-        onSuccess: (data: { response: TypeEmployee[]; }) => {
-            dispatch(employeeActions.setEmployee(data.response))
-        },
-    })
-
-    function getDetails(item: TypeEmployee) {
-        dispatch(employeeActions.setEmployeeDialog(true))
-        EmployeeApi.getEmpolyeeDetails(item.id as string).then((data: { response: TypeEmployee }) => {
-            dispatch(employeeActions.setEmployeeFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
-        })
+    function getDetails(item: initialDto) {
+        setIsOpen(true);
+        setDto(item)
     }
 
+    function addMoreCity() {
+        setIsLoading(true);
+        console.log(dto);
+        SettingApi.UpsertCity({ ...dto, id: dto.id == '' ? null : dto.id }).then(() => {
+            dispatch(settingActions.UpsertCity(dto))
+            toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            })
+            setIsLoading(false);
+            setIsOpen(false)
+            setDto({ name: '', id: '' })
+        }).catch(() => setIsLoading(false))
+
+    }
+    const handleInputChange = (e: any) => {
+        console.log(e.target.value);
+
+        const { name, value } = e.target;
+        setDto({
+            ...dto,
+            [name]: value
+        });
+    };
     const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = employees.map((n: any) => n.name);
+            const newSelected = cities.map((n: any) => n.name);
             setSelected(newSelected);
             return;
         }
         setSelected([]);
     };
     const handleClick = (id: string) => {
-        // setSelected();
-        // setSelected(prevVal => [...prevVal, id]);
-        // console.log(selected);
-
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
         if (selectedIndex === -1) {
@@ -77,10 +104,10 @@ export default function Employee() {
         }
         setSelected(newSelected);
     };
-    const deleteEmployee = () => {
-        EmployeeApi.DeleteEmpolyee(selected).then(() => {
-            dispatch(employeeActions.deleteEmployee(selected))
-            toast('تمت الحذف بنجاح', {
+    const removeCity = () => {
+        SettingApi.DeleteCity(selected).then(() => {
+            dispatch(settingActions.deleteCity(selected))
+            toast('تمت الحذف المدينة بنجاح', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -93,11 +120,12 @@ export default function Employee() {
         }
         )
     }
+
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
                 {
-                    isLoading ?
+                    props.loading ?
                         <Box sx={{ width: '100%' }}>
                             <LinearProgress />
                         </Box> : null
@@ -107,26 +135,49 @@ export default function Employee() {
                     width: '100%'
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
-                        <TextField label='ابحث عن موظف' title='employee' name='employeeSearch'></TextField>
-                        <DialogEmployee></DialogEmployee>
-
-                    </div>
-                    {
-                        selected.length > 0 ?
-
-                            (
-                                <div className='flex justify-end items-center w-full px-2'>
-
+                        <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة مدينة</Button>
+                        {
+                            selected.length > 0 ?
+                                (
                                     <Tooltip title="Delete">
-                                        <IconButton onClick={deleteEmployee}>
+                                        <IconButton onClick={removeCity}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </Tooltip>
+                                ) : null
+
+                        }
+                        <Dialog open={isOpen}>
+                            <DialogTitle>
+                                {
+                                    dto.id ? 'تعديل مدينة' : 'اضافة مدينة'
+                                }
+                            </DialogTitle>
+
+                            <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
+                                <TextField name='name' id='city-name' label='اسم المدينة' value={dto.name} onChange={handleInputChange} />
+                            </DialogContent>
+                            <Divider />
+                            <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
+                                <div className='flex justify-end items-end gap-4'>
+
+                                    {
+                                        isLoading ?
+                                            <LoadingButton loading variant='contained'></LoadingButton>
+                                            :
+                                            <Button variant='contained' onClick={addMoreCity}>
+                                                {
+                                                    dto.id ? 'تعديل مدينة' : 'اضافة مدينة'
+                                                }
+                                            </Button>
+                                    }
+                                    <Button variant='outlined' onClick={() => { setIsOpen(false); setDto({ name: '', id: '' }) }}>الغاء</Button>
                                 </div>
 
-                            ) : null
+                            </DialogActions>
+                        </Dialog>
+                    </div>
 
-                    }
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
@@ -139,19 +190,14 @@ export default function Employee() {
                                         }}
                                     />
                                 </TableCell>
-                                <TableCell>الصورة</TableCell>
-                                <TableCell>الاسم</TableCell>
-                                <TableCell align="center">رقم الموبايل</TableCell>
-                                <TableCell align="center">تاريخ الميلاد</TableCell>
-                                <TableCell align="center">تاريخ الطلبات المعالجة</TableCell>
-                                <TableCell align="center">عدد الطلبات المعالجة</TableCell>
-                                <TableCell align="center">البريد الالكتروني</TableCell>
-                                <TableCell align="center">الحالة</TableCell>
+                                <TableCell align="center">الاسم</TableCell>
+                                <TableCell align="center">التاريخ</TableCell>
                                 <TableCell align="center">تفاصيل</TableCell>
+
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {employees ? employees.map((row: TypeEmployee, index: number) => {
+                            {cities ? cities.map((row: { name: string, id: string }, index: number) => {
                                 return (
                                     <TableRow
                                         hover
@@ -167,19 +213,9 @@ export default function Employee() {
                                                 color="primary"
                                             />
                                         </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            <img width={50} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
-                                        </TableCell>
 
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.fullName}
-                                        </TableCell>
-                                        <TableCell align="center">{row.phoneNumber}</TableCell>
-                                        <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
-                                        <TableCell align="center">{row.dateCreated ? new Date(row.dateCreated).toLocaleDateString() : ''} </TableCell>
-                                        <TableCell align="center">{row.handledOrdersCount} </TableCell>
-                                        <TableCell align="center">{row.email}</TableCell>
-                                        <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
+                                        <TableCell align="center">{row.name}</TableCell>
+                                        <TableCell align="center">{new Date().toLocaleDateString()}</TableCell>
                                         <TableCell align="center">
                                             <MoreVertIcon onClick={() => getDetails(row)} />
                                         </TableCell>
@@ -200,4 +236,3 @@ export default function Employee() {
 
     )
 }
-

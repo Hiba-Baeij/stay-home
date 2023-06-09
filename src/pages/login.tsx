@@ -44,7 +44,6 @@ export default function login() {
     });
     const onSubmit = (data: any) => {
         console.log(data);
-
         LoginUser({
             email: data.email,
             password: data.password,

@@ -8,6 +8,7 @@ export enum API_EMPLOYEE {
     GetById = "Employee/GetById",
     Add = "Employee/Add",
     Delete = "Employee/Delete",
+    Modify = "Employee/Modify",
 }
 
 export class EmployeeApi {
@@ -46,20 +47,19 @@ export class EmployeeApi {
 
     }
 
-    // static ModifyEmpolyee = async (payload: Employee) => {
-    //     try {
-    //         const res = await axiosIns.post(API_EMPLOYEE., serialize(payload));
-    //         return res.data
-    //     }
+    static ModifyEmpolyee = async (payload: Employee) => {
+        try {
+            const res = await axiosIns.post(API_EMPLOYEE.Modify, serialize(payload));
+            return res.data
+        }
 
-    //     catch (er) {
-    //         throw er
-    //     }
+        catch (er) {
+            throw er
+        }
 
-    // }
+    }
 
     static DeleteEmpolyee = async (ids: string[]) => {
-        console.log(ids);
         try {
             const res = await axiosIns.delete(API_EMPLOYEE.Delete, { data: [...ids] });
             return res.data

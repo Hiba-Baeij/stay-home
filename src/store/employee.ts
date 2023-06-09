@@ -21,28 +21,30 @@ const employeeSlice = createSlice({
             state.employees = action.payload
         },
 
-        setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
-            console.log(action.payload);
+        setBlocked(state: initialState, action: PayloadAction<boolean>) {
+            state.employeeDto.isBlock = action.payload
 
+        },
+
+        setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
             if (action.payload.id) {
                 state.employeeDto = { ...action.payload }
-                console.log(state.employeeDto);
             }
             else {
-                console.log("in add employee");
-                state.employees.unshift(action.payload)
-                console.log(state.employees);
-
+                state.employees.unshift({ ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 })
             }
+        },
+
+        modifyEmployee(state: initialState, action: PayloadAction<Employee>) {
+            const indexData = state.employees.findIndex(ele => ele.id == action.payload.id);
+            state.employees[indexData] = { ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
         },
 
         setEmployeeDialog(state: initialState, action: PayloadAction<boolean>) {
             state.openDialogEmployee = action.payload
-            console.log(state.openDialogEmployee);
         },
         deleteEmployee(state: initialState, action: PayloadAction<string[]>) {
             state.employees = state.employees.filter(ele => !action.payload.includes(ele.id ? ele.id : ''))
-            console.log(state.openDialogEmployee);
         },
 
     }
