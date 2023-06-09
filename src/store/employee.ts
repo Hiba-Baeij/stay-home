@@ -22,8 +22,9 @@ const employeeSlice = createSlice({
         },
 
         setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
-            if (action.payload.id) {
+            console.log(action.payload);
 
+            if (action.payload.id) {
                 state.employeeDto = { ...action.payload }
                 console.log(state.employeeDto);
             }

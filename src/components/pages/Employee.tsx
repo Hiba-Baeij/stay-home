@@ -12,7 +12,8 @@ import { Add, Close } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import employee, { employeeActions } from '@/store/employee';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function DialogEmployee() {
@@ -37,9 +38,11 @@ export default function DialogEmployee() {
             // })
         }
         else {
+            console.log(data);
+
             setIsLoading(true)
             EmployeeApi.AddEmpolyee(data).then(() => {
-                employeeActions.setEmployeeFormDto(data)
+                dispatch(employeeActions.setEmployeeFormDto({ ...data }))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -52,7 +55,7 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            })
+            }).catch(() => setIsLoading(false))
         }
     };
     const resetForm = () => {
@@ -67,6 +70,7 @@ export default function DialogEmployee() {
                 إضافة موظف
                 <Add></Add>
             </Button>
+            <ToastContainer />
             <Dialog open={isOpen}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center pl-4 ">
@@ -74,12 +78,13 @@ export default function DialogEmployee() {
                         <IconButton onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}><Close /></IconButton>
                     </div>
                     <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4 '>
+
                         <div className='grid grid-cols-2 gap-5 '>
                             <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='fullName' id='employee-fullName' label='اسم الموظف'
-                                    value={employeeDto.fullName}
+
                                 />
                             }
                             />
@@ -87,7 +92,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
-                                    value={employeeDto.phoneNumber}
+
                                 />
                             }
                             />
@@ -96,7 +101,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='password' id='password' label='كلمة المرور'
-                                    value={employeeDto.password}
+
                                 />
                             }
                             />
@@ -105,7 +110,7 @@ export default function DialogEmployee() {
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
                                     {...field} name='email' id='email' label='البريد الالكتروني'
-                                    value={employeeDto.email}
+
                                 />
                             }
                             />
@@ -113,7 +118,7 @@ export default function DialogEmployee() {
                                 <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
                                     <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
-                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} value={employeeDto.birthDate} />
+                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
                                 }
                                 />
                             </div>

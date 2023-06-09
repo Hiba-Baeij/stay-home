@@ -14,10 +14,12 @@ import { AppDispatch, RootState } from '@/store';
 import { customerActions } from '@/store/customer';
 import { toast } from 'react-toastify';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useParams } from 'react-router-dom';
 
 export default function DialogCustomer() {
     const [imageUrl, setImageUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    let { id } = useParams();
     const isOpen = useSelector<RootState>(state => state.customer.openDialogCustomer) as boolean;
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as CustomerDto;
     const dispatch = useDispatch<AppDispatch>()
@@ -67,6 +69,7 @@ export default function DialogCustomer() {
                 إضافة موظف
                 <Add></Add>
             </Button>
+            {id}
             {/* <Dialog open={isOpen}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center pl-4 ">

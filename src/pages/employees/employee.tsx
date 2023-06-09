@@ -15,15 +15,19 @@ import { Employee as TypeEmployee } from "@/api/employee/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { employeeActions } from '@/store/employee';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import LinearProgress from '@mui/material/LinearProgress';
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(0);
+    const [page, setPage] = React.useState(1);
+    const [isLoading, setIsLoading] = React.useState(false);
     const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as TypeEmployee;
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
 
@@ -32,11 +36,13 @@ export default function Employee() {
     }, [])
 
     function getEmployees() {
+        setIsLoading(true);
         EmployeeApi.fetchEmpolyee().then((data: { response: TypeEmployee[]; }) => {
             console.log(data);
             dispatch(employeeActions.setEmployee(data.response))
+            setIsLoading(false)
 
-        })
+        }).catch(() => setIsLoading(false))
     }
 
     function getDetails(item: TypeEmployee) {
@@ -46,6 +52,10 @@ export default function Employee() {
             dispatch(employeeActions.setEmployeeFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
         })
     }
+
+    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -63,7 +73,7 @@ export default function Employee() {
         // console.log(selected);
 
         const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly string[] = [];
+        let newSelected: string[] = [];
         console.log(selectedIndex);
 
         if (selectedIndex === -1) {
@@ -84,14 +94,32 @@ export default function Employee() {
         console.log(selected);
     };
     const deleteEmployee = () => {
-        // EmployeeApi.DeleteEmpolyee(selected).then(() =>
-        //     employees = employees.filter(ele => !selected.includes(ele.id))
-        // )
+        EmployeeApi.DeleteEmpolyee(selected).then(() => {
+            dispatch(employeeActions.deleteEmployee(selected))
+            toast('تمت الحذف بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            })
+        }
+        )
     }
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                {JSON.stringify(employees)}
+                {
+                    isLoading ?
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress />
+                        </Box> : null
+                }
+                {/* {JSON.stringify(employees)} */}
+                {selected}
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
@@ -160,7 +188,7 @@ export default function Employee() {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            <img width={30} height={30} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" />
+                                            <img width={50} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
                                         </TableCell>
 
                                         <TableCell component="th" scope="row" align="left">
@@ -184,7 +212,8 @@ export default function Employee() {
                     </Table>
                 </TableContainer>
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    <Pagination count={10} />
+                    {page}
+                    <Pagination count={10} page={page} onChange={handleChangePage} />
                 </Stack>
             </Paper>
         </Box>

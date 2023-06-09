@@ -60,15 +60,14 @@ export class EmployeeApi {
 
     static DeleteEmpolyee = async (ids: string[]) => {
         console.log(ids);
-        // try {
+        try {
+            const res = await axiosIns.delete(API_EMPLOYEE.Delete, { data: [...ids] });
+            return res.data
+        }
 
-        //     const res = await axiosIns.delete(API_EMPLOYEE.Delete, ids);
-        //     return res.data
-        // }
-
-        // catch (er) {
-        //     throw er
-        // }
+        catch (er) {
+            throw er
+        }
 
     }
 }

@@ -17,7 +17,7 @@ export class CustomerDto {
     imageUrl?= "";
     birthDate = "";
     isBlock?= false;
-    address = new Address()
+    address = { ...new Address() }
 }
 export class Address {
     id?= '';

@@ -19,12 +19,13 @@ import CustomerPage from '@/components/pages/Customer'
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import { Add } from '@mui/icons-material';
-import { NavLink, Route } from 'react-router-dom';
+import { NavLink, Route, useNavigate } from 'react-router-dom';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Customer() {
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
+    const navigation = useNavigate()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(0);
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as TypeCustomer;
@@ -104,7 +105,7 @@ export default function Customer() {
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
                         <TextField label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
-                        <Button variant="contained" onClick={() => dispatch(customerActions.setCustomerDialog(true))}>
+                        <Button variant="contained" onClick={() => navigation('/customer/0')}>
                             إضافة زبون
                             <Add></Add>
                         </Button>
