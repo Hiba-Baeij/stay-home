@@ -135,6 +135,7 @@ export default function Countries(props: typeProps) {
                     width: '100%'
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
+                        <h2>المدن</h2>
                         <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة مدينة</Button>
                         {
                             selected.length > 0 ?

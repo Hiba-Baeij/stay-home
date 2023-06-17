@@ -17,7 +17,7 @@ import { LoginUser } from "@/global/auth"
 import { theme } from '@/theme';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-
+import LoadingButton from '@mui/lab/LoadingButton';
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -34,7 +34,7 @@ function Copyright(props: any) {
 
 export default function login() {
     const navigate = useNavigate();
-
+    const [isLoading, setIsLoading] = React.useState(false);
     const initialForm = {
         email: '',
         password: '',
@@ -43,11 +43,12 @@ export default function login() {
         defaultValues: { ...initialForm }
     });
     const onSubmit = (data: any) => {
+        setIsLoading(true);
         console.log(data);
         LoginUser({
             email: data.email,
             password: data.password,
-        }).then(() => navigate('/'))
+        }).then(() => { navigate('/'); setIsLoading(true) }).catch(() => setIsLoading(true))
     }
 
     return (
@@ -101,15 +102,23 @@ export default function login() {
                             label='تذكرني'
                             sx={{ color: theme.palette.secondary['dark'] }}
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            color="primary"
-                        >
-                            تسجيل الدخول
-                        </Button>
+                        {
+                            isLoading ?
+                                <LoadingButton loading fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2, height: '35px' }}></LoadingButton>
+                                : <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                    color="primary"
+                                >
+                                    تسجيل الدخول
+                                </Button>
+
+                        }
+
                     </form>
 
                     <Grid container>

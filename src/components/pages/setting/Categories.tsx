@@ -146,6 +146,8 @@ export default function Categories(props: typeProps) {
                     width: '100%'
                 }}>
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
+                        <h2>التصنيفات</h2>
+
                         <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة صنف</Button>
                         {
                             selected.length > 0 ?
