@@ -20,7 +20,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
+import PersonIcon from '@mui/icons-material/Person';
 import { useQuery } from '@tanstack/react-query';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
@@ -30,7 +33,7 @@ export default function Employee() {
     const [page, setPage] = React.useState(1);
     const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as TypeEmployee;
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
-
+    const swal = withReactContent(Swal)
     const { isLoading } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
         onSuccess: (data: { response: TypeEmployee[]; }) => {
             dispatch(employeeActions.setEmployee(data.response))
@@ -78,23 +81,49 @@ export default function Employee() {
         setSelected(newSelected);
     };
     const deleteEmployee = () => {
-        EmployeeApi.DeleteEmpolyee(selected).then(() => {
-            dispatch(employeeActions.deleteEmployee(selected))
-            toast('تمت الحذف بنجاح', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                progress: undefined,
-                theme: "light",
-                type: 'success'
-            })
-        }
-        )
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                EmployeeApi.DeleteEmpolyee(selected).then(() => {
+                    dispatch(employeeActions.deleteEmployee(selected))
+                    toast('تمت الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                }
+                )
+            }
+        })
+
     }
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', padding: '10px' }}>
+            <div className='flex justify-between items-center w-full gap-5  my-5'>
+                <div className='flex justify-center items-center gap-3'>
+
+                    <PersonIcon></PersonIcon>
+                    <h2 className='text-lg font-bold text-dark'>الموظفين</h2>
+                </div>
+                <div className='flex justify-center items-center gap-3'>
+                    <TextField size="small" label='ابحث عن موظف' title='employee' sx={{ width: '300px' }} name='employeeSearch'></TextField>
+
+                    <DialogEmployee></DialogEmployee>
+                </div>
+
+            </div>
             <Paper sx={{ width: '100%', mb: 2 }}>
                 {
                     isLoading ?
@@ -106,16 +135,13 @@ export default function Employee() {
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
-                    <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
-                        <TextField label='ابحث عن موظف' title='employee' name='employeeSearch'></TextField>
-                        <DialogEmployee></DialogEmployee>
 
-                    </div>
+
                     {
                         selected.length > 0 ?
 
                             (
-                                <div className='flex justify-end items-center w-full px-2'>
+                                <div className='flex justify-start items-center w-full px-2 mt-2'>
 
                                     <Tooltip title="Delete">
                                         <IconButton onClick={deleteEmployee}>
@@ -168,7 +194,7 @@ export default function Employee() {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            <img width={50} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
+                                            <img width={35} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
                                         </TableCell>
 
                                         <TableCell component="th" scope="row" align="left">
