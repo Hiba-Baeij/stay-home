@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, IconButton, LinearProgress, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomerApi } from "@/api/customer/endpoints"
 import { Address, Customer as TypeCustomer } from "@/api/customer/dto"
@@ -20,6 +20,10 @@ import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import { Add } from '@mui/icons-material';
 import { NavLink, Route, useNavigate } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import { Area, settingActions } from '@/store/setting';
+import { useQuery } from '@tanstack/react-query';
+import { SettingApi } from '@/api/setting/endpoints';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Customer() {
@@ -30,30 +34,20 @@ export default function Customer() {
     const [page, setPage] = React.useState(0);
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as TypeCustomer;
     const customers = useSelector<RootState>(state => state.customer.customers) as TypeCustomer[];
+    const cities = useSelector<RootState>(state => state.setting.cities) as Area[];
+    const getCityName = (id: string) => cities.find(ele => ele.id === id)?.name
 
-    useEffect(() => {
-        getCustomers();
-    }, [])
-
-    function getCustomers() {
-        CustomerApi.fetchCustomer().then((data: { response: TypeCustomer[]; }) => {
+    const { isLoading } = useQuery(['customer'], CustomerApi.fetchCustomer, {
+        onSuccess: (data: { response: TypeCustomer[]; }) => {
             dispatch(customerActions.setCustomer(data.response))
+        },
+    })
+    useQuery(['city'], SettingApi.fetchCity, {
+        onSuccess: (data: { response: { name: string, id: string }[]; }) => {
+            dispatch(settingActions.setCity(data.response))
+        },
+    })
 
-        })
-    }
-
-    function getDetails(item: TypeCustomer) {
-        dispatch(customerActions.setCustomerDialog(true))
-        CustomerApi.getCustomerDetails(item.id as string).then((data: { response: TypeCustomer }) => {
-            dispatch(customerActions.setCustomerFormDto({
-                ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD'),
-                email: '',
-                fullName: '',
-                password: '',
-                address: new Address()
-            }))
-        })
-    }
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -95,20 +89,35 @@ export default function Customer() {
 
     }
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', padding: '10px' }} >
+            <div className='flex justify-between items-center w-full gap-5  my-5'>
+                <div className='flex justify-center items-center gap-3'>
+
+                    <PersonIcon></PersonIcon>
+                    <h2 className='text-lg font-bold text-dark'>الزبائن</h2>
+                </div>
+                <div className='flex justify-center items-center gap-3'>
+                    <TextField size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
+                    <Button variant="contained" onClick={() => navigation('/customer/0')}>
+                        إضافة زبون
+                        <Add></Add>
+                    </Button>
+
+                </div>
+
+            </div>
             <Paper sx={{ width: '100%', mb: 2 }}>
                 {/* {JSON.stringify(customers)} */}
+                {
+                    isLoading ?
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress />
+                        </Box> : null
+                }
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
-                    <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
-                        <TextField label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
-                        <Button variant="contained" onClick={() => navigation('/customer/0')}>
-                            إضافة زبون
-                            <Add></Add>
-                        </Button>
 
-                    </div>
                     {
                         selected.length > 0 ?
 
@@ -169,8 +178,8 @@ export default function Customer() {
                                         <TableCell component="th" scope="row" align="left">
                                             {row.name}
                                         </TableCell>
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.cityId}
+                                        <TableCell align="center" component="th" scope="row" >
+                                            {getCityName(row.cityId)}
                                         </TableCell>
                                         <TableCell align="center">{row.phoneNumber}</TableCell>
                                         <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>

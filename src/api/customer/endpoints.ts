@@ -8,6 +8,8 @@ export enum API_CUSTOMER {
     GetById = "Customer/GetById",
     Add = "Customer/Add",
     GetNames = "Customer/GetNames",
+    Modify = "Customer/Modify",
+    Delete = "Customer/Delete",
 }
 
 
@@ -38,6 +40,29 @@ export class CustomerApi {
     static AddCustomer = async (payload: CustomerDto) => {
         try {
             const res = await axiosIns.post(API_CUSTOMER.Add, serialize(payload));
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static ModifyCustomer = async (payload: CustomerDto) => {
+        try {
+            const res = await axiosIns.post(API_CUSTOMER.Modify, serialize(payload));
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+
+    static DeleteCustomer = async (ids: string[]) => {
+        try {
+            const res = await axiosIns.delete(API_CUSTOMER.Delete, { data: [...ids] });
             return res.data
         }
 

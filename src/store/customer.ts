@@ -22,17 +22,20 @@ const customerSlice = createSlice({
         },
 
         setCustomerFormDto(state: initialState, action: PayloadAction<CustomerDto>) {
-            if (action.payload.id) {
 
-                state.customerDto = { ...action.payload }
-                console.log(state.customerDto);
-            }
-            else {
-                console.log("in add  custoneer");
-                // state.customers.unshift(action.payload)
-                console.log(state.customers);
+            state.customerDto = { ...action.payload }
+            console.log(state.customerDto);
 
-            }
+        },
+        addMoreCustomer(state: initialState, action: PayloadAction<CustomerDto>) {
+            state.customers.unshift({
+                id: '',
+                orderCount: 0,
+                name: action.payload.fullName,
+                birthDate: action.payload.birthDate,
+                cityId: action.payload.cityId,
+                phoneNumber: action.payload.phoneNumber,
+            })
         },
 
         setCustomerDialog(state: initialState, action: PayloadAction<boolean>) {
