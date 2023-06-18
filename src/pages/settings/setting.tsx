@@ -7,6 +7,7 @@ import { SettingApi } from "@/api/setting/endpoints"
 import { settingActions } from '@/store/setting';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export default function Setting() {
 
@@ -21,20 +22,33 @@ export default function Setting() {
             dispatch(settingActions.setCategory(data.response))
         },
     })
+    const { isLoading: loadingArea } = useQuery(['area'], SettingApi.fetchArea, {
+        onSuccess: (data) => {
+            dispatch(settingActions.setArea(data.response))
+        },
+    })
 
     return (
-        <div className='grid grid-cols-2 gap-4'>
-            <div className='col-span-1'>
-                <Cities loading={loadingCity} />
-            </div>
+        <div className='p-2'>
+            <div className='flex justify-start items-center gap-3 my-5'>
 
-            <div className='col-span-1'>
-                <Categories loading={loadingCategory} />
+                <SettingsIcon></SettingsIcon>
+                <h2 className='text-lg font-bold text-dark'>الاعدادات</h2>
             </div>
-            <div className='col-span-1'>
-                <Areas />
+            <div className='grid grid-cols-2 gap-4'>
+                <div className='col-span-1'>
+                    <Cities loading={loadingCity} />
+                </div>
+
+                <div className='col-span-1'>
+                    <Categories loading={loadingCategory} />
+                </div>
+                <div className='col-span-1'>
+                    <Areas loading={loadingArea} />
+                </div>
             </div>
         </div>
+
     )
 }
 

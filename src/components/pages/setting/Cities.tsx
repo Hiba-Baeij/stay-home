@@ -20,6 +20,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import { LoadingButton } from '@mui/lab';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 const DEFAULT_ROWS_PER_PAGE = 5;
 interface typeProps {
     loading: boolean
@@ -31,6 +33,7 @@ export default function Countries(props: typeProps) {
     const [selected, setSelected] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const swal = withReactContent(Swal)
     const [dto, setDto] = React.useState({
         id: '',
         name: '',
@@ -105,20 +108,34 @@ export default function Countries(props: typeProps) {
         setSelected(newSelected);
     };
     const removeCity = () => {
-        SettingApi.DeleteCity(selected).then(() => {
-            dispatch(settingActions.deleteCity(selected))
-            toast('تمت الحذف المدينة بنجاح', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                progress: undefined,
-                theme: "light",
-                type: 'success'
-            })
-        }
-        )
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                SettingApi.DeleteCity(selected).then(() => {
+                    dispatch(settingActions.deleteCity(selected))
+                    toast('تمت الحذف المدينة بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                }
+                )
+            }
+
+        })
     }
 
     return (
@@ -137,17 +154,7 @@ export default function Countries(props: typeProps) {
                     <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
                         <h2>المدن</h2>
                         <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة مدينة</Button>
-                        {
-                            selected.length > 0 ?
-                                (
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={removeCity}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                ) : null
 
-                        }
                         <Dialog open={isOpen}>
                             <DialogTitle>
                                 {
@@ -183,13 +190,21 @@ export default function Countries(props: typeProps) {
                         <TableHead>
                             <TableRow>
                                 <TableCell padding="checkbox">
-                                    <Checkbox
+                                    {/* <Checkbox
                                         color="primary"
                                         onChange={handleSelectAllClick}
                                         inputProps={{
                                             'aria-label': 'select all desserts',
                                         }}
-                                    />
+                                    /> */}
+
+                                    <Tooltip title="Delete">
+                                        <IconButton onClick={removeCity}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
+
+
                                 </TableCell>
                                 <TableCell align="center">الاسم</TableCell>
                                 <TableCell align="center">التاريخ</TableCell>

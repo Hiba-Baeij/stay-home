@@ -4,11 +4,15 @@ interface Base {
     id: string,
     imageFile?: File,
     imageUrl?: string,
-
+}
+export interface Area {
+    id: string | null,
+    name: string,
+    cityId: string
 }
 interface initialState {
     cities: Base[],
-    areas: Base[],
+    areas: Area[],
     categories: Base[],
 }
 
@@ -60,6 +64,29 @@ const settingSlice = createSlice({
 
             }
             else state.categories.unshift(action.payload)
+        },
+
+        //Area
+
+        setArea(state: initialState, action: PayloadAction<Area[]>) {
+            state.areas = action.payload;
+        },
+
+        deleteArea(state: initialState, action: PayloadAction<string[]>) {
+            state.areas = state.areas.filter(ele => !action.payload.includes(ele.id ? ele.id : ''))
+
+        },
+
+        UpsertArea(state: initialState, action: PayloadAction<Area>) {
+            if (action.payload.id) {
+                console.log(action.payload);
+
+                const index = state.areas.findIndex(ele => ele.id == action.payload.id);
+                state.areas[index] = { ...action.payload }
+                console.log(action.payload);
+
+            }
+            else state.areas.unshift(action.payload)
         },
     }
 

@@ -22,6 +22,7 @@ import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import PersonIcon from '@mui/icons-material/Person';
 import { useQuery } from '@tanstack/react-query';
+// import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 const DEFAULT_ROWS_PER_PAGE = 5;
@@ -31,9 +32,9 @@ export default function Employee() {
     const dispatch = useDispatch<AppDispatch>()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(1);
-    const employeeDto = useSelector<RootState>(state => state.employee.employeeDto) as TypeEmployee;
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
     const swal = withReactContent(Swal)
+    // const { paginate, pagination } = usePagination()
     const { isLoading } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
         onSuccess: (data: { response: TypeEmployee[]; }) => {
             dispatch(employeeActions.setEmployee(data.response))
@@ -60,10 +61,6 @@ export default function Employee() {
         setSelected([]);
     };
     const handleClick = (id: string) => {
-        // setSelected();
-        // setSelected(prevVal => [...prevVal, id]);
-        // console.log(selected);
-
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
         if (selectedIndex === -1) {
@@ -218,7 +215,7 @@ export default function Employee() {
                     </Table>
                 </TableContainer>
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    {page}
+
                     <Pagination count={10} page={page} onChange={handleChangePage} />
                 </Stack>
             </Paper>

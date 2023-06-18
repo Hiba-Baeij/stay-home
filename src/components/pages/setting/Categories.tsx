@@ -21,6 +21,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import { LoadingButton } from '@mui/lab';
 import Upload from '@/components/shared/Upload';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { IMAGE_URL } from '@/../app.config';
 
 const DEFAULT_ROWS_PER_PAGE = 5;
@@ -37,6 +39,8 @@ export default function Categories(props: typeProps) {
     const [selected, setSelected] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const swal = withReactContent(Swal)
+
     const [dto, setDto] = React.useState({
         id: '',
         name: '',
@@ -116,20 +120,32 @@ export default function Categories(props: typeProps) {
         setSelected(newSelected);
     };
     const removeCategory = () => {
-        SettingApi.DeleteCategory(selected).then(() => {
-            dispatch(settingActions.deleteCategory(selected))
-            toast('تمت الحذف الصنف بنجاح', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                progress: undefined,
-                theme: "light",
-                type: 'success'
-            })
-        }
-        )
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                SettingApi.DeleteCategory(selected).then(() => {
+                    dispatch(settingActions.deleteCategory(selected))
+                    toast('تمت الحذف الصنف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                }
+                )
+            }
+        })
     }
 
     return (
@@ -149,17 +165,7 @@ export default function Categories(props: typeProps) {
                         <h2>التصنيفات</h2>
 
                         <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة صنف</Button>
-                        {
-                            selected.length > 0 ?
-                                (
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={removeCategory}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                ) : null
 
-                        }
                         <Dialog open={isOpen}>
                             <DialogTitle>
                                 {
@@ -202,13 +208,18 @@ export default function Categories(props: typeProps) {
                         <TableHead>
                             <TableRow>
                                 <TableCell padding="checkbox">
-                                    <Checkbox
+                                    {/* <Checkbox
                                         color="primary"
                                         onChange={handleSelectAllClick}
                                         inputProps={{
                                             'aria-label': 'select all desserts',
                                         }}
-                                    />
+                                    /> */}
+                                    <Tooltip title="Delete">
+                                        <IconButton onClick={removeCategory}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
                                 </TableCell>
 
                                 <TableCell align="center">الصورة</TableCell>
