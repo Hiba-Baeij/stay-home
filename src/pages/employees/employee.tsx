@@ -108,11 +108,11 @@ export default function Employee() {
     }
     return (
         <Box sx={{ width: '100%', padding: '10px' }}>
-            <div className='flex justify-between items-center w-full gap-5  my-5'>
+            <div className='flex justify-between items-center w-full gap-5 my-5'>
                 <div className='flex justify-center items-center gap-3'>
 
                     <PersonIcon></PersonIcon>
-                    <h2 className='text-lg font-bold text-dark'>الموظفين</h2>
+                    <h2 className='text-lg font-bold '>الموظفين</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
                     <TextField size="small" label='ابحث عن موظف' title='employee' sx={{ width: '300px' }} name='employeeSearch'></TextField>

@@ -126,7 +126,7 @@ export default function CustomerDetails() {
             <div className='flex justify-start items-center gap-3 my-5'>
 
                 <PersonIcon></PersonIcon>
-                <h2 className='text-lg font-bold text-dark'> {customerDto.id ? 'تفاصيل / الزبون' : 'اضافة الزبون'} </h2>
+                <h2 className='text-lg font-bold'> {customerDto.id ? 'تفاصيل / الزبون' : 'اضافة الزبون'} </h2>
             </div>
             <Card>
                 {

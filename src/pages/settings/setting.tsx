@@ -33,7 +33,7 @@ export default function Setting() {
             <div className='flex justify-start items-center gap-3 my-5'>
 
                 <SettingsIcon></SettingsIcon>
-                <h2 className='text-lg font-bold text-dark'>الاعدادات</h2>
+                <h2 className='text-lg font-bold '>الاعدادات</h2>
             </div>
             <div className='grid grid-cols-2 gap-4'>
                 <div className='col-span-1'>

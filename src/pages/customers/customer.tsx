@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import DialogCustomer from "@/components/pages/Customer"
+import DialogCustomer from "@/components/pages/Shop"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,7 +15,7 @@ import { Address, Customer as TypeCustomer } from "@/api/customer/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { customerActions } from '@/store/customer';
-import CustomerPage from '@/components/pages/Customer'
+import ShopComponent from '@/components/pages/Shop'
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import { Add } from '@mui/icons-material';
@@ -94,7 +94,7 @@ export default function Customer() {
                 <div className='flex justify-center items-center gap-3'>
 
                     <PersonIcon></PersonIcon>
-                    <h2 className='text-lg font-bold text-dark'>الزبائن</h2>
+                    <h2 className='text-lg font-bold'>الزبائن</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
                     <TextField size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
