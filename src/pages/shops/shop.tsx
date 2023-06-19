@@ -32,7 +32,7 @@ export default function Shop() {
                 <div className='flex justify-start items-center gap-3'>
 
                     <StoreIcon></StoreIcon>
-                    <h2 className='text-lg font-bold '>المتاجر</h2>
+                    <h2 className='text-lg font-bold'>المتاجر</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
                     <TextField size="small" label='ابحث عن المتاجر' title='shop' sx={{ width: '300px' }} name='shopSearch'></TextField>

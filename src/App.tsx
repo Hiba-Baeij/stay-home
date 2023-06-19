@@ -10,8 +10,9 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import { QueryClientProvider, QueryClient, useQuery } from "@tanstack/react-query"
 import { ToastContainer } from 'react-toastify';
+
 // import 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap';
 
 const stylisPlugins = [prefixer];

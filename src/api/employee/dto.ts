@@ -11,13 +11,3 @@ export class Employee {
     isBlock?= false;
     password?= ""
 }
-// export class AddEmployee {
-//     fullName = '';
-//     email = '';
-//     password?= '';
-//     phoneNumber = '';
-//     imageFile?: File | null = null;
-//     imageUrl?= "";
-//     birthDate = '';
-
-// }
