@@ -65,7 +65,8 @@ export const isDarkMode = (mode: PaletteMode) => ({
                 },
                 text: {
                     primary: '#fff',
-                    secondary: grey[500],
+                    default: "#fff",
+
                 },
             }),
     },

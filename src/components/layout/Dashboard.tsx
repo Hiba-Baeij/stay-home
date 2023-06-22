@@ -170,7 +170,7 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                 justifyContent: 'center',
                 gap: 2
             }}>
-                <Typography fontWeight={'bold'} fontSize={24} sx={{ color: '#41444A' }}>Stay Home</Typography>
+                <Typography fontWeight={'bold'} fontSize={24} >Stay Home</Typography>
                 {/* <img alt='logo' width={'56'} src='/Asset 1.svg'></img> */}
             </Toolbar>
             <Divider />
@@ -190,7 +190,7 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                                             py: 0.8,
                                             px: 2,
                                             borderRadius: "0.5rem",
-                                            color: isActive ? "white" : palette.grey["700"],
+                                            color: isActive ? "white" : '',
                                             "&.Mui-selected , &.Mui-selected:hover": {
                                                 backgroundColor: palette.primary.main,
                                             },
@@ -199,12 +199,12 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                                     >
                                         <ListItemIcon
                                             sx={({ palette }) => ({
-                                                color: isActive ? "white" : palette.grey["700"],
+                                                color: isActive ? "white" : '',
                                             })}
                                         >
                                             <item.icon />
                                         </ListItemIcon>
-                                        <ListItemText primary={item.name} />
+                                        <ListItemText>{item.name}</ListItemText>
                                     </ListItemButton>
                                 </ListItem>
                             );

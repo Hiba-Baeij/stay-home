@@ -1,12 +1,14 @@
-import { Shop } from '@/api/shop/dto';
+import { Shop, WorkTimes } from '@/api/shop/dto';
 import { ShopApi } from '@/api/shop/endpoints';
 import { AppDispatch, RootState } from '@/store';
 import shop, { shopActions } from '@/store/shop';
-import { Add, Close } from '@mui/icons-material'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Add, Close, Label } from '@mui/icons-material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormHelperText, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import React, { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Upload from '../shared/Upload';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,9 +20,15 @@ import { SettingApi } from '@/api/setting/endpoints';
 
 export default function ShopComponent() {
     const [isLoading, setIsLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState('');
     const isOpen = useSelector<RootState>(state => state.shop.openDialogShop) as boolean;
     const shopDto = useSelector<RootState>(state => state.shop.shopDto) as Shop;
     const { handleSubmit, control, reset } = useForm({ defaultValues: { ...new Shop() } });
+    const { fields, append, remove } = useFieldArray({
+        control, // control props comes from useForm (optional: if you are using FormContext)
+        name: "workTimes", // unique name for your Field Array
+    });
+
     const dispatch = useDispatch<AppDispatch>()
     const categories = useSelector<RootState>(state => state.setting.categories) as { name: string, id: string }[];
     const areas = useSelector<RootState>(state => state.setting.areas) as Area[];
@@ -35,6 +43,7 @@ export default function ShopComponent() {
             dispatch(settingActions.setCategory(data.response))
         },
     })
+
     const onSubmit = (data: Shop) => {
         if (data.id) {
             setIsLoading(true)
@@ -132,7 +141,8 @@ export default function ShopComponent() {
                                             label=" اسم المنطقة"
                                         >
                                             {
-                                                areas.map((item) => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)
+
+                                                areas.map((ar) => <MenuItem key={ar.id} value={ar.id}>{ar.name}</MenuItem>)
                                             }
 
                                         </Select>
@@ -164,31 +174,91 @@ export default function ShopComponent() {
                                 } />
 
                             </div>
+
                             <div className='col-span-2'>
-                                <InputLabel id="time-label">وقت الدوام</InputLabel>
-                                <Controller rules={{ required: 'وقت الفتح مطلوب' }} name='workTimes' control={control} render={({ field, fieldState }) =>
-                                    <FormControl fullWidth error={!!fieldState.error}>
-                                        {/* <TimePicker label="وقت الفتح" /> */}
-                                        <FormHelperText>
-                                            {fieldState.error?.message}
-                                        </FormHelperText>
-                                    </FormControl>
-                                } />
-                                <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name='workTimes' control={control} render={({ field, fieldState }) =>
-                                    <FormControl fullWidth error={!!fieldState.error}>
-                                        {/* <TimePicker label="وقت الاغلاق" /> */}
-                                        <FormHelperText>
-                                            {fieldState.error?.message}
-                                        </FormHelperText>
-                                    </FormControl>
-                                } />
+                                <div className='mb-5 flex justify-between items-center'>
+                                    <InputLabel id="time-label">اوقات الدوام</InputLabel>
+                                    <Button onClick={() => append({ ...new WorkTimes() })}>
+                                        <ControlPointIcon color='success'></ControlPointIcon>
+                                    </Button>
+                                </div>
+                                {fields.map((item, index) =>
+                                (
+                                    <div className='grid grid-cols-3 gap-5 mt-3' key={item.id}>
+
+                                        <div className='md:col-span-1 col-span-3 flex justify-center items-center'>
+                                            <button type="button" onClick={() => remove(index)} className='mt-7 ml-4'>
+                                                <DeleteOutlineIcon color='error'></DeleteOutlineIcon>
+                                            </button>
+                                            <div>
+
+                                                <label> اليوم :</label>
+                                                <Controller rules={{ required: ' اليوم مطلوب' }} name={`workTimes.${index}.dayOfWeek`} control={control} render={({ field, fieldState }) =>
+                                                    <TextField error={!!fieldState.error} fullWidth
+                                                        helperText={fieldState.error?.message}
+                                                        {...field} name={`workTimes.${index}.dayOfWeek`} id={`workTimes_dayOfWeek_${index}`}
+                                                        type='number'
+                                                        sx={{ marginTop: '10px' }}
+
+                                                    />
+
+                                                } />
+                                            </div>
+
+                                        </div>
+                                        <div className='md:col-span-1 col-span-3'>
+                                            <label>وقت البدء :</label>
+                                            <Controller rules={{ required: 'وقت الفتح مطلوب' }} name={`workTimes.${index}.startTime.ticks`} control={control} render={({ field, fieldState }) =>
+                                                <TextField error={!!fieldState.error} fullWidth
+                                                    helperText={fieldState.error?.message}
+                                                    {...field} name={`workTimes.${index}.startTime.ticks`} id={`workTimes_startTime_${index}`}
+                                                    type='time'
+
+                                                    sx={{ marginTop: '10px' }}
+
+                                                />
+
+                                            } />
+                                        </div>
+                                        <div className='md:col-span-1 col-span-3'>
+                                            <label>وقت الاغلاق :</label>
+
+                                            <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name={`workTimes.${index}.endTime.ticks`} control={control} render={({ field, fieldState }) =>
+
+                                                <TextField error={!!fieldState.error} fullWidth
+                                                    helperText={fieldState.error?.message}
+                                                    {...field}
+                                                    type='time'
+                                                    name={`workTimes.${index}.endTime.ticks`} id={`workTimes_endTime_${index}`}
+                                                    sx={{ marginTop: '10px' }}
+                                                />
+
+                                            } />
+
+
+                                        </div>
+
+                                    </div>
+
+                                )
+
+                                )}
                             </div>
 
 
-                            {/* <div className='col-span-2'>
-                                <label htmlFor="imageEmployee" className='pb-4'>صورة المتجر </label>
-                                <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload>
-                            </div> */}
+                            <div className='col-span-2'>
+                                <Controller rules={{ required: 'يرجى رفع صورة' }}
+                                    control={control} name='imageFile' render={({ field, fieldState }) =>
+
+                                        <FormControl error={!!fieldState.error} fullWidth>
+                                            <Upload {...field} url={imageUrl} onChangeUrl={setImageUrl} name='image' label='صورة المتجر'></Upload>
+                                            <FormHelperText>
+                                                {fieldState.error?.message}
+                                            </FormHelperText>
+                                        </FormControl>
+                                    }
+                                />
+                            </div>
 
                         </div>
 

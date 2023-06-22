@@ -1,42 +1,89 @@
-
 import styled from '@emotion/styled';
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
-import { HOST_DOMAIN } from '@/../app.config'
+import { IconButton } from '@mui/material';
+import { Close, FileUploadOutlined } from '@mui/icons-material';
+import { IMAGE_URL } from '../../../app.config';
+
 const id = uuidv4();
 
+type Props = {
+    onChange: (payload: File | null) => void;
+    onChangeUrl: (url: string) => void;
+    value?: File | null;
+    url: string;
+    name: string;
+    label?: string;
+    className?: string;
+};
+
 const Label = styled.label`
-border: 1px dashed #cccccc;
-width:100%;
-min-height: 100px;
-cursor: pointer;
-`
-interface propsType {
-    onChange: (payload: { file: File, name: string, src: string }) => void,
-    onChangeUrl?: () => string,
-    url: string,
-    name: string, [x: string]: any
-}
-export default function Upload({ onChange, url, name, ...rest }: propsType) {
+  border: 1px dashed #cccccc;
+  width: 100%;
+  min-height: 100px;
+  cursor: pointer;
+`;
 
-    function handleChange(event: any) {
-        const file = event.target.files[0];
-        const url = URL.createObjectURL(file);
-        onChange({ file, name: name, src: url })
+const ImageUpload = React.forwardRef<HTMLInputElement, Props>(
+    ({ onChange, onChangeUrl, value, url, name, label, className, ...rest }, ref) => {
+        const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+        function handleChange(event: ChangeEvent<HTMLInputElement>) {
+            if (event.target.files) {
+                const file = event.target.files[0];
+                const url = URL.createObjectURL(file);
+                onChange(file);
+                onChangeUrl(url);
+                setFileUrl(url);
+            }
+        }
+
+        function reset() {
+            onChange(null);
+            onChangeUrl('');
+            setFileUrl(null);
+        }
+
+        return (
+            <>
+                <div className="flex justify-between items-center">
+                    {label && <label className="my-2">{label}</label>}
+                    {value && (
+                        <IconButton size="small" sx={{ my: 1 }} onClick={reset}>
+                            <Close />
+                        </IconButton>
+                    )}
+                </div>
+                <Label
+                    className={`text-center flex items-center justify-center relative ${className}`}
+                    htmlFor={`input-file-${id}`}
+                >
+                    {url || fileUrl ? (
+                        <img
+                            className="h-72"
+                            src={
+                                url?.includes('http') || fileUrl === null
+                                    ? url
+                                    : `${IMAGE_URL}+${url}`
+                            }
+                            alt="img"
+                        />
+                    ) : (
+                        <span>اختر صورة لرفعها</span>
+                    )}
+                </Label>
+                <input
+                    ref={ref}
+                    placeholder="input"
+                    name={name}
+                    className="hidden"
+                    id={`input-file-${id}`}
+                    type="file"
+                    onChange={handleChange}
+                />
+            </>
+        );
     }
+);
 
-    return (
-        <>
-            <label className='my-2' > {rest.label}</label>
-            <Label className='text-center flex items-center justify-center' htmlFor={`input-file-${id}`}>
-                {
-                    url ? <img className='h-72' src={url.includes('http') ? url : `${HOST_DOMAIN}/${url}`} alt='img' /> : <span>UPLOAD</span>
-                }
-            </Label>
-            <input placeholder='input' name={name} className='hidden' id={`input-file-${id}`} type='file' onChange={handleChange} />
-
-        </>
-
-    )
-}
-
+export default ImageUpload;

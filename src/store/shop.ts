@@ -24,6 +24,8 @@ const shopSlice = createSlice({
         },
 
         setShopDto(state: initialState, action: PayloadAction<Shop>) {
+            console.log(action.payload);
+            delete action.payload.imageFile;
             if (action.payload.id) {
                 state.shopDto = { ...action.payload }
             }

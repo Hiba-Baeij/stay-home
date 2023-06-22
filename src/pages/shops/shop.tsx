@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { shopActions } from '@/store/shop';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import withReactContent from 'sweetalert2-react-content'
 import { ShopApi } from '@/api/shop/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import StoreIcon from '@mui/icons-material/Store';
 import ShopComponent from '@/components/pages/Shop'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function Shop() {
     const dispatch = useDispatch<AppDispatch>()
@@ -24,6 +26,35 @@ export default function Shop() {
             dispatch(shopActions.setShop(data.response))
         },
     })
+    const deleteShop = (id: string) => {
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                ShopApi.DeleteShop([id]).then(() => {
+                    dispatch(shopActions.deleteShop([id]))
+                    toast('تم الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                }
+                )
+            }
+        })
+
+    }
 
     return (
         <Box sx={{ width: '100%', padding: '10px' }}>
@@ -47,13 +78,26 @@ export default function Shop() {
                         sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px" }}
                     >
                         {shop.imageUrl && (
-                            <CardMedia
-                                sx={{ height: "240px", borderRadius: "22px" }}
-                                component="img"
-                                image={`${IMAGE_URL + shop.imageUrl}`}
+                            <div className='hover:bg-dark hover:opacity-90 rounded-2xl cursor-pointer relative'>
 
-                                alt="green iguana"
-                            />
+                                <Button onClick={() => deleteShop(shop.id)} variant="contained" sx={{
+
+                                    '.MuiButton-root:hover': {
+                                        display: 'block'
+                                    }, position: 'absolute', left: '120px', top: '40%', zIndex: '999'
+                                }}>
+                                    <DeleteIcon />
+                                </Button>
+
+                                <CardMedia
+                                    sx={{ height: "240px", borderRadius: "22px" }}
+                                    component="img"
+                                    image={`${IMAGE_URL + shop.imageUrl}`}
+
+                                    alt="green iguana"
+                                />
+                            </div>
+
                         )}
 
                         <CardContent className="">
@@ -77,14 +121,17 @@ export default function Shop() {
                         <CardActions className="gap-2">
                             <Link
                                 className="flex-grow"
-                                to='/'
+                                to={`/shop/${shop.id}`}
                             >
                                 <Button variant="contained" fullWidth>
-                                    عرض القطع (20)
+                                    عرض المنتجات وتفاصيل
                                 </Button>
                             </Link>
-                            {/* <Button variant="contained" onClick={() => props.onDetails(car)}>
-                                <Edit></Edit>
+                            <Button variant="contained" >
+                                <Edit />
+                            </Button>
+                            {/* <Button variant="contained" >
+                                <DeleteIcon />
                             </Button> */}
                         </CardActions>
                     </Card>

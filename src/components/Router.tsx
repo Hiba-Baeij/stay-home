@@ -17,6 +17,7 @@ import Vehicle from '@/pages/vehicles/vehicle'
 import Rating from '@/pages/ratings/rating'
 import CustomerDetails from '@/pages/customers/customerDetails';
 import { IsLoggedIn } from '@/global/auth'
+import ShopDetails from '../pages/shops/shopDetails';
 const routeList = [
     {
         path: '/',
@@ -124,6 +125,14 @@ function Router() {
                 <div className='h-screen'>
                     <Dashboard>
                         <CustomerDetails />
+                    </Dashboard>
+                </div>
+            }>
+            </Route>
+            <Route path={`/shop/:id`} element={
+                <div className='h-screen'>
+                    <Dashboard>
+                        <ShopDetails />
                     </Dashboard>
                 </div>
             }>
