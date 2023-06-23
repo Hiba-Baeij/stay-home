@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useId, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import { IconButton } from '@mui/material';
 import { Close, FileUploadOutlined } from '@mui/icons-material';
 import { IMAGE_URL } from '../../../app.config';
 
-const id = uuidv4();
 
 type Props = {
     onChange: (payload: File | null) => void;
@@ -25,8 +24,10 @@ const Label = styled.label`
 `;
 
 const ImageUpload = React.forwardRef<HTMLInputElement, Props>(
+
     ({ onChange, onChangeUrl, value, url, name, label, className, ...rest }, ref) => {
         const [fileUrl, setFileUrl] = useState<string | null>(null);
+        const id = useId();
 
         function handleChange(event: ChangeEvent<HTMLInputElement>) {
             if (event.target.files) {

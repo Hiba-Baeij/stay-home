@@ -142,7 +142,7 @@ export default function ShopComponent() {
                                         >
                                             {
 
-                                                areas.map((ar) => <MenuItem key={ar.id} value={ar.id}>{ar.name}</MenuItem>)
+                                                areas.map((ar) => <MenuItem key={ar.id} value={ar.id ? ar.id : ''}>{ar.name}</MenuItem>)
                                             }
 
                                         </Select>

@@ -3,12 +3,14 @@ import employeeSlice from "@/store/employee"
 import customerSlice from "@/store/customer"
 import settingSlice from "@/store/setting"
 import shopSlice from "@/store/shop"
+import productSlice from "@/store/product"
 export const store = configureStore({
     reducer: {
         employee: employeeSlice,
         customer: customerSlice,
         setting: settingSlice,
         shop: shopSlice,
+        product: productSlice,
     }
 });
 

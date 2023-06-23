@@ -2,7 +2,7 @@ import React from 'react'
 import { Shop as ShopType } from '@/api/shop/dto'
 import { AppDispatch, RootState } from '@/store'
 import { Edit } from '@mui/icons-material'
-import { Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, CardMedia, CircularProgress, TextField, Typography } from '@mui/material'
 import { IMAGE_URL } from '@/../app.config';
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query'
 import StoreIcon from '@mui/icons-material/Store';
 import ShopComponent from '@/components/pages/Shop'
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 export default function Shop() {
     const dispatch = useDispatch<AppDispatch>()
@@ -49,6 +50,7 @@ export default function Shop() {
                         theme: "light",
                         type: 'success'
                     })
+
                 }
                 )
             }
@@ -71,72 +73,72 @@ export default function Shop() {
 
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                {shops.map((shop) => (
-                    <Card
-                        key={shop.id}
-                        sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px" }}
-                    >
-                        {shop.imageUrl && (
-                            <div className='hover:bg-dark hover:opacity-90 rounded-2xl cursor-pointer relative'>
 
-                                <Button onClick={() => deleteShop(shop.id)} variant="contained" sx={{
+            {
+                isLoading ?
+                    <div className='flex justify-center items-center'>
+                        <CircularProgress />
+                    </div>
+                    :
 
-                                    '.MuiButton-root:hover': {
-                                        display: 'block'
-                                    }, position: 'absolute', left: '120px', top: '40%', zIndex: '999'
-                                }}>
-                                    <DeleteIcon />
-                                </Button>
-
-                                <CardMedia
-                                    sx={{ height: "240px", borderRadius: "22px" }}
-                                    component="img"
-                                    image={`${IMAGE_URL + shop.imageUrl}`}
-
-                                    alt="green iguana"
-                                />
-                            </div>
-
-                        )}
-
-                        <CardContent className="">
-                            <div className="flex justify-between items-center">
-
-                                <Typography
-                                    className="text-gray-700"
-                                    fontWeight={600}
-                                    gutterBottom
-                                    variant="h6"
-                                    fontSize={20}
-                                    margin={0}
-                                    component="div"
-                                >
-                                    {shop.name}
-                                </Typography>
-                            </div>
-
-                        </CardContent>
-
-                        <CardActions className="gap-2">
-                            <Link
-                                className="flex-grow"
-                                to={`/shop/${shop.id}`}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                        {shops.map((shop) => (
+                            <Card
+                                key={shop.id}
+                                sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px" }}
                             >
-                                <Button variant="contained" fullWidth>
-                                    عرض المنتجات وتفاصيل
-                                </Button>
-                            </Link>
-                            <Button variant="contained" >
-                                <Edit />
-                            </Button>
-                            {/* <Button variant="contained" >
-                                <DeleteIcon />
-                            </Button> */}
-                        </CardActions>
-                    </Card>
-                ))}
-            </div>
+                                {shop.imageUrl && (
+
+
+
+                                    <CardMedia
+                                        sx={{ height: "240px", borderRadius: "22px" }}
+                                        component="img"
+                                        image={`${IMAGE_URL + shop.imageUrl}`}
+
+                                        alt="green iguana"
+                                    />
+
+
+                                )}
+
+                                <CardContent className="">
+                                    <div className="flex justify-between items-center">
+
+                                        <Typography
+                                            className="text-gray-700"
+                                            fontWeight={600}
+                                            gutterBottom
+                                            variant="h6"
+                                            fontSize={20}
+                                            margin={0}
+                                            component="div"
+                                        >
+                                            {shop.name}
+                                        </Typography>
+                                    </div>
+
+                                </CardContent>
+
+                                <CardActions className="gap-2">
+                                    <Link
+                                        className="flex-grow"
+                                        to={`/shop/${shop.id}`}
+                                    >
+                                        <Button variant="contained" fullWidth>
+                                            عرض المنتجات وتفاصيل
+                                        </Button>
+                                    </Link>
+                                    <Button variant="contained" onClick={() => deleteShop(shop.id)}>
+                                        <DeleteOutlineIcon />
+                                    </Button>
+
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </div>
+            }
+
         </Box>
 
 

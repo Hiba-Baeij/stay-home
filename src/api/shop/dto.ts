@@ -17,3 +17,9 @@ export class WorkTimes {
         ticks: 0
     }
 }
+export class Products {
+    id = '';
+    name = "";
+    imageUrl = '';
+    cost = 0;
+}
