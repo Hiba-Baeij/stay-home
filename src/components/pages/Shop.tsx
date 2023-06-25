@@ -96,8 +96,9 @@ export default function ShopComponent() {
     }
     const resetForm = () => {
         reset({ ...new Shop() });
-        // setImageUrl('')
+        setImageUrl('')
         dispatch(shopActions.setShopDialog(false));
+        dispatch(shopActions.resetForm());
     }
     return (
         <div>
@@ -213,7 +214,9 @@ export default function ShopComponent() {
                                                     helperText={fieldState.error?.message}
                                                     {...field} name={`workTimes.${index}.startTime.ticks`} id={`workTimes_startTime_${index}`}
                                                     type='time'
-
+                                                    inputProps={{
+                                                        step: "2"
+                                                    }}
                                                     sx={{ marginTop: '10px' }}
 
                                                 />
@@ -229,6 +232,9 @@ export default function ShopComponent() {
                                                     helperText={fieldState.error?.message}
                                                     {...field}
                                                     type='time'
+                                                    inputProps={{
+                                                        step: "2"
+                                                    }}
                                                     name={`workTimes.${index}.endTime.ticks`} id={`workTimes_endTime_${index}`}
                                                     sx={{ marginTop: '10px' }}
                                                 />

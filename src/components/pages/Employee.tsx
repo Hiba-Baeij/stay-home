@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, FormControlLabel, Switch } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
-import Upload from '../shared/Upload';
 import { Employee } from '@/api/employee/dto';
 import { EmployeeApi } from '@/api/employee/endpoints';
 import Dialog from '@mui/material/Dialog';
@@ -15,9 +14,12 @@ import employee, { employeeActions } from '@/store/employee';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Upload from '@/components/shared/Upload';
+import { IMAGE_URL } from '@/../app.config';
 
 export default function DialogEmployee() {
     const [imageUrl, setImageUrl] = useState('');
+    // const [imageFile, setImageFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.employee.openDialogEmployee) as boolean;
@@ -31,7 +33,7 @@ export default function DialogEmployee() {
         console.log(employeeDto);
         if (employeeDto && employeeDto.id) {
             console.log("in Effect modify");
-            setImageUrl(employeeDto.imageUrl);
+            setImageUrl(IMAGE_URL + employeeDto.imageUrl);
             reset({ ...employeeDto })
         }
     }, [employeeDto])
@@ -82,13 +84,28 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            }).catch(() => setIsLoading(false))
+            }).catch((er: any) => {
+                console.log(er);
+
+                setIsLoading(false);
+                toast.error(er.response.data.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                    type: 'success'
+                })
+            })
         }
     };
     const resetForm = () => {
-        reset({ ...new Employee() });
+        reset({ ...new Employee(), id: '' });
         setImageUrl('')
         dispatch(employeeActions.setEmployeeDialog(false));
+        dispatch(employeeActions.resetForm());
     }
     const blockedEmployee = () => {
         setIsBlocked(!isBlocked);
@@ -113,6 +130,7 @@ export default function DialogEmployee() {
                         <IconButton onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}><Close /></IconButton>
                     </div>
                     <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
+
                         <div className='grid grid-cols-2 gap-5 '>
                             <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
                                 <TextField error={!!fieldState.error}
@@ -157,8 +175,11 @@ export default function DialogEmployee() {
                                 />
                             </div>
                             <div className='col-span-2'>
-                                <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label>
-                                <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload>
+                                {/* <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label> */}
+                                {/* <Upload onChange={(file: null | File) => { setImageFile(file) }} url={imageUrl} onChangeUrl={setImageUrl} name='image' label='صورة الموظف'></Upload> */}
+                                <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
+                                />
+                                {/* <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload> */}
                             </div>
 
                         </div>

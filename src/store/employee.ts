@@ -27,12 +27,17 @@ const employeeSlice = createSlice({
         },
 
         setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
+            delete action.payload.imageFile
+
             if (action.payload.id) {
                 state.employeeDto = { ...action.payload }
             }
             else {
                 state.employees.unshift({ ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 })
             }
+        },
+        resetForm(state: initialState) {
+            state.employeeDto = { ... new Employee() }
         },
 
         modifyEmployee(state: initialState, action: PayloadAction<Employee>) {

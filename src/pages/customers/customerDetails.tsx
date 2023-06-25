@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, LinearProgress } from '@mui/material'
+import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, LinearProgress, FormControl, InputLabel, FormHelperText } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Upload from '@/components/shared/Upload';
 import { Customer, CustomerDto } from '@/api/customer/dto';
@@ -14,10 +14,11 @@ import { toast } from 'react-toastify';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
+import moment from 'moment';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { useQuery } from '@tanstack/react-query';
-
+import { Area } from '@/store/setting';
 export default function CustomerDetails() {
     let { id } = useParams();
     const [imageUrl, setImageUrl] = useState('');
@@ -26,23 +27,28 @@ export default function CustomerDetails() {
     const swal = withReactContent(Swal)
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as CustomerDto;
     const dispatch = useDispatch<AppDispatch>()
-    const { handleSubmit, control, setValue, reset } = useForm<Customer>({
-        defaultValues: { ...new Customer() }
+    const cities = useSelector<RootState>(state => state.setting.cities) as { name: string, id: string }[];
+    const areas = useSelector<RootState>(state => state.setting.areas) as Area[];
+
+    const { handleSubmit, control, setValue, reset } = useForm<CustomerDto>({
+        defaultValues: { ...new CustomerDto() }
     });
-    useEffect(() => {
-        if (customerDto.id) {
-            console.log("in Effect modify");
-            setImageUrl(customerDto.imageUrl ? customerDto.imageUrl : '');
-            reset({ ...customerDto })
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (customerDto.id) {
+    //         console.log("in Effect modify");
+    //         setImageUrl(customerDto.imageUrl ? customerDto.imageUrl : '');
+    //         reset({ ...customerDto })
+    //     }
+    // }, [])
 
     const { isLoading: dataLoading } = useQuery({
         queryKey: ["customerDetails"],
         queryFn: () => CustomerApi.getCustomerDetails(id as string),
         enabled: id !== "0",
         onSuccess: (data: { response: CustomerDto }) => {
-            dispatch(customerActions.setCustomerFormDto(data.response))
+            dispatch(customerActions.setCustomerFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
+            reset({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') })
+
         },
     });
 
@@ -121,22 +127,41 @@ export default function CustomerDetails() {
 
     return (
         <div>
+            <form onSubmit={handleSubmit(onSubmit)} className='p-4'>
 
-            {/* {id} */}
-            <div className='flex justify-start items-center gap-3 my-5'>
+                <div className='flex justify-between items-center w-full gap-5 '>
 
-                <PersonIcon></PersonIcon>
-                <h2 className='text-lg font-bold'> {customerDto.id ? 'تفاصيل / الزبون' : 'اضافة الزبون'} </h2>
-            </div>
-            <Card>
-                {
-                    dataLoading && id !== '0' ?
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box> : null
-                }
-                {JSON.stringify(customerDto)}
-                <form onSubmit={handleSubmit(onSubmit)} className='p-4'>
+                    <div className='flex justify-start items-center gap-3'>
+
+                        <PersonIcon></PersonIcon>
+                        <h2 className='text-lg font-bold'> {customerDto.id ? 'تفاصيل / الزبون' : 'اضافة الزبون'} </h2>
+
+                    </div>
+                    <Box gap={2} display='flex' sx={{ marginY: '20px' }}>
+                        {
+                            isLoading ?
+                                <LoadingButton loading variant='contained'></LoadingButton>
+                                :
+                                <Button variant='contained' type="submit">إضافة زبون</Button>
+                        }
+                        {
+                            customerDto.id ?
+                                <Button color={customerDto.isBlock ? 'error' : 'success'} variant='outlined' >{customerDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
+                        }
+                        <Button color='error' variant='outlined' onClick={deleteCustomer}>حذف</Button>
+                        <Button color='secondary' variant='outlined' onClick={() => { navigation('/customers'); resetForm() }}>تراجع</Button>
+                    </Box>
+                </div>
+
+
+                <Card>
+                    {
+                        dataLoading && id !== '0' ?
+                            <Box sx={{ width: '100%' }}>
+                                <LinearProgress />
+                            </Box> : null
+                    }
+                    {/* {JSON.stringify(customerDto)} */}
                     <CardContent>
 
                         <div className='grid grid-cols-5 gap-5 '>
@@ -165,8 +190,8 @@ export default function CustomerDetails() {
                                     </div>
                                     <div className='col-span-1'>
                                         <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
-                                            <TextField label='تاريح الميلاد ' error={!!fieldState.error}
-                                                helperText={fieldState.error?.message} fullWidth
+                                            <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
                                                 {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
                                         }
                                         />
@@ -184,6 +209,7 @@ export default function CustomerDetails() {
                                     </div>
                                     <div className='col-span-1'>
 
+
                                         <Controller rules={{ required: ' البريد الالكتروني مطلوب' }} name='email' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
                                                 helperText={fieldState.error?.message} fullWidth
@@ -194,15 +220,63 @@ export default function CustomerDetails() {
                                         />
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: '  العنوان مطلوب' }} name='name' control={control} render={({ field, fieldState }) =>
+                                        <Controller rules={{ required: 'يرجى اختيار المدينة' }} name='cityId' control={control} render={({ field, fieldState }) =>
+                                            <FormControl fullWidth error={!!fieldState.error}>
+                                                <InputLabel id="city-id-label">اسم المدينة</InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    name='cityId'
+                                                    labelId="city-id-label"
+                                                    label=" اسم المدينة"
+                                                >
+                                                    {
+                                                        cities.map((c) => <MenuItem key={c.id} value={c.id ? c.id : ''}>{c.name}</MenuItem>)
+                                                    }
+
+                                                </Select>
+                                                <FormHelperText>
+                                                    {fieldState.error?.message}
+                                                </FormHelperText>
+                                            </FormControl>
+                                        } />
+                                    </div>
+
+                                    <div className='col-span-2'>
+                                        تفاصيل العنوان
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: '  العنوان مطلوب' }} name='address.name' control={control} render={({ field, fieldState }) =>
                                             <TextField label='اسم العنوان ' error={!!fieldState.error} fullWidth
                                                 helperText={fieldState.error?.message}
-                                                {...field} name='addressName' id='addressName' sx={{ width: '100%' }} />
+                                                {...field} name='address.name' id='addressName' sx={{ width: '100%' }} />
                                         }
                                         />
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: '  رقم المنزل مطلوب' }} name='houseNumber' control={control} render={({ field, fieldState }) =>
+                                        <Controller rules={{ required: 'يرجى اختيار المنطقة' }} name='address.areaId' control={control} render={({ field, fieldState }) =>
+                                            <FormControl fullWidth error={!!fieldState.error}>
+                                                <InputLabel id="area-id-label">اسم المنطقة</InputLabel>
+                                                <Select
+                                                    fullWidth
+                                                    {...field}
+                                                    name='address.areaId'
+                                                    labelId="area-id-label"
+                                                    label=" اسم المنطقة"
+                                                >
+                                                    {
+
+                                                        areas.map((ar) => <MenuItem key={ar.id} value={ar.id ? ar.id : ''}>{ar.name}</MenuItem>)
+                                                    }
+
+                                                </Select>
+                                                <FormHelperText>
+                                                    {fieldState.error?.message}
+                                                </FormHelperText>
+                                            </FormControl>
+                                        } />
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: '  رقم المنزل مطلوب' }} name='address.houseNumber' control={control} render={({ field, fieldState }) =>
                                             <TextField label='رقم المنزل ' error={!!fieldState.error} fullWidth
                                                 helperText={fieldState.error?.message}
                                                 {...field} name='houseNumber' id='houseNumber' sx={{ width: '100%' }} />
@@ -210,15 +284,15 @@ export default function CustomerDetails() {
                                         />
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: '   الشارع مطلوب' }} name='houseNumber' control={control} render={({ field, fieldState }) =>
+                                        <Controller rules={{ required: '   الشارع مطلوب' }} name='address.street' control={control} render={({ field, fieldState }) =>
                                             <TextField label=' الشارع ' error={!!fieldState.error}
                                                 helperText={fieldState.error?.message} fullWidth
-                                                {...field} name='houseNumber' id='houseNumber' sx={{ width: '100%' }} />
+                                                {...field} name='address.street' id='street' sx={{ width: '100%' }} />
                                         }
                                         />
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: '   طابق مطلوب' }} name='floor' control={control} render={({ field, fieldState }) =>
+                                        <Controller rules={{ required: 'طابق مطلوب' }} name='address.floor' control={control} render={({ field, fieldState }) =>
                                             <TextField label=' طابق ' error={!!fieldState.error}
                                                 helperText={fieldState.error?.message} fullWidth
                                                 {...field} name='floor' id='floor' sx={{ width: '100%' }} />
@@ -226,7 +300,13 @@ export default function CustomerDetails() {
                                         />
                                     </div>
                                     <div className='col-span-2'>
-                                        <TextField label=' ملاحظات اضافية ' name='additional' id='additional' sx={{ width: '100%' }} />
+                                        <Controller name='address.additional' control={control} render={({ field, fieldState }) =>
+                                            <TextField label=' ملاحظات اضافية ' error={!!fieldState.error}
+                                                helperText={fieldState.error?.message} fullWidth
+                                                {...field} name='additional' id='address.additional' sx={{ width: '100%' }} />
+
+                                        }
+                                        />
 
                                     </div>
                                 </div>
@@ -234,31 +314,14 @@ export default function CustomerDetails() {
 
                             <div className='col-span-2'>
                                 <h4 className='pb-4'>صورة الزبون </h4>
-                                <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload>
+                                <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>} />
                             </div>
 
                         </div>
                     </CardContent>
-                    <CardActions>
-                        <Box gap={2} display='flex' sx={{ marginY: '20px' }}>
-                            {
-                                isLoading ?
-                                    <LoadingButton loading variant='contained'></LoadingButton>
-                                    :
-                                    <Button variant='contained' type="submit">إضافة زبون</Button>
-                            }
-                            {
-                                customerDto.id ?
-                                    <Button color={customerDto.isBlock ? 'error' : 'success'} variant='outlined' >{customerDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
-                            }
-                            <Button color='error' variant='outlined' onClick={deleteCustomer}>حذف</Button>
-                            <Button color='secondary' variant='outlined' onClick={() => { navigation('/customers'); resetForm() }}>تراجع</Button>
-                        </Box>
-                    </CardActions>
+                </Card>
 
-                </form>
-            </Card>
-
+            </form>
         </div>
 
 

@@ -11,6 +11,7 @@ import { LoadingButton } from '@mui/lab'
 import { ProductApi } from '@/api/Product/endpoints'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { IMAGE_URL } from '@/../app.config';
 
 export default function AddProduct(props: { shopId: string }) {
     const [imageUrl, setImageUrl] = useState('');
@@ -23,10 +24,8 @@ export default function AddProduct(props: { shopId: string }) {
     const isOpen = useSelector<RootState>(state => state.product.openDialogProduct) as boolean;
     useEffect(() => {
         if (productDto && productDto.id) {
-
-            setImageUrl(productDto.imageUrl);
+            setImageUrl(IMAGE_URL + productDto.imageUrl);
             reset({ ...productDto })
-
         }
     }, [productDto])
     const onSubmit = (data: Product) => {
@@ -83,6 +82,7 @@ export default function AddProduct(props: { shopId: string }) {
         reset({ ...new Product() });
         setImageUrl('')
         dispatch(productActions.setProductDialog(false));
+        dispatch(productActions.resetForm());
     }
     return (
         <>

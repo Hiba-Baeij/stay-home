@@ -191,7 +191,7 @@ export default function Employee() {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" align="left">
-                                            <img width={35} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
+                                            <img width={55} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
                                         </TableCell>
 
                                         <TableCell component="th" scope="row" align="left">

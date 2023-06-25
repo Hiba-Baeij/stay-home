@@ -9,7 +9,7 @@ export class Shop {
 
 }
 export class WorkTimes {
-    dayOfWeek = 0;
+    dayOfWeek = 1;
     startTime = {
         ticks: 0
     };

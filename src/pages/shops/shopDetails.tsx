@@ -229,7 +229,9 @@ export default function shopDetails() {
                                                             helperText={fieldState.error?.message}
                                                             {...field} name={`workTimes.${index}.startTime.ticks`} id={`workTimes_startTime_${index}`}
                                                             type='time'
-
+                                                            inputProps={{
+                                                                step: "2"
+                                                            }}
                                                             sx={{ marginTop: '10px' }}
 
                                                         />
@@ -248,6 +250,9 @@ export default function shopDetails() {
                                                             <TextField error={!!fieldState.error} fullWidth
                                                                 helperText={fieldState.error?.message}
                                                                 {...field}
+                                                                inputProps={{
+                                                                    step: "2"
+                                                                }}
                                                                 type='time'
                                                                 name={`workTimes.${index}.endTime.ticks`} id={`workTimes_endTime_${index}`}
                                                                 sx={{ marginTop: '10px' }}

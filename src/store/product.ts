@@ -44,6 +44,9 @@ const productSlice = createSlice({
             const indexData = state.products.findIndex(ele => ele.id == action.payload.id);
             state.products[indexData] = { ...action.payload }
         },
+        resetForm(state: initialState) {
+            state.productDto = { ... new Product }
+        },
 
         setProductDialog(state: initialState, action: PayloadAction<boolean>) {
             state.openDialogProduct = action.payload
