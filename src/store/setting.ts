@@ -14,12 +14,15 @@ interface initialState {
     cities: Base[],
     areas: Area[],
     categories: Base[],
+    vehicles: Base[],
 }
 
 const state: initialState = {
     cities: [],
     areas: [],
-    categories: []
+    categories: [],
+    vehicles: [],
+
 }
 
 const settingSlice = createSlice({
@@ -57,7 +60,9 @@ const settingSlice = createSlice({
         },
 
         UpsertCategory(state: initialState, action: PayloadAction<Base>) {
+            console.log(action.payload);
             if (action.payload.id) {
+
                 const index = state.categories.findIndex(ele => ele.id == action.payload.id);
                 state.categories[index] = { ...action.payload }
                 console.log(action.payload);
@@ -87,6 +92,26 @@ const settingSlice = createSlice({
 
             }
             else state.areas.unshift(action.payload)
+        },
+
+        // Vechile
+
+        setVehicle(state: initialState, action: PayloadAction<Base[]>) {
+            state.vehicles = action.payload;
+        },
+
+        deleteVehicles(state: initialState, action: PayloadAction<string[]>) {
+            state.vehicles = state.vehicles.filter(ele => !action.payload.includes(ele.id ? ele.id : ''))
+        },
+
+        upsertVehicle(state: initialState, action: PayloadAction<Base>) {
+            if (action.payload.id) {
+                const index = state.vehicles.findIndex(ele => ele.id == action.payload.id);
+                state.vehicles[index] = { ...action.payload }
+                console.log(action.payload);
+
+            }
+            else state.vehicles.unshift(action.payload)
         },
     }
 

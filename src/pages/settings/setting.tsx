@@ -8,6 +8,7 @@ import { settingActions } from '@/store/setting';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import SettingsIcon from '@mui/icons-material/Settings';
+import VehicleType from '@/components/pages/setting/VehicleType';
 
 export default function Setting() {
 
@@ -25,6 +26,11 @@ export default function Setting() {
     const { isLoading: loadingArea } = useQuery(['area'], SettingApi.fetchArea, {
         onSuccess: (data) => {
             dispatch(settingActions.setArea(data.response))
+        },
+    })
+    const { isLoading: loadingVehcile } = useQuery(['vehcile'], SettingApi.fetchVehicle, {
+        onSuccess: (data) => {
+            dispatch(settingActions.setVehicle(data.response))
         },
     })
 
@@ -45,6 +51,9 @@ export default function Setting() {
                 </div>
                 <div className='col-span-1'>
                     <Areas loading={loadingArea} />
+                </div>
+                <div className='col-span-1'>
+                    <VehicleType loading={loadingVehcile} />
                 </div>
             </div>
         </div>

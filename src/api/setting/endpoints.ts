@@ -16,6 +16,9 @@ export enum API_SETTING {
     UpsertArea = "Setting/UpsertArea",
     GetNamesAreas = "Setting/GetNamesAreas",
     DeleteArea = "Setting/DeleteArea",
+    UpsertVehicleType = "Setting/UpsertVehicleType",
+    GetAllVehicleTypes = "Setting/GetAllVehicleTypes",
+    DeleteVehicleType = "Setting/DeleteVehicleType",
 }
 
 export class SettingApi {
@@ -75,6 +78,17 @@ export class SettingApi {
         }
 
     }
+    static fetchVehicle = async () => {
+        try {
+            const res = await axiosIns.get(API_SETTING.GetAllVehicleTypes);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
 
     static DeleteCategory = async (ids: string[]) => {
         try {
@@ -109,6 +123,17 @@ export class SettingApi {
         }
 
     }
+    static DeleteVehicle = async (ids: string[]) => {
+        try {
+            const res = await axiosIns.delete(API_SETTING.DeleteVehicleType, { data: [...ids] });
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
 
     static UpsertCity = async (payload: { name: string, id: null | string }) => {
         try {
@@ -121,7 +146,18 @@ export class SettingApi {
         }
 
     }
-    static UpsertCategory = async (payload: { name: string, id: null | string }) => {
+    static UpsertVehicle = async (payload: { name: string, id: null | string }) => {
+        try {
+            const res = await axiosIns.post(API_SETTING.UpsertVehicleType, serialize(payload));
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static UpsertCategory = async (payload: { name: string, id: null | string, imageFile: null }) => {
         try {
             const res = await axiosIns.post(API_SETTING.UpsertCategory, serialize(payload));
             return res.data

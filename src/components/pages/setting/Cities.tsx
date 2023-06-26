@@ -171,7 +171,7 @@ export default function Countries(props: typeProps) {
 
                                     {
                                         isLoading ?
-                                            <LoadingButton loading variant='contained'></LoadingButton>
+                                            <LoadingButton sx={{ height: '36px' }} loading variant='contained'></LoadingButton>
                                             :
                                             <Button variant='contained' onClick={addMoreCity}>
                                                 {
@@ -207,7 +207,7 @@ export default function Countries(props: typeProps) {
 
                                 </TableCell>
                                 <TableCell align="center">الاسم</TableCell>
-                                <TableCell align="center">التاريخ</TableCell>
+                                {/* <TableCell align="center">التاريخ</TableCell> */}
                                 <TableCell align="center">تفاصيل</TableCell>
 
                             </TableRow>
@@ -231,7 +231,7 @@ export default function Countries(props: typeProps) {
                                         </TableCell>
 
                                         <TableCell align="center">{row.name}</TableCell>
-                                        <TableCell align="center">{new Date().toLocaleDateString()}</TableCell>
+                                        {/* <TableCell align="center">{new Date().toLocaleDateString()}</TableCell> */}
                                         <TableCell align="center">
                                             <MoreVertIcon onClick={() => getDetails(row)} />
                                         </TableCell>
@@ -244,7 +244,7 @@ export default function Countries(props: typeProps) {
                     </Table>
                 </TableContainer>
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    {page}
+                    {/* {page} */}
                     <Pagination count={10} page={page} onChange={handleChangePage} />
                 </Stack>
             </Paper>

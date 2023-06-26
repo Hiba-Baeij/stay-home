@@ -289,7 +289,7 @@ export default function Areas(props: typeProps) {
                     </Table>
                 </TableContainer>
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    {page}
+                    {/* {page} */}
                     <Pagination count={10} page={page} onChange={handleChangePage} />
                 </Stack>
             </Paper>
