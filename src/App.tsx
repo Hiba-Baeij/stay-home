@@ -55,6 +55,11 @@ const StartupCalls = (props: React.PropsWithChildren) => {
       dispatch(settingActions.setCategory(data.response))
     },
   })
+  useQuery(['vechile'], SettingApi.fetchVehicle, {
+    onSuccess: (data: { response: { name: string, id: string }[]; }) => {
+      dispatch(settingActions.setVehicle(data.response))
+    },
+  })
 
   return <> {props.children} </>
 }

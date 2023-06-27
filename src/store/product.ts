@@ -36,7 +36,7 @@ const productSlice = createSlice({
                 state.productDto = { ...action.payload }
             }
             else {
-                state.products.unshift({ ...action.payload })
+                state.products.unshift(action.payload)
             }
         },
 

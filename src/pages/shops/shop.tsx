@@ -94,7 +94,7 @@ export default function Shop() {
                                     <CardMedia
                                         sx={{ height: "240px", borderRadius: "22px" }}
                                         component="img"
-                                        image={`${IMAGE_URL + shop.imageUrl}`}
+                                        image={`${IMAGE_URL}${shop.imageUrl}`}
 
                                         alt="green iguana"
                                     />

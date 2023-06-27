@@ -44,6 +44,7 @@ export default function shopDetails() {
         onSuccess: (data: { response: Shop }) => {
             dispatch(shopActions.setShopDto(data.response))
             reset({ ...data.response })
+            setImageUrl(IMAGE_URL + data.response.imageUrl)
         },
     })
     const deleteShop = () => {

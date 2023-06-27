@@ -30,7 +30,7 @@ const shopSlice = createSlice({
                 state.shopDto = { ...action.payload }
             }
             else {
-                state.shops.unshift({ ...action.payload })
+                state.shops.unshift(action.payload)
             }
         },
 
