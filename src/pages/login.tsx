@@ -48,29 +48,14 @@ export default function login() {
         LoginUser({
             email: data.email,
             password: data.password,
-        }).then(() => { navigate('/'); setIsLoading(true) }).catch(() => setIsLoading(true))
+        }).then((res) => { if (res.isSuccess) { navigate('/'); setIsLoading(false) } }).catch(() => setIsLoading(false))
     }
 
     return (
 
         <Grid container component="main" sx={{ height: '100vh' }}>
             <CssBaseline />
-            <Grid
-                item
-                xs={false}
-                sm={false}
-                md={7}
-                sx={{
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    display: { lg: 'flex', sm: 'none', xs: 'none' },
-                    justifyContent: 'center',
-                    alignItems: 'center',
 
-                }}
-            >
-                <img src={Login} ></img>
-            </Grid>
             <Grid item xs={12} sm={12} lg={5} md={12} component={Paper} elevation={6} square color='secondary.purpule'>
                 <Box
                     sx={{
@@ -97,11 +82,7 @@ export default function login() {
                                 helperText={fieldState.error?.message} type="password" />} />
 
 
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label='تذكرني'
-                            sx={{ color: theme.palette.secondary['dark'] }}
-                        />
+
                         {
                             isLoading ?
                                 <LoadingButton loading fullWidth
@@ -121,7 +102,7 @@ export default function login() {
 
                     </form>
 
-                    <Grid container>
+                    <Grid container sx={{ marginTop: '50px' }}>
                         <Grid item xs>
                             <Link href="/resetPassword" variant="body2">
                                 هل نسيت كلمة المرور؟
@@ -133,12 +114,27 @@ export default function login() {
                             </Link>
                         </Grid>
                     </Grid>
-                    <Copyright sx={{ mt: 5 }} />
+
                     {/* </Box> */}
                 </Box>
-                <Box sx={{ paddingRight: '30px', width: '100%', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-                    <Button variant='text'><Link href="/" color="secondary"><ArrowBackIcon />رجوع الى الرئيسية </Link> </Button>
-                </Box>
+
+            </Grid>
+            <Grid
+                item
+                xs={false}
+                sm={false}
+                md={7}
+                sx={{
+
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    display: { lg: 'flex', sm: 'none', xs: 'none' },
+                    justifyContent: 'center',
+                    alignItems: 'center',
+
+                }}
+            >
+                <img src={Login} width='700'></img>
             </Grid>
         </Grid >
 

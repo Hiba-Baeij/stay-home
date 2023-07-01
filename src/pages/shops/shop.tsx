@@ -76,7 +76,7 @@ export default function Shop() {
 
             {
                 isLoading ?
-                    <div className='flex justify-center items-center'>
+                    <div className='flex justify-center items-center h-80'>
                         <CircularProgress />
                     </div>
                     :

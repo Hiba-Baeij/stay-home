@@ -43,7 +43,10 @@ import Vehicle from '@/pages/vehicles/vehicle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Logo from '@/assets/svg/logo.svg';
+import ImageUser from '@/assets/images/image-user.png';
 import { useNavigate } from "react-router-dom"
+import { GetUserData } from "@/global/auth";
 const drawerWidth = 240;
 export const sidebarList = [
     {
@@ -170,8 +173,8 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                 justifyContent: 'center',
                 gap: 2
             }}>
-                <Typography fontWeight={'bold'} fontSize={24} >Stay Home</Typography>
-                {/* <img alt='logo' width={'56'} src='/Asset 1.svg'></img> */}
+                {/* <Typography fontWeight={'bold'} fontSize={24} >Stay Home</Typography> */}
+                <img alt='logo' src={Logo}></img>
             </Toolbar>
             <Divider />
 
@@ -272,11 +275,11 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                             >
                                 <MenuIcon></MenuIcon>
                             </IconButton>
-                            <div className='w-full flex justify-end items-center'>
+                            <div className='flex justify-between items-center w-full'>
 
-                                <div>
+                                {/* <div> */}
 
-                                    {/* <Button
+                                {/* <Button
                                 id="basic-button"
                                 aria-controls={open ? 'basic-menu' : undefined}
                                 aria-haspopup="true"
@@ -315,6 +318,14 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                                 </MenuItem>
                             </Menu> */}
 
+                                <div className="flex justify-center items-center gap-3">
+                                    {/* https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80 */}
+                                    <img alt='image-employee' className="rounded-full w-10 h-10 object-cover" src={ImageUser}></img>
+                                    <span className="text-dark">Admin Admin</span>
+                                </div>
+                                <div >
+
+
                                     <IconButton>
                                         <Badge badgeContent={4} color="error">
                                             <NotificationsIcon />
@@ -325,8 +336,10 @@ export default function sidebar(props: React.PropsWithChildren & any) {
                                         {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                                     </IconButton>
                                 </div>
-
                             </div>
+
+
+                            {/* </div> */}
                         </Box>
                     </Toolbar>
                 </AppBar>

@@ -31,32 +31,24 @@ export async function LoginUser(payload: LoginRequest) {
     try {
         const { data } = await axiosIns.post(API_USER.Login, payload)
         if (data.isSuccess) {
+            console.log("in log succuss");
+
             SetUserData(data.response)
-            return data
+            toast('تم التسجيل بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            });
         }
-        // if (data.message) {
-        //     toast(data.message, {
-        //         position: "top-right",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         progress: undefined,
-        //         theme: "light",
-        //     });
-        // }
-        // else {
-        toast('تم التسجيل بنجاح', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            progress: undefined,
-            theme: "light",
-            type: 'success'
-        });
-        // }
+
+        return data
+
+
     }
     catch (error) {
         HandlerError(error as AxiosError)
@@ -97,6 +89,8 @@ export const isLoggedIn = () => {
 }
 
 export function SetUserData(userData: LoginResponse) {
+    console.log(userData);
+
     localStorage.setItem('user-data', JSON.stringify(userData))
 }
 export function GetAccessToken() {
