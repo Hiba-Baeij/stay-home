@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import DialogCustomer from "@/components/pages/Shop"
+import React from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,32 +10,32 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, Button, Checkbox, Chip, IconButton, LinearProgress, Pagination, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomerApi } from "@/api/customer/endpoints"
-import { Address, Customer as TypeCustomer } from "@/api/customer/dto"
+import { Customer as TypeCustomer } from "@/api/customer/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { customerActions } from '@/store/customer';
-import ShopComponent from '@/components/pages/Shop'
-import { IMAGE_URL } from '@/../app.config';
-import moment from 'moment';
-import { Add } from '@mui/icons-material';
-import { NavLink, Route, useNavigate } from 'react-router-dom';
+import CustomerDialog from '@/components/pages/Customer'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import PersonIcon from '@mui/icons-material/Person';
 import { Area, settingActions } from '@/store/setting';
 import { useQuery } from '@tanstack/react-query';
 import { SettingApi } from '@/api/setting/endpoints';
+import moment from 'moment';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Customer() {
-    const [selected, setSelected] = React.useState<readonly string[]>([]);
+    const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
-    const navigation = useNavigate()
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(0);
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as TypeCustomer;
     const customers = useSelector<RootState>(state => state.customer.customers) as TypeCustomer[];
     const cities = useSelector<RootState>(state => state.setting.cities) as Area[];
     const getCityName = (id: string) => cities.find(ele => ele.id === id)?.name
-
+    const swal = withReactContent(Swal)
     const { isLoading } = useQuery(['customer'], CustomerApi.fetchCustomer, {
         onSuccess: (data: { response: TypeCustomer[]; }) => {
             dispatch(customerActions.setCustomer(data.response))
@@ -48,6 +47,12 @@ export default function Customer() {
         },
     })
 
+    function getDetails(item: TypeCustomer) {
+        dispatch(customerActions.setCustomerDialog(true))
+        CustomerApi.getCustomerDetails(item.id as string).then((data: { response: TypeCustomer }) => {
+            dispatch(customerActions.setCustomerFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
+        })
+    }
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -58,14 +63,8 @@ export default function Customer() {
         setSelected([]);
     };
     const handleClick = (id: string) => {
-        // setSelected();
-        console.log(id);
-
-        // setSelected(prevVal => [...prevVal, id]);
-        // console.log(selected);
-
         const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly string[] = [];
+        let newSelected: string[] = [];
         console.log(selectedIndex);
 
         if (selectedIndex === -1) {
@@ -86,7 +85,33 @@ export default function Customer() {
         console.log(selected);
     };
     const deleteCustomer = () => {
-
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                CustomerApi.DeleteCustomer(selected).then(() => {
+                    dispatch(customerActions.deleteCustomer(selected))
+                    toast('تمت الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                }
+                )
+                setSelected([])
+            }
+        })
     }
     return (
         <Box sx={{ width: '100%', padding: '10px' }} >
@@ -98,10 +123,7 @@ export default function Customer() {
                 </div>
                 <div className='flex justify-center items-center gap-3'>
                     <TextField size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
-                    <Button variant="contained" onClick={() => navigation('/customer/0')}>
-                        إضافة زبون
-                        <Add></Add>
-                    </Button>
+                    <CustomerDialog />
 
                 </div>
 
@@ -122,7 +144,7 @@ export default function Customer() {
                         selected.length > 0 ?
 
                             (
-                                <div className='flex justify-end items-center w-full px-2'>
+                                <div className='flex justify-start items-center w-full px-2 mt-2'>
 
                                     <Tooltip title="Delete">
                                         <IconButton onClick={deleteCustomer}>
@@ -185,7 +207,7 @@ export default function Customer() {
                                         <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
                                         <TableCell align="center">{row.orderCount} </TableCell>
                                         <TableCell align="center">
-                                            <NavLink to={`/customer/${row.id}`}> <MoreVertIcon /></NavLink>
+                                            <MoreVertIcon onClick={() => getDetails(row)} />
                                         </TableCell>
                                     </TableRow>
                                 )

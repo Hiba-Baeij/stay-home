@@ -1,6 +1,6 @@
 
 import { axiosIns } from "@/lib/axios"
-import { Customer, CustomerDto } from "./dto";
+import { Customer } from "./dto";
 import { serialize } from "object-to-formdata";
 
 export enum API_CUSTOMER {
@@ -37,7 +37,7 @@ export class CustomerApi {
 
     }
 
-    static AddCustomer = async (payload: CustomerDto) => {
+    static AddCustomer = async (payload: Customer) => {
         try {
             const res = await axiosIns.post(API_CUSTOMER.Add, serialize(payload));
             return res.data
@@ -48,7 +48,7 @@ export class CustomerApi {
         }
 
     }
-    static ModifyCustomer = async (payload: CustomerDto) => {
+    static ModifyCustomer = async (payload: Customer) => {
         try {
             const res = await axiosIns.post(API_CUSTOMER.Modify, serialize(payload));
             return res.data

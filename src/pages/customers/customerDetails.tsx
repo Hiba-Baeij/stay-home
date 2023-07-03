@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, LinearProgress, FormControl, InputLabel, FormHelperText } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Upload from '@/components/shared/Upload';
-import { Customer, CustomerDto } from '@/api/customer/dto';
+import { Customer } from '@/api/customer/dto';
 import { CustomerApi } from '@/api/customer/endpoints';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -25,13 +25,13 @@ export default function CustomerDetails() {
     const navigation = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
     const swal = withReactContent(Swal)
-    const customerDto = useSelector<RootState>(state => state.customer.customerDto) as CustomerDto;
+    const customerDto = useSelector<RootState>(state => state.customer.customerDto) as Customer;
     const dispatch = useDispatch<AppDispatch>()
     const cities = useSelector<RootState>(state => state.setting.cities) as { name: string, id: string }[];
     const areas = useSelector<RootState>(state => state.setting.areas) as Area[];
 
-    const { handleSubmit, control, setValue, reset } = useForm<CustomerDto>({
-        defaultValues: { ...new CustomerDto() }
+    const { handleSubmit, control, setValue, reset } = useForm<Customer>({
+        defaultValues: { ...new Customer() }
     });
     // useEffect(() => {
     //     if (customerDto.id) {
@@ -45,14 +45,14 @@ export default function CustomerDetails() {
         queryKey: ["customerDetails"],
         queryFn: () => CustomerApi.getCustomerDetails(id as string),
         enabled: id !== "0",
-        onSuccess: (data: { response: CustomerDto }) => {
+        onSuccess: (data: { response: Customer }) => {
             dispatch(customerActions.setCustomerFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
             reset({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') })
 
         },
     });
 
-    const onSubmit = (data: CustomerDto) => {
+    const onSubmit = (data: Customer) => {
         if (id != "0") {
             setIsLoading(true)
             CustomerApi.ModifyCustomer(data).then(() => {
@@ -75,7 +75,7 @@ export default function CustomerDetails() {
         else {
             setIsLoading(true)
             CustomerApi.AddCustomer(data).then(() => {
-                dispatch(customerActions.addMoreCustomer({ ...data }))
+                dispatch(customerActions.setCustomerFormDto({ ...data }))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -92,7 +92,7 @@ export default function CustomerDetails() {
         }
     };
     const resetForm = () => {
-        reset({ ...new CustomerDto() });
+        reset({ ...new Customer() });
         setImageUrl('')
     }
     const deleteCustomer = () => {
@@ -167,150 +167,77 @@ export default function CustomerDetails() {
                         <div className='grid grid-cols-5 gap-5 '>
                             <div className='col-span-3'>
 
-                                <div className='grid grid-cols-2 gap-5 '>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'اسم الزبون مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='fullName' id='employee-fullName' label='اسم الزبون'
-
-                                            />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'رقم الموبايل مطلوب' }} name='phoneNumber' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
-
-                                            />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
-                                            <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-
-                                        <Controller rules={{ required: 'كلمة المرور مطلوبة' }} name='password' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='password' id='password' label='كلمة المرور' fullWidth
-
-                                            />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
 
 
-                                        <Controller rules={{ required: ' البريد الالكتروني مطلوب' }} name='email' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message} fullWidth
-                                                {...field} name='email' id='email' label='البريد الالكتروني'
+                                <Controller rules={{ required: 'اسم الزبون مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
+                                    <TextField error={!!fieldState.error} fullWidth
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='fullName' id='employee-fullName' label='اسم الزبون'
 
-                                            />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'يرجى اختيار المدينة' }} name='cityId' control={control} render={({ field, fieldState }) =>
-                                            <FormControl fullWidth error={!!fieldState.error}>
-                                                <InputLabel id="city-id-label">اسم المدينة</InputLabel>
-                                                <Select
-                                                    {...field}
-                                                    name='cityId'
-                                                    labelId="city-id-label"
-                                                    label=" اسم المدينة"
-                                                >
-                                                    {
-                                                        cities.map((c) => <MenuItem key={c.id} value={c.id ? c.id : ''}>{c.name}</MenuItem>)
-                                                    }
+                                    />
+                                }
+                                />
 
-                                                </Select>
-                                                <FormHelperText>
-                                                    {fieldState.error?.message}
-                                                </FormHelperText>
-                                            </FormControl>
-                                        } />
-                                    </div>
 
-                                    <div className='col-span-2'>
-                                        تفاصيل العنوان
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: '  العنوان مطلوب' }} name='address.name' control={control} render={({ field, fieldState }) =>
-                                            <TextField label='اسم العنوان ' error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='address.name' id='addressName' sx={{ width: '100%' }} />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'يرجى اختيار المنطقة' }} name='address.areaId' control={control} render={({ field, fieldState }) =>
-                                            <FormControl fullWidth error={!!fieldState.error}>
-                                                <InputLabel id="area-id-label">اسم المنطقة</InputLabel>
-                                                <Select
-                                                    fullWidth
-                                                    {...field}
-                                                    name='address.areaId'
-                                                    labelId="area-id-label"
-                                                    label=" اسم المنطقة"
-                                                >
-                                                    {
+                                <Controller rules={{ required: 'رقم الموبايل مطلوب' }} name='phoneNumber' control={control} render={({ field, fieldState }) =>
+                                    <TextField error={!!fieldState.error} fullWidth
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
 
-                                                        areas.map((ar) => <MenuItem key={ar.id} value={ar.id ? ar.id : ''}>{ar.name}</MenuItem>)
-                                                    }
+                                    />
+                                }
+                                />
 
-                                                </Select>
-                                                <FormHelperText>
-                                                    {fieldState.error?.message}
-                                                </FormHelperText>
-                                            </FormControl>
-                                        } />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: '  رقم المنزل مطلوب' }} name='address.houseNumber' control={control} render={({ field, fieldState }) =>
-                                            <TextField label='رقم المنزل ' error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='houseNumber' id='houseNumber' sx={{ width: '100%' }} />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: '   الشارع مطلوب' }} name='address.street' control={control} render={({ field, fieldState }) =>
-                                            <TextField label=' الشارع ' error={!!fieldState.error}
-                                                helperText={fieldState.error?.message} fullWidth
-                                                {...field} name='address.street' id='street' sx={{ width: '100%' }} />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'طابق مطلوب' }} name='address.floor' control={control} render={({ field, fieldState }) =>
-                                            <TextField label=' طابق ' error={!!fieldState.error}
-                                                helperText={fieldState.error?.message} fullWidth
-                                                {...field} name='floor' id='floor' sx={{ width: '100%' }} />
-                                        }
-                                        />
-                                    </div>
-                                    <div className='col-span-2'>
-                                        <Controller name='address.additional' control={control} render={({ field, fieldState }) =>
-                                            <TextField label=' ملاحظات اضافية ' error={!!fieldState.error}
-                                                helperText={fieldState.error?.message} fullWidth
-                                                {...field} name='additional' id='address.additional' sx={{ width: '100%' }} />
+                                <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
+                                    <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
+                                }
+                                />
 
-                                        }
-                                        />
+                                <Controller rules={{ required: 'كلمة المرور مطلوبة' }} name='password' control={control} render={({ field, fieldState }) =>
+                                    <TextField error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='password' id='password' label='كلمة المرور' fullWidth
 
-                                    </div>
-                                </div>
+                                    />
+                                }
+                                />
+
+                                <Controller rules={{ required: ' البريد الالكتروني مطلوب' }} name='email' control={control} render={({ field, fieldState }) =>
+                                    <TextField error={!!fieldState.error}
+                                        helperText={fieldState.error?.message} fullWidth
+                                        {...field} name='email' id='email' label='البريد الالكتروني'
+
+                                    />
+                                }
+                                />
+
+
+                                <Controller rules={{ required: 'يرجى اختيار المدينة' }} name='cityId' control={control} render={({ field, fieldState }) =>
+                                    <FormControl fullWidth error={!!fieldState.error}>
+                                        <InputLabel id="city-id-label">اسم المدينة</InputLabel>
+                                        <Select
+                                            {...field}
+                                            name='cityId'
+                                            labelId="city-id-label"
+                                            label=" اسم المدينة"
+                                        >
+                                            {
+                                                cities.map((c) => <MenuItem key={c.id} value={c.id ? c.id : ''}>{c.name}</MenuItem>)
+                                            }
+
+                                        </Select>
+                                        <FormHelperText>
+                                            {fieldState.error?.message}
+                                        </FormHelperText>
+                                    </FormControl>
+                                } />
+
+
+
                             </div>
+
 
                             <div className='col-span-2'>
                                 <h4 className='pb-4'>صورة الزبون </h4>

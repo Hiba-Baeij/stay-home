@@ -1,23 +1,18 @@
+
 export class Customer {
-    id = "";
-    name = "";
+    name?= "";
     phoneNumber = "";
     cityId = "";
     birthDate = "";
-    orderCount = 0
-}
-export class CustomerDto {
+    orderCount = 0;
     id?= '';
     email = "";
     fullName = "";
-    phoneNumber = "";
     password = "";
-    cityId = "";
     imageFile?: File | null = null;
     imageUrl?= "";
-    birthDate = "";
     isBlock?= false;
-    address = { ...new Address() }
+
 }
 export class Address {
     id?= '';

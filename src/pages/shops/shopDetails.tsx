@@ -2,7 +2,7 @@ import { Shop, WorkTimes } from '@/api/shop/dto';
 import { ShopApi } from '@/api/shop/endpoints';
 import { AppDispatch, RootState } from '@/store';
 import { shopActions } from '@/store/shop';
-import Product from '@/components/pages/product/Product';
+import Product from '@/components/pages/product/ProductList';
 import { IMAGE_URL } from '@/../app.config';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react'

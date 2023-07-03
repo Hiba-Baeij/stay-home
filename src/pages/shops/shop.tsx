@@ -82,11 +82,12 @@ export default function Shop() {
                     :
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                        {shops.map((shop) => (
+                        {shops.map((shop, index) => (
                             <Card
                                 key={shop.id}
-                                sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px" }}
+                                sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px", position: 'relative' }}
                             >
+                                <div className={shop.isOnline ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute left-5 top-5'} ></div>
                                 {shop.imageUrl && (
 
 
@@ -116,6 +117,9 @@ export default function Shop() {
                                         >
                                             {shop.name}
                                         </Typography>
+                                        {/* <div>
+                                            {shop.workTimes[index]?.startTime.ticks}
+                                        </div> */}
                                     </div>
 
                                 </CardContent>

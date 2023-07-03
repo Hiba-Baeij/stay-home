@@ -9,7 +9,6 @@ import DialogActions from '@mui/material/DialogActions';
 import { Add, Close } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
-import employee, { employeeActions } from '@/store/employee';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -18,7 +17,7 @@ import { IMAGE_URL } from '@/../app.config';
 import { VehicleApi } from '@/api/vehicle/endpoints';
 import { vehicleActions } from '@/store/vehicle';
 
-export default function DialogVehcile() {
+export default function VehcileDialog() {
     const [imageUrl, setImageUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const isOpen = useSelector<RootState>(state => state.vehicle.openDialogVehicle) as boolean;
@@ -103,8 +102,8 @@ export default function DialogVehcile() {
     const resetForm = () => {
         reset({ ...new Vehicle(), id: '' });
         setImageUrl('')
-        dispatch(employeeActions.setEmployeeDialog(false));
-        dispatch(employeeActions.resetForm());
+        dispatch(vehicleActions.setVehicleDialog(false));
+        dispatch(vehicleActions.resetForm());
     }
 
     return (
@@ -129,7 +128,7 @@ export default function DialogVehcile() {
                             <Controller rules={{ required: 'اسم المركبة مطلوب' }} name='name' control={control} render={({ field, fieldState }) =>
                                 <TextField error={!!fieldState.error}
                                     helperText={fieldState.error?.message}
-                                    {...field} name='fullName' id='employee-fullName' label='اسم المركبة'
+                                    {...field} name='fullName' id='vechile-fullName' label='اسم المركبة'
 
                                 />
                             }
@@ -145,7 +144,7 @@ export default function DialogVehcile() {
 
                             <Controller rules={{ required: ' سعة المركبة مطلوبة' }} name='maxCapacity' control={control} render={({ field, fieldState }) =>
                                 <TextField error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
+                                    helperText={fieldState.error?.message} type='number'
                                     {...field} name='maxCapacity' id='maxCapacity' label='سعة المركبة'
 
                                 />
@@ -153,7 +152,7 @@ export default function DialogVehcile() {
                             />
 
                             <Controller rules={{ required: '  اللون مطلوب' }} name='color' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error}
+                                <TextField error={!!fieldState.error} type="color"
                                     helperText={fieldState.error?.message}
                                     {...field} name='color' id='color' label='اللون'
 

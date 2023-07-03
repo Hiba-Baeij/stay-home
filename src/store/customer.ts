@@ -1,15 +1,15 @@
 
-import { Customer, CustomerDto } from "@/api/customer/dto"
+import { Customer } from "@/api/customer/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface initialState {
     customers: Customer[],
     openDialogCustomer: boolean,
-    customerDto: CustomerDto,
+    customerDto: Customer,
 }
 
 const state: initialState = {
     customers: [],
-    customerDto: { ...new CustomerDto() },
+    customerDto: { ...new Customer() },
     openDialogCustomer: false
 }
 
@@ -21,22 +21,33 @@ const customerSlice = createSlice({
             state.customers = action.payload
         },
 
-        setCustomerFormDto(state: initialState, action: PayloadAction<CustomerDto>) {
-
+        setCustomerFormDto(state: initialState, action: PayloadAction<Customer>) {
             state.customerDto = { ...action.payload }
             console.log(state.customerDto);
 
+            if (action.payload.id) {
+                state.customerDto = { ...action.payload }
+            }
+            else {
+                state.customers.unshift({ ...action.payload, orderCount: 0 })
+            }
+
         },
-        addMoreCustomer(state: initialState, action: PayloadAction<CustomerDto>) {
-            state.customers.unshift({
-                id: '',
-                orderCount: 0,
-                name: action.payload.fullName,
-                birthDate: action.payload.birthDate,
-                cityId: action.payload.cityId,
-                phoneNumber: action.payload.phoneNumber,
-            })
+
+        resetForm(state: initialState) {
+            state.customerDto = { ... new Customer() }
         },
+
+        setBlocked(state: initialState, action: PayloadAction<boolean>) {
+            state.customerDto.isBlock = action.payload
+
+        },
+
+        modifyCustomer(state: initialState, action: PayloadAction<Customer>) {
+            const indexData = state.customers.findIndex(ele => ele.id == action.payload.id);
+            state.customers[indexData] = action.payload
+        },
+
 
         setCustomerDialog(state: initialState, action: PayloadAction<boolean>) {
             state.openDialogCustomer = action.payload

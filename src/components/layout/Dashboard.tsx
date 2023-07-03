@@ -44,7 +44,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Logo from '@/assets/svg/logo.svg';
-import ImageUser from '@/assets/images/image-user.png';
+import ImageUser from '@/assets/images/user.jpg';
 import { useNavigate } from "react-router-dom"
 import { GetUserData } from "@/global/auth";
 const drawerWidth = 240;
@@ -320,7 +320,7 @@ export default function sidebar(props: React.PropsWithChildren & any) {
 
                                 <div className="flex justify-center items-center gap-3">
                                     {/* https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80 */}
-                                    <img alt='image-employee' className="rounded-full w-10 h-10 object-cover" src={ImageUser}></img>
+                                    <img alt='image-employee' className="rounded-full w-12 h-12 object-cover" src={ImageUser}></img>
                                     <span className="text-dark">Admin Admin</span>
                                 </div>
                                 <div >

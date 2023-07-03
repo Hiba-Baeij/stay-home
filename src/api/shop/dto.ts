@@ -1,6 +1,7 @@
 export class Shop {
     id = "";
     name = "";
+    isOnline?= "";
     categoryId = "";
     areaId?= "";
     imageUrl = "";

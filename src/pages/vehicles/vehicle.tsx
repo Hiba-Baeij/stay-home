@@ -1,29 +1,13 @@
 import React from 'react'
-import DialogEmployee from "@/components/pages/Employee"
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, Chip, CircularProgress, IconButton, Pagination, Stack, TextField, Tooltip, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { EmployeeApi } from "@/api/employee/endpoints"
-import { Employee as TypeEmployee } from "@/api/employee/dto"
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
-import { employeeActions } from '@/store/employee';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LinearProgress from '@mui/material/LinearProgress';
 import { IMAGE_URL } from '@/../app.config';
-import moment from 'moment';
-import PersonIcon from '@mui/icons-material/Person';
 import { useQuery } from '@tanstack/react-query';
 import { Vehicle as TypeVehicle } from '@/api/vehicle/dto';
-// import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { vehicleActions } from '@/store/vehicle';
@@ -31,6 +15,7 @@ import { VehicleApi } from '@/api/vehicle/endpoints';
 import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import VehcileDialog from '@/components/pages/Vehicle';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Vehicle() {
@@ -54,35 +39,8 @@ export default function Vehicle() {
         })
     }
 
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = vehicles.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
-    const handleClick = (id: string) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: string[] = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1)
-            );
-        }
-        setSelected(newSelected);
-    };
+
     const deleteVehicle = (id: string) => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
@@ -126,7 +84,7 @@ export default function Vehicle() {
                 </div>
                 <div className='flex justify-center items-center gap-3'>
                     <TextField size="small" label='ابحث عن المركبات' title='shop' sx={{ width: '300px' }} name='shopSearch'></TextField>
-                    {/* <ShopComponent /> */}
+                    <VehcileDialog />
 
                 </div>
             </div>
@@ -151,7 +109,7 @@ export default function Vehicle() {
                                     <CardMedia
                                         sx={{ height: "240px", borderRadius: "22px" }}
                                         component="img"
-                                        image={`${IMAGE_URL} ${vehicle.imageUrl}`}
+                                        image={`${IMAGE_URL + vehicle.imageUrl}`}
 
                                         alt="green iguana"
                                     />
@@ -179,14 +137,11 @@ export default function Vehicle() {
                                 </CardContent>
 
                                 <CardActions className="gap-2">
-                                    <Link
-                                        className="flex-grow"
-                                        to={`/shop/${vehicle.id}`}
-                                    >
-                                        <Button variant="contained" fullWidth>
-                                            عرض التفاصيل
-                                        </Button>
-                                    </Link>
+
+                                    <Button variant="contained" fullWidth onClick={() => getDetails(vehicle)}>
+                                        عرض التفاصيل
+                                    </Button>
+
                                     <Button variant="contained" onClick={() => deleteVehicle(vehicle.id ? vehicle.id : '')}>
                                         <DeleteOutlineIcon />
                                     </Button>

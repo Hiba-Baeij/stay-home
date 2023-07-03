@@ -10,6 +10,8 @@ export default {
       light: "##E0E1EF",
       mainGray: "#F8F8F8",
       secondaryGrey: "#69696A",
+      red: "#dc2626",
+      green: "#16a34a",
     },
   },
   plugins: [],
