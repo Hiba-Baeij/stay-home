@@ -1,11 +1,8 @@
 import * as React from 'react';
 import './App.css'
-import Router from './components/Router';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Router from '@/router/Router';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { PaletteMode } from '@mui/material';
-import { isDarkMode } from './theme';
-import { ColorModeContext } from './components/layout/Dashboard';
 import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 import { CacheProvider } from '@emotion/react';
@@ -16,7 +13,9 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from './store';
 import { SettingApi } from './api/setting/endpoints';
 import { Area, settingActions } from './store/setting';
-
+import { useDarkMode } from 'usehooks-ts'
+import { darkTheme } from "@/themes/dark.theme";
+import { lightTheme } from "@/themes/light.theme";
 // import 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap';
 
 const stylisPlugins = [prefixer];
@@ -65,45 +64,31 @@ const StartupCalls = (props: React.PropsWithChildren) => {
 }
 
 export default function App() {
-  const [mode, setMode] = React.useState<PaletteMode>('light');
-  const colorMode = React.useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        localStorage.setItem("mode", mode === 'light' ? 'dark' : 'light');
-        setMode((prevMode: PaletteMode) =>
-          prevMode === 'light' ? 'dark' : 'light'
-        );
 
-      },
-    }),
-    [],
-  );
-  // console.log(mode)
+  const { isDarkMode, } = useDarkMode(false);
+
+  const activeTheme = React.useMemo(() => isDarkMode ? darkTheme : lightTheme, [isDarkMode])
+
   React.useEffect(() => {
-    let modeVal = localStorage.getItem("mode") as PaletteMode
-    if (modeVal) {
-      setMode(modeVal)
-    }
-  }, [])
+    // Set body dark class To turn on dark mode in tailwind css
+    isDarkMode ? document.body.classList.add('dark') : document.body.classList.remove('dark')
 
-  const theme = React.useMemo(() => createTheme(isDarkMode(mode)), [mode]);
+  }, [isDarkMode])
   return (
     <div className="App">
 
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={theme}>
-          <QueryClientProvider client={qyeryClient}>
-            <StartupCalls />
-
-            <RTL>
-              <CssBaseline />
-              <Router></Router>
-            </RTL>
-          </QueryClientProvider>
-          <ToastContainer />
-        </ThemeProvider>
-      </ColorModeContext.Provider>
+      {/* <ColorModeContext.Provider value={colorMode}> */}
+      <ThemeProvider theme={activeTheme}>
+        <QueryClientProvider client={qyeryClient}>
+          <StartupCalls />
+          <RTL>
+            <CssBaseline />
+            <Router></Router>
+          </RTL>
+        </QueryClientProvider>
+        <ToastContainer />
+      </ThemeProvider>
+      {/* </ColorModeContext.Provider> */}
 
     </div >
   )

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import FullScreen from "@/components/layout/FullScreen"
-import Dashboard from "@/components/layout/Dashboard"
+import FullScreen from "@/components/layouts/FullScreen"
+import Dashboard from "@/components/layouts/Dashboard"
 import ResetPassword from "@/pages/resetPassword"
 import Signup from "@/pages/signup"
 import Home from '@/pages/home';
