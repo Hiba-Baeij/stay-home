@@ -1,13 +1,13 @@
 export class Driver {
     id?= '';
-    name = "";
+    fullName = "";
     imageUrl = "";
     imageFile?: File | null = null;
     phoneNumber = '';
+    isAvailable = '';
     email = "";
     birthDate = '';
-    dateCreated?= "";
-    handledOrdersCount?= 0;
+    orderCount = 0;
     isBlock?= false;
     password?= ""
 }
