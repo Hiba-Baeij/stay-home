@@ -128,24 +128,6 @@ export default function DialogEmployee() {
 
         })
     }
-    // const unBlockedEmployee = () => {
-    //     EmployeeApi.BlockEmpolyee(employeeDto.id as string).then(() => {
-    //         dispatch(employeeActions.modifyEmployee({ ...employeeDto, isBlock: false }))
-    //         dispatch(employeeActions.setEmployeeDialog(false));
-    //         dispatch(employeeActions.resetForm());
-
-    //         toast('تم رفع الحظر بنجاح', {
-    //             position: "top-right",
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             progress: undefined,
-    //             theme: "light",
-    //             type: 'success'
-    //         })
-    //     })
-    // }
 
     return (
         <div>

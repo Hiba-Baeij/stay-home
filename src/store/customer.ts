@@ -45,7 +45,7 @@ const customerSlice = createSlice({
 
         modifyCustomer(state: initialState, action: PayloadAction<Customer>) {
             const indexData = state.customers.findIndex(ele => ele.id == action.payload.id);
-            state.customers[indexData] = action.payload
+            state.customers[indexData] = { ...action.payload, orderCount: 0 }
         },
 
 

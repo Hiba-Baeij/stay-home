@@ -24,14 +24,15 @@ import { Area, settingActions } from '@/store/setting';
 import { useQuery } from '@tanstack/react-query';
 import { SettingApi } from '@/api/setting/endpoints';
 import moment from 'moment';
-const DEFAULT_ROWS_PER_PAGE = 5;
+import TableSkeleton from '@/components/skeletons/table';
+import { usePagination } from '@/global/usePagination';
+
 
 export default function Customer() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
-    const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(0);
-    const customerDto = useSelector<RootState>(state => state.customer.customerDto) as TypeCustomer;
+    const [searchItem, setSearchItem] = React.useState('');
+    const { paginate, pagination, setPagination } = usePagination(6, 1)
     const customers = useSelector<RootState>(state => state.customer.customers) as TypeCustomer[];
     const cities = useSelector<RootState>(state => state.setting.cities) as Area[];
     const getCityName = (id: string) => cities.find(ele => ele.id === id)?.name
@@ -62,6 +63,17 @@ export default function Customer() {
         }
         setSelected([]);
     };
+
+    const handleSearch = (event: any) => {
+        setSearchItem(event.target.value);
+    };
+
+    // const filteredItems = customers.filter((item) => {
+    //     return (item.fullName.toLowerCase().includes(searchItem.toLowerCase()) ||
+    //         item.email.toLowerCase().includes(searchItem.toLowerCase()) ||
+    //         item.phoneNumber.toLowerCase().includes(searchItem.toLowerCase()))
+    // });
+
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -114,7 +126,7 @@ export default function Customer() {
         })
     }
     return (
-        <Box sx={{ width: '100%', padding: '10px' }} >
+        <Box sx={{ width: '100%' }} >
             <div className='flex justify-between items-center w-full gap-5  my-5'>
                 <div className='flex justify-center items-center gap-3'>
 
@@ -122,27 +134,19 @@ export default function Customer() {
                     <h2 className='text-lg font-bold'>الزبائن</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    <TextField size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
+                    <TextField value={searchItem} onChange={handleSearch} size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
                     <CustomerDialog />
 
                 </div>
 
             </div>
             <Paper sx={{ width: '100%', mb: 2 }}>
-                {/* {JSON.stringify(customers)} */}
-                {
-                    isLoading ?
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box> : null
-                }
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
 
                     {
                         selected.length > 0 ?
-
                             (
                                 <div className='flex justify-start items-center w-full px-2 mt-2'>
 
@@ -154,72 +158,78 @@ export default function Customer() {
                                 </div>
 
                             ) : null
-
                     }
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        color="primary"
-                                        onChange={handleSelectAllClick}
-                                        inputProps={{
-                                            'aria-label': 'select all desserts',
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell>الاسم</TableCell>
-                                <TableCell align="center"> المدينة</TableCell>
-                                <TableCell align="center">رقم الموبايل</TableCell>
-                                <TableCell align="center">تاريخ الميلاد</TableCell>
-                                <TableCell align="center">عدد الطلبات </TableCell>
-                                <TableCell align="center">تفاصيل</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {customers ? customers.map((row: TypeCustomer, index: number) => {
+                    {
+                        isLoading ? <TableSkeleton headers={['', 'الاسم', 'المدينة', 'رقم الموبايل', 'تاريخ الميلاد', 'عدد الطلبات ', 'تفاصيل']} />
 
-
-                                // onClick={(event) => handleClick(event, row.id ? row.id : '')}
-                                return (
-                                    <TableRow
-                                        hover
-                                        role="checkbox"
-                                        tabIndex={-1}
-                                        key={row.id}
-
-                                    >
+                            : <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
                                         <TableCell padding="checkbox">
                                             <Checkbox
-                                                onChange={() => handleClick(row.id ? row.id : '')}
-
                                                 color="primary"
+                                                onChange={handleSelectAllClick}
+                                                inputProps={{
+                                                    'aria-label': 'select all desserts',
+                                                }}
                                             />
                                         </TableCell>
-
-                                        <TableCell component="th" scope="row" align="left">
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell align="center" component="th" scope="row" >
-                                            {getCityName(row.cityId)}
-                                        </TableCell>
-                                        <TableCell align="center">{row.phoneNumber}</TableCell>
-                                        <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
-                                        <TableCell align="center">{row.orderCount} </TableCell>
-                                        <TableCell align="center">
-                                            <MoreVertIcon onClick={() => getDetails(row)} />
-                                        </TableCell>
+                                        <TableCell>الاسم</TableCell>
+                                        <TableCell align="center"> المدينة</TableCell>
+                                        <TableCell align="center">رقم الموبايل</TableCell>
+                                        <TableCell align="center">تاريخ الميلاد</TableCell>
+                                        <TableCell align="center">عدد الطلبات </TableCell>
+                                        <TableCell align="center"> الحالة </TableCell>
+                                        <TableCell align="center">تفاصيل</TableCell>
                                     </TableRow>
-                                )
-                            }
-                            ) : null
-                            }
-                        </TableBody>
-                    </Table>
+                                </TableHead>
+                                <TableBody>
+                                    {customers ? paginate(customers).map((row: TypeCustomer, index: number) => {
+
+                                        return (
+                                            <TableRow
+                                                hover
+                                                role="checkbox"
+                                                tabIndex={-1}
+                                                key={row.id}
+
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                        onChange={() => handleClick(row.id ? row.id : '')}
+
+                                                        color="primary"
+                                                    />
+                                                </TableCell>
+
+                                                <TableCell component="th" scope="row" align="left">
+                                                    {row.name}
+                                                </TableCell>
+                                                <TableCell align="center" component="th" scope="row" >
+                                                    {getCityName(row.cityId)}
+                                                </TableCell>
+                                                <TableCell align="center">{row.phoneNumber}</TableCell>
+                                                <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
+                                                <TableCell align="center">{row.orderCount} </TableCell>
+                                                <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
+                                                <TableCell align="center">
+                                                    <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    }
+                                    ) : null
+                                    }
+                                </TableBody>
+                            </Table>
+                    }
+
+                    <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
+                        <Pagination count={pagination.totalPages}
+                            page={pagination.pageIndex}
+                            onChange={(event, page) => setPagination({ ...pagination, pageIndex: page })} />
+                    </Stack>
                 </TableContainer>
-                <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    <Pagination count={10} />
-                </Stack>
             </Paper>
 
         </Box>

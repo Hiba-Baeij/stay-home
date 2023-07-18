@@ -46,7 +46,7 @@ const employeeSlice = createSlice({
         modifyEmployee(state: initialState, action: PayloadAction<Employee>) {
 
             const indexData = state.employees.findIndex(ele => ele.id == action.payload.id);
-            state.employees[indexData] = { ...action.payload, isBlock: action.payload.isBlock, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
+            state.employees[indexData] = { ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
             console.log(state.employees[indexData]);
 
         },

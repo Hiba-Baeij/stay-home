@@ -12,6 +12,7 @@ export class Customer {
     imageFile?: File | null = null;
     imageUrl?= "";
     isBlock?= false;
+    gender = '';
 
 }
 export class Address {

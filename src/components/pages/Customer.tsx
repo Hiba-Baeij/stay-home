@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, FormControl, InputLabel, FormHelperText } from '@mui/material'
+import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, FormControl, InputLabel, FormHelperText, FormControlLabel, RadioGroup, FormLabel, Radio } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -37,7 +37,7 @@ export default function DialogCustomer() {
         if (data.id) {
             setIsLoading(true)
             CustomerApi.ModifyCustomer(data).then((res) => {
-                dispatch(customerActions.modifyCustomer(res.response))
+                dispatch(customerActions.modifyCustomer({ ...res.response, fullName: res.response.name, orderCount: 0 }))
                 setIsLoading(false)
                 resetForm();
                 toast('تم التعديل بنجاح', {
@@ -102,11 +102,28 @@ export default function DialogCustomer() {
         dispatch(customerActions.setCustomerDialog(false));
         dispatch(customerActions.resetForm());
     }
-    const blockedCustomer = () => {
-        setIsBlocked(!isBlocked);
-        console.log(isBlocked);
+    const handleChange = (event: React.ChangeEvent<unknown>, value: string) => {
+        customerDto.gender = value
+    };
+    const modifyBlockCustomer = (blocked: boolean) => {
+        CustomerApi.BlockCustomer(customerDto.id as string).then(() => {
+            if (blocked) dispatch(customerActions.modifyCustomer({ ...customerDto, isBlock: true, fullName: customerDto.fullName }))
+            else dispatch(customerActions.modifyCustomer({ ...customerDto, isBlock: false, fullName: customerDto.fullName }))
+            dispatch(customerActions.setCustomerDialog(false));
+            dispatch(customerActions.resetForm());
 
-        dispatch(customerActions.setBlocked(isBlocked))
+            toast(blocked ? 'تم الحظر بنجاح' : 'تم رفع الحظر بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            })
+
+        })
     }
     return (
         <div>
@@ -199,6 +216,30 @@ export default function DialogCustomer() {
                                     </FormControl>
                                 } />
                             </div>
+                            <div className='col-span-2'>
+
+                                <FormLabel id="demo-radio-buttons-group-label">جنس الزبون</FormLabel>
+                                {customerDto.gender}
+                                <Controller name='gender' control={control} render={({ field, fieldState }) =>
+                                    <RadioGroup
+                                        aria-labelledby="demo-radio-buttons-group-label"
+                                        defaultValue="Female"
+                                        name="radio-buttons-group"
+                                        row
+                                        value={customerDto.gender}
+                                        onChange={handleChange}
+
+                                    >
+                                        <FormControlLabel value="Female" control={<Radio />} label="انثى" />
+                                        <FormControlLabel value="Male" control={<Radio />} label="ذكر" />
+                                        <FormControlLabel value="Other" control={<Radio />} label="اخر" />
+                                    </RadioGroup>
+                                }
+                                />
+
+
+                            </div>
+
 
 
                         </div>
@@ -219,7 +260,8 @@ export default function DialogCustomer() {
                             }
                             {
                                 customerDto.id ?
-                                    <Button variant='outlined' color='secondary' onClick={blockedCustomer}>{customerDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
+                                    <>{customerDto.isBlock ? <Button variant='outlined' color='error' onClick={() => modifyBlockCustomer(false)}>محظور</Button>
+                                        : <Button variant='outlined' color='secondary' onClick={() => modifyBlockCustomer(true)}>غير محظور</Button>}</> : null
                             }
                             <Button variant='outlined' onClick={() => { dispatch(customerActions.setCustomerDialog(false)); resetForm() }}>الغاء</Button>
                         </Box>

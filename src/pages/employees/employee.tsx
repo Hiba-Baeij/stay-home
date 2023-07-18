@@ -17,7 +17,6 @@ import { AppDispatch, RootState } from '@/store';
 import { employeeActions } from '@/store/employee';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import LinearProgress from '@mui/material/LinearProgress';
 import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import PersonIcon from '@mui/icons-material/Person';
@@ -26,7 +25,6 @@ import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import TableSkeleton from '@/components/skeletons/table';
-const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
     const [selected, setSelected] = React.useState<string[]>([]);
@@ -35,7 +33,7 @@ export default function Employee() {
     const [searchDate, setSearchDate] = React.useState('');
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
     const swal = withReactContent(Swal)
-    const { paginate, pagination, setPagination } = usePagination(2, 1)
+    const { paginate, pagination, setPagination } = usePagination(6, 1)
     const { isLoading } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
         onSuccess: (data: { response: TypeEmployee[]; }) => {
             dispatch(employeeActions.setEmployee(data.response))
