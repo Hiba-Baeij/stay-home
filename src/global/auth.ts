@@ -125,6 +125,7 @@ export function LogOut() {
     // console.log('in Logout');
     localStorage.removeItem('user-data')
 
+
 }
 // function ActionsGaurd(name: string, action: string) {
 //     if (name === 'Public')

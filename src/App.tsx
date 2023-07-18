@@ -16,6 +16,7 @@ import { Area, settingActions } from './store/setting';
 import { useDarkMode } from 'usehooks-ts'
 import { darkTheme } from "@/themes/dark.theme";
 import { lightTheme } from "@/themes/light.theme";
+
 // import 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap';
 
 const stylisPlugins = [prefixer];
@@ -65,8 +66,7 @@ const StartupCalls = (props: React.PropsWithChildren) => {
 
 export default function App() {
 
-  const { isDarkMode, } = useDarkMode(false);
-
+  const { isDarkMode } = useDarkMode(false);
   const activeTheme = React.useMemo(() => isDarkMode ? darkTheme : lightTheme, [isDarkMode])
 
   React.useEffect(() => {
@@ -74,6 +74,7 @@ export default function App() {
     isDarkMode ? document.body.classList.add('dark') : document.body.classList.remove('dark')
 
   }, [isDarkMode])
+
   return (
     <div className="App">
 

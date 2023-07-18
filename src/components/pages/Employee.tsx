@@ -107,12 +107,46 @@ export default function DialogEmployee() {
         dispatch(employeeActions.setEmployeeDialog(false));
         dispatch(employeeActions.resetForm());
     }
-    const blockedEmployee = () => {
-        setIsBlocked(!isBlocked);
-        console.log(isBlocked);
 
-        // dispatch(employeeActions.setBlocked(isBlocked))
+    const modifyBlockEmployee = (blocked: boolean) => {
+        EmployeeApi.BlockEmpolyee(employeeDto.id as string).then(() => {
+            if (blocked) dispatch(employeeActions.modifyEmployee({ ...employeeDto, isBlock: true }))
+            else dispatch(employeeActions.modifyEmployee({ ...employeeDto, isBlock: false }))
+            dispatch(employeeActions.setEmployeeDialog(false));
+            dispatch(employeeActions.resetForm());
+
+            toast(blocked ? 'تم الحظر بنجاح' : 'تم رفع الحظر بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            })
+
+        })
     }
+    // const unBlockedEmployee = () => {
+    //     EmployeeApi.BlockEmpolyee(employeeDto.id as string).then(() => {
+    //         dispatch(employeeActions.modifyEmployee({ ...employeeDto, isBlock: false }))
+    //         dispatch(employeeActions.setEmployeeDialog(false));
+    //         dispatch(employeeActions.resetForm());
+
+    //         toast('تم رفع الحظر بنجاح', {
+    //             position: "top-right",
+    //             autoClose: 5000,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true,
+    //             progress: undefined,
+    //             theme: "light",
+    //             type: 'success'
+    //         })
+    //     })
+    // }
+
     return (
         <div>
             <Button variant="contained" onClick={() => dispatch(employeeActions.setEmployeeDialog(true))}>
@@ -214,7 +248,8 @@ export default function DialogEmployee() {
                             }
                             {
                                 employeeDto.id ?
-                                    <Button variant='outlined' color='secondary' onClick={blockedEmployee}>{employeeDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
+                                    <>{employeeDto.isBlock ? <Button variant='outlined' color='error' onClick={() => modifyBlockEmployee(false)}>محظور</Button>
+                                        : <Button variant='outlined' color='secondary' onClick={() => modifyBlockEmployee(true)}>غير محظور</Button>}</> : null
                             }
                             <Button variant='outlined' onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
                         </Box>

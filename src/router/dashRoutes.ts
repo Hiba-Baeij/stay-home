@@ -69,13 +69,7 @@ export const navLinks = [
         layout: Dashboard
     },
 
-    {
-        name: "تقييمات",
-        path: "/ratings",
-        icon: BarChartIcon,
-        component: Rating,
-        layout: Dashboard
-    },
+
     {
         name: "الاشعارات",
         path: "/notifications",

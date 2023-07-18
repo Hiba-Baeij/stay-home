@@ -22,7 +22,7 @@ import { IMAGE_URL } from '@/../app.config';
 import moment from 'moment';
 import PersonIcon from '@mui/icons-material/Person';
 import { useQuery } from '@tanstack/react-query';
-// import { usePagination } from "@/global/usePagination"
+import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import TableSkeleton from '@/components/skeletons/table';
@@ -33,11 +33,9 @@ export default function Employee() {
     const dispatch = useDispatch<AppDispatch>()
     const [searchItem, setSearchItem] = React.useState('');
     const [searchDate, setSearchDate] = React.useState('');
-    const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(1);
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
     const swal = withReactContent(Swal)
-    // const { paginate, pagination } = usePagination()
+    const { paginate, pagination, setPagination } = usePagination(2, 1)
     const { isLoading } = useQuery(['employee'], EmployeeApi.fetchEmpolyee, {
         onSuccess: (data: { response: TypeEmployee[]; }) => {
             dispatch(employeeActions.setEmployee(data.response))
@@ -65,9 +63,6 @@ export default function Employee() {
             item.phoneNumber.toLowerCase().includes(searchItem.toLowerCase()))
     });
 
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -191,7 +186,7 @@ export default function Employee() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredItems ? filteredItems.map((row: TypeEmployee, index: number) => {
+                                {filteredItems ? paginate(filteredItems).map((row: TypeEmployee, index: number) => {
                                     return (
                                         <TableRow
                                             hover
@@ -221,7 +216,7 @@ export default function Employee() {
                                             <TableCell align="center">{row.email}</TableCell>
                                             <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">
-                                                <MoreVertIcon onClick={() => getDetails(row)} />
+                                                <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
                                             </TableCell>
                                         </TableRow>
                                     )
@@ -233,7 +228,9 @@ export default function Employee() {
                 }
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
 
-                    <Pagination count={5} page={page} onChange={handleChangePage} />
+                    <Pagination count={pagination.totalPages}
+                        page={pagination.pageIndex}
+                        onChange={(event, page) => setPagination({ ...pagination, pageIndex: page })} />
                 </Stack>
             </TableContainer>
 

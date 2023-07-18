@@ -22,9 +22,12 @@ const employeeSlice = createSlice({
         },
 
         setBlocked(state: initialState, action: PayloadAction<boolean>) {
+
             state.employeeDto.isBlock = action.payload
+            console.log(state.employeeDto.isBlock);
 
         },
+
 
         setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
             delete action.payload.imageFile
@@ -41,8 +44,11 @@ const employeeSlice = createSlice({
         },
 
         modifyEmployee(state: initialState, action: PayloadAction<Employee>) {
+
             const indexData = state.employees.findIndex(ele => ele.id == action.payload.id);
-            state.employees[indexData] = { ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
+            state.employees[indexData] = { ...action.payload, isBlock: action.payload.isBlock, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
+            console.log(state.employees[indexData]);
+
         },
 
         setEmployeeDialog(state: initialState, action: PayloadAction<boolean>) {
