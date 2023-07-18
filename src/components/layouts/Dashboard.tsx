@@ -106,8 +106,8 @@ export default function MiniDrawer(props: any) {
                         <img width="48" src="/logo.png" />
                         {
                             open &&
-                            <Typography fontSize={13} fontWeight={"bold"} variant="h2">
-                                MDX Dashboard
+                            <Typography fontSize={20} fontWeight={"bold"} variant="h2">
+                                Stay Home
                             </Typography>
                         }
                         {

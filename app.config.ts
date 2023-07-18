@@ -5,7 +5,7 @@ const HOST_DOMAIN = localHost
 
     // ? Production Domain
 
-    : 'http://stayhome22-001-site1.ftempurl.com'
+    : 'http://finalstayhome-001-site1.atempurl.com'
 
 const API_URL = `${HOST_DOMAIN}/api/Dashboard/`
 const IMAGE_URL = `${HOST_DOMAIN}/`

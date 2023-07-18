@@ -25,11 +25,14 @@ import { useQuery } from '@tanstack/react-query';
 // import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import TableSkeleton from '@/components/skeletons/table';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 export default function Employee() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
+    const [searchItem, setSearchItem] = React.useState('');
+    const [searchDate, setSearchDate] = React.useState('');
     const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
     const [page, setPage] = React.useState(1);
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
@@ -47,6 +50,20 @@ export default function Employee() {
             dispatch(employeeActions.setEmployeeFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
         })
     }
+
+    const handleSearch = (event: any) => {
+        setSearchItem(event.target.value);
+    };
+    const handleFilerDate = (event: any) => {
+        setSearchDate(event.target.value);
+    };
+
+
+    const filteredItems = employees.filter((item) => {
+        return (item.fullName.toLowerCase().includes(searchItem.toLowerCase()) ||
+            item.email.toLowerCase().includes(searchItem.toLowerCase()) ||
+            item.phoneNumber.toLowerCase().includes(searchItem.toLowerCase()))
+    });
 
     const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
@@ -115,23 +132,17 @@ export default function Employee() {
                     <h2 className='text-lg font-bold '>الموظفين</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    <TextField size="small" label='ابحث عن موظف' title='employee' sx={{ width: '300px' }} name='employeeSearch'></TextField>
+                    {/* <TextField type='date' value={searchDate} onChange={handleFilerDate} size="small" label='تاريخ الميلاد' title='employee' sx={{ width: '300px' }} name='employeeSearch'></TextField> */}
+                    <TextField value={searchItem} onChange={handleSearch} size="small" label='ابحث عن موظف' title='employee' sx={{ width: '300px' }} name='employeeSearch'></TextField>
 
                     <DialogEmployee></DialogEmployee>
                 </div>
 
             </div>
 
-            {/* { */}
-                // isLoading ?
-            <Box sx={{ width: '100%' }}>
-                <LinearProgress sx={{ marginTop: '25px' }} />
-            </Box>
-            {/* : null */}
-            {/* } */}
-
             <TableContainer component={Paper} sx={{
-                width: '100%'
+                width: '100%',
+
             }}>
 
 
@@ -151,72 +162,78 @@ export default function Employee() {
                         ) : null
 
                 }
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                    color="primary"
-                                    onChange={handleSelectAllClick}
-                                    inputProps={{
-                                        'aria-label': 'select all desserts',
-                                    }}
-                                />
-                            </TableCell>
-                            <TableCell>الصورة</TableCell>
-                            <TableCell>الاسم</TableCell>
-                            <TableCell align="center">رقم الموبايل</TableCell>
-                            <TableCell align="center">تاريخ الميلاد</TableCell>
-                            <TableCell align="center">تاريخ الطلبات المعالجة</TableCell>
-                            <TableCell align="center">عدد الطلبات المعالجة</TableCell>
-                            <TableCell align="center">البريد الالكتروني</TableCell>
-                            <TableCell align="center">الحالة</TableCell>
-                            <TableCell align="center">تفاصيل</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {employees ? employees.map((row: TypeEmployee, index: number) => {
-                            return (
-                                <TableRow
-                                    hover
-                                    role="checkbox"
-                                    tabIndex={-1}
-                                    key={row.id}
 
-                                >
+
+                {
+                    isLoading ? <TableSkeleton headers={['', 'الصورة', 'الاسم', 'رقم الموبايل', 'تاريخ الميلاد', 'تاريخ الطلبات المعالجة', 'عدد الطلبات المعالجة', 'البريد الالكتروني', 'الحالة', 'تفاصيل']} />
+
+                        : <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
                                     <TableCell padding="checkbox">
                                         <Checkbox
-                                            onChange={() => handleClick(row.id ? row.id : '')}
-
                                             color="primary"
+                                            onChange={handleSelectAllClick}
+                                            inputProps={{
+                                                'aria-label': 'select all desserts',
+                                            }}
                                         />
                                     </TableCell>
-                                    <TableCell component="th" scope="row" align="left">
-                                        <img width={40} height={40} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
-                                    </TableCell>
-
-                                    <TableCell component="th" scope="row" align="left">
-                                        {row.fullName}
-                                    </TableCell>
-                                    <TableCell align="center">{row.phoneNumber}</TableCell>
-                                    <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
-                                    <TableCell align="center">{row.dateCreated ? new Date(row.dateCreated).toLocaleDateString() : ''} </TableCell>
-                                    <TableCell align="center">{row.handledOrdersCount} </TableCell>
-                                    <TableCell align="center">{row.email}</TableCell>
-                                    <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
-                                    <TableCell align="center">
-                                        <MoreVertIcon onClick={() => getDetails(row)} />
-                                    </TableCell>
+                                    <TableCell>الصورة</TableCell>
+                                    <TableCell>الاسم</TableCell>
+                                    <TableCell align="center">رقم الموبايل</TableCell>
+                                    <TableCell align="center">تاريخ الميلاد</TableCell>
+                                    <TableCell align="center">تاريخ الطلبات المعالجة</TableCell>
+                                    <TableCell align="center">عدد الطلبات المعالجة</TableCell>
+                                    <TableCell align="center">البريد الالكتروني</TableCell>
+                                    <TableCell align="center">الحالة</TableCell>
+                                    <TableCell align="center">تفاصيل</TableCell>
                                 </TableRow>
-                            )
-                        }
-                        ) : null
-                        }
-                    </TableBody>
-                </Table>
+                            </TableHead>
+                            <TableBody>
+                                {filteredItems ? filteredItems.map((row: TypeEmployee, index: number) => {
+                                    return (
+                                        <TableRow
+                                            hover
+                                            role="checkbox"
+                                            tabIndex={-1}
+                                            key={row.id}
+
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    onChange={() => handleClick(row.id ? row.id : '')}
+
+                                                    color="primary"
+                                                />
+                                            </TableCell>
+                                            <TableCell component="th" scope="row" align="left">
+                                                <img width={40} height={40} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
+                                            </TableCell>
+
+                                            <TableCell component="th" scope="row" align="left">
+                                                {row.fullName}
+                                            </TableCell>
+                                            <TableCell align="center">{row.phoneNumber}</TableCell>
+                                            <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
+                                            <TableCell align="center">{row.dateCreated ? new Date(row.dateCreated).toLocaleDateString() : ''} </TableCell>
+                                            <TableCell align="center">{row.handledOrdersCount} </TableCell>
+                                            <TableCell align="center">{row.email}</TableCell>
+                                            <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
+                                            <TableCell align="center">
+                                                <MoreVertIcon onClick={() => getDetails(row)} />
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                                ) : null
+                                }
+                            </TableBody>
+                        </Table>
+                }
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
 
-                    <Pagination count={10} page={page} onChange={handleChangePage} />
+                    <Pagination count={5} page={page} onChange={handleChangePage} />
                 </Stack>
             </TableContainer>
 

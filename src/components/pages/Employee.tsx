@@ -119,7 +119,21 @@ export default function DialogEmployee() {
                 إضافة موظف
                 <Add></Add>
             </Button>
-            <Dialog open={isOpen}>
+            <Dialog open={isOpen} sx={{
+                '&::-webkit-scrollbar': {
+                    width: '12px',
+                },
+                '&::-webkit-scrollbar-track': {
+                    backgroundColor: '#f5f5f5',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#888',
+                    borderRadius: '10px',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                    backgroundColor: '#555',
+                },
+            }}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-between items-center pl-4 ">
                         <DialogTitle>
