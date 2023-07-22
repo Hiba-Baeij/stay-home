@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, Checkbox, Chip, DialogContent, Divider, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, DialogContent, Divider, IconButton, Pagination, Stack, TextField, Toolbar, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
@@ -22,25 +22,25 @@ import DialogActions from '@mui/material/DialogActions';
 import { LoadingButton } from '@mui/lab';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-const DEFAULT_ROWS_PER_PAGE = 5;
-interface typeProps {
-    loading: boolean
-}
+import Areas from './Areas';
+import { usePagination } from '@/global/usePagination';
+
 interface initialDto {
     name: string, id: string
 }
-export default function Countries(props: typeProps) {
+export default function Countries() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const swal = withReactContent(Swal)
+    const { paginate, pagination, setPagination } = usePagination(6, 1)
+
     const [dto, setDto] = React.useState({
         id: '',
         name: '',
     });
     const dispatch = useDispatch<AppDispatch>()
-    const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(1);
+
     const cities = useSelector<RootState>(state => state.setting.cities) as initialDto[];
 
     function getDetails(item: initialDto) {
@@ -78,18 +78,8 @@ export default function Countries(props: typeProps) {
             [name]: value
         });
     };
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = cities.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
+
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -139,19 +129,18 @@ export default function Countries(props: typeProps) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                {
-                    props.loading ?
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box> : null
-                }
-
+        <div className='grid grid-cols-2 gap-5'>
+            <Box className='col-span-2 md:col-span-1' sx={{ width: '100%' }}>
                 <TableContainer component={Paper} sx={{
                     width: '100%'
                 }}>
-                    <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
+                    <Box sx={{
+                        p: 2,
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
                         <h2>المدن</h2>
                         <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة مدينة</Button>
 
@@ -184,25 +173,18 @@ export default function Countries(props: typeProps) {
 
                             </DialogActions>
                         </Dialog>
-                    </div>
+                    </Box>
 
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell padding="checkbox">
-                                    {/* <Checkbox
-                                        color="primary"
-                                        onChange={handleSelectAllClick}
-                                        inputProps={{
-                                            'aria-label': 'select all desserts',
-                                        }}
-                                    /> */}
 
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={removeCity}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
+
+                                    <IconButton disabled={selected.length == 0} onClick={removeCity}>
+                                        <DeleteIcon />
+                                    </IconButton>
+
 
 
                                 </TableCell>
@@ -213,7 +195,7 @@ export default function Countries(props: typeProps) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {cities ? cities.map((row: { name: string, id: string }, index: number) => {
+                            {cities ? paginate(cities).map((row: { name: string, id: string }, index: number) => {
                                 return (
                                     <TableRow
                                         hover
@@ -242,13 +224,19 @@ export default function Countries(props: typeProps) {
                             }
                         </TableBody>
                     </Table>
+                    <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <Pagination count={pagination.totalPages}
+                            page={pagination.pageIndex}
+                            onChange={(event, page) => setPagination({ ...pagination, pageIndex: page })} />
+                    </Stack>
                 </TableContainer>
-                <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    {/* {page} */}
-                    <Pagination count={10} page={page} onChange={handleChangePage} />
-                </Stack>
-            </Paper>
-        </Box>
+            </Box>
+            <Box className='col-span-2 md:col-span-1' sx={{ width: '100%' }}>
+                <Areas />
+            </Box>
+
+        </div>
 
     )
 }

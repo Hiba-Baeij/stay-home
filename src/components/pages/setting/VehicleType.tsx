@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, Checkbox, Chip, DialogContent, Divider, IconButton, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, DialogContent, Divider, IconButton, Pagination, Stack, TextField, Toolbar, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
@@ -22,14 +22,12 @@ import DialogActions from '@mui/material/DialogActions';
 import { LoadingButton } from '@mui/lab';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-const DEFAULT_ROWS_PER_PAGE = 5;
-interface typeProps {
-    loading: boolean
-}
+import { usePagination } from '@/global/usePagination';
+
 interface initialDto {
     name: string, id: string
 }
-export default function VehicleType(props: typeProps) {
+export default function VehicleType() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -39,8 +37,7 @@ export default function VehicleType(props: typeProps) {
         name: '',
     });
     const dispatch = useDispatch<AppDispatch>()
-    const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(1);
+    const { paginate, pagination, setPagination } = usePagination(6, 1)
     const vehicles = useSelector<RootState>(state => state.setting.vehicles) as initialDto[];
 
     function getDetails(item: initialDto) {
@@ -78,18 +75,7 @@ export default function VehicleType(props: typeProps) {
             [name]: value
         });
     };
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = vehicles.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -139,117 +125,108 @@ export default function VehicleType(props: typeProps) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                {
-                    props.loading ?
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box> : null
-                }
 
-                <TableContainer component={Paper} sx={{
-                    width: '100%'
-                }}>
-                    <div className='flex justify-between items-center w-full gap-5 p-5 pb-3 '>
-                        <h2>نوع المركبات</h2>
-                        <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة نوع المركبة</Button>
 
-                        <Dialog open={isOpen}>
-                            <DialogTitle>
+        <TableContainer component={Paper} sx={{
+            width: '100%'
+        }}>
+            <Box sx={{
+                p: 2,
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            }}>
+                <h2>نوع المركبات</h2>
+                <Button variant='contained' onClick={() => setIsOpen(true)}>اضافة نوع المركبة</Button>
 
-                                {
-                                    dto.id ? 'تعديل نوع المركبة' : 'اضافة نوع المركبة'
-                                }
-                            </DialogTitle>
+                <Dialog open={isOpen}>
+                    <DialogTitle>
 
-                            <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
-                                <TextField name='name' id='Vehicle-name' label='اسم النوع المركبة' value={dto.name} onChange={handleInputChange} />
-                            </DialogContent>
-                            <Divider />
-                            <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
-                                <div className='flex justify-end items-end gap-4'>
+                        {
+                            dto.id ? 'تعديل نوع المركبة' : 'اضافة نوع المركبة'
+                        }
+                    </DialogTitle>
 
-                                    {
-                                        isLoading ?
-                                            <LoadingButton sx={{ height: '36px' }} loading variant='contained'></LoadingButton>
-                                            :
-                                            <Button variant='contained' onClick={addMoreVehicle}>
-                                                {
-                                                    dto.id ? 'تعديل نوع المركبة' : 'اضافة نوع المركبة'
-                                                }
-                                            </Button>
-                                    }
-                                    <Button variant='outlined' onClick={() => { setIsOpen(false); setDto({ name: '', id: '' }) }}>الغاء</Button>
-                                </div>
+                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
+                        <TextField name='name' id='Vehicle-name' label='اسم النوع المركبة' value={dto.name} onChange={handleInputChange} />
+                    </DialogContent>
+                    <Divider />
+                    <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
+                        <div className='flex justify-end items-end gap-4'>
 
-                            </DialogActions>
-                        </Dialog>
-                    </div>
+                            {
+                                isLoading ?
+                                    <LoadingButton sx={{ height: '36px' }} loading variant='contained'></LoadingButton>
+                                    :
+                                    <Button variant='contained' onClick={addMoreVehicle}>
+                                        {
+                                            dto.id ? 'تعديل نوع المركبة' : 'اضافة نوع المركبة'
+                                        }
+                                    </Button>
+                            }
+                            <Button variant='outlined' onClick={() => { setIsOpen(false); setDto({ name: '', id: '' }) }}>الغاء</Button>
+                        </div>
 
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
+                    </DialogActions>
+                </Dialog>
+            </Box>
+
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell padding="checkbox">
+
+                            <IconButton disabled={selected.length == 0} onClick={removeVehicle}>
+                                <DeleteIcon />
+                            </IconButton>
+
+
+                        </TableCell>
+                        <TableCell align="center">الاسم</TableCell>
+                        {/* <TableCell align="center">التاريخ</TableCell> */}
+                        <TableCell align="center">تفاصيل</TableCell>
+
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {vehicles ? paginate(vehicles).map((row: { name: string, id: string }, index: number) => {
+                        return (
+                            <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row.id}
+
+                            >
                                 <TableCell padding="checkbox">
-                                    {/* <Checkbox
+                                    <Checkbox
+                                        onChange={() => handleClick(row.id ? row.id : '')}
+
                                         color="primary"
-                                        onChange={handleSelectAllClick}
-                                        inputProps={{
-                                            'aria-label': 'select all desserts',
-                                        }}
-                                    /> */}
-
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={removeVehicle}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-
-
+                                    />
                                 </TableCell>
-                                <TableCell align="center">الاسم</TableCell>
-                                {/* <TableCell align="center">التاريخ</TableCell> */}
-                                <TableCell align="center">تفاصيل</TableCell>
 
+                                <TableCell align="center">{row.name}</TableCell>
+                                {/* <TableCell align="center">{new Date().toLocaleDateString()}</TableCell> */}
+                                <TableCell align="center">
+                                    <MoreVertIcon onClick={() => getDetails(row)} />
+                                </TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {vehicles ? vehicles.map((row: { name: string, id: string }, index: number) => {
-                                return (
-                                    <TableRow
-                                        hover
-                                        role="checkbox"
-                                        tabIndex={-1}
-                                        key={row.id}
+                        )
+                    }
+                    ) : null
+                    }
+                </TableBody>
+            </Table>
+            <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
 
-                                    >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                onChange={() => handleClick(row.id ? row.id : '')}
+                <Pagination count={pagination.totalPages}
+                    page={pagination.pageIndex}
+                    onChange={(event, page) => setPagination({ ...pagination, pageIndex: page })} />
+            </Stack>
+        </TableContainer>
 
-                                                color="primary"
-                                            />
-                                        </TableCell>
-
-                                        <TableCell align="center">{row.name}</TableCell>
-                                        {/* <TableCell align="center">{new Date().toLocaleDateString()}</TableCell> */}
-                                        <TableCell align="center">
-                                            <MoreVertIcon onClick={() => getDetails(row)} />
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            }
-                            ) : null
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
-                    {/* {page} */}
-                    <Pagination count={10} page={page} onChange={handleChangePage} />
-                </Stack>
-            </Paper>
-        </Box>
 
     )
 }

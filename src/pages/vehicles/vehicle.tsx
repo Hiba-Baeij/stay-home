@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, Chip, CircularProgress, IconButton, Pagination, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, Chip, CircularProgress, IconButton, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
 import { toast } from 'react-toastify';
@@ -16,16 +15,20 @@ import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import VehcileDialog from '@/components/pages/Vehicle';
-const DEFAULT_ROWS_PER_PAGE = 5;
+import DeleteIcon from '@mui/icons-material/Delete';
+import TableSkeleton from '@/components/skeletons/table';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { usePagination } from '@/global/usePagination';
 
 export default function Vehicle() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
-    const [rowsPerPage, setRowsPerPage] = React.useState(DEFAULT_ROWS_PER_PAGE);
-    const [page, setPage] = React.useState(1);
+    const { paginate, pagination, setPagination } = usePagination(6, 1)
+
     const vehicles = useSelector<RootState>(state => state.vehicle.vehicles) as TypeVehicle[];
+    const vehiclesType = useSelector<RootState>(state => state.setting.vehicles) as { name: string, id: string }[];
     const swal = withReactContent(Swal)
-    // const { paginate, pagination } = usePagination()
+    const getVechileType = (id: string) => vehiclesType.find(ele => ele.id === id)?.name
     const { isLoading } = useQuery(['vehicle'], VehicleApi.fetchVehicle, {
         onSuccess: (data: { response: TypeVehicle[]; }) => {
             dispatch(vehicleActions.setVehicle(data.response))
@@ -39,9 +42,40 @@ export default function Vehicle() {
         })
     }
 
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.checked) {
+            const newSelected = vehicles.map((n: any) => n.name);
+            setSelected(newSelected);
+            return;
+        }
+        setSelected([]);
+    };
+
+    const handleClick = (id: string) => {
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: string[] = [];
+        console.log(selectedIndex);
+
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+            console.log(newSelected);
+
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1)
+            );
+        }
+        setSelected(newSelected);
+        console.log(selected);
+    };
 
 
-    const deleteVehicle = (id: string) => {
+    const deleteVehicle = () => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
             text: "لن تتمكن من التراجع عن هذا!",
@@ -52,8 +86,8 @@ export default function Vehicle() {
             showCloseButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                VehicleApi.DeleteVehicle([id]).then(() => {
-                    dispatch(vehicleActions.deleteVehicle([id]))
+                VehicleApi.DeleteVehicle(selected).then(() => {
+                    dispatch(vehicleActions.deleteVehicle(selected))
                     toast('تم الحذف بنجاح', {
                         position: "top-right",
                         autoClose: 5000,
@@ -64,6 +98,8 @@ export default function Vehicle() {
                         theme: "light",
                         type: 'success'
                     })
+
+                    setSelected([])
                 }
                 )
             }
@@ -89,7 +125,102 @@ export default function Vehicle() {
                 </div>
             </div>
 
-            {
+            <TableContainer component={Paper} sx={{
+                width: '100%'
+            }}>
+
+                {
+                    selected.length > 0 ?
+                        (
+                            <div className='flex justify-start items-center w-full px-2 mt-2'>
+
+                                <Tooltip title="Delete">
+                                    <IconButton onClick={deleteVehicle}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+
+                        ) : null
+                }
+                {
+                    isLoading ? <TableSkeleton headers={['', 'الاسم', 'المدينة', 'رقم الموبايل', 'تاريخ الميلاد', 'عدد الطلبات ', 'تفاصيل']} />
+
+                        : <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            color="primary"
+                                            onChange={handleSelectAllClick}
+                                            inputProps={{
+                                                'aria-label': 'select all desserts',
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>الرقم</TableCell>
+                                    <TableCell>الصورة</TableCell>
+                                    <TableCell align="center"> الاسم</TableCell>
+                                    <TableCell align="center"> السعة</TableCell>
+                                    <TableCell align="center">نوع المركبة</TableCell>
+                                    <TableCell align="center"> اللون </TableCell>
+                                    <TableCell align="center"> الحالة </TableCell>
+                                    <TableCell align="center">تفاصيل</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {vehicles ? paginate(vehicles).map((row: TypeVehicle, index: number) => {
+
+                                    return (
+                                        <TableRow
+                                            hover
+                                            role="checkbox"
+                                            tabIndex={-1}
+                                            key={row.id}
+
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    onChange={() => handleClick(row.id ? row.id : '')}
+
+                                                    color="primary"
+                                                />
+                                            </TableCell>
+
+                                            <TableCell component="th" scope="row" align="left">
+                                                {row.number}
+                                            </TableCell>
+
+                                            <TableCell component="th" scope="row" align="left">
+                                                <img width={40} height={40} src={`${IMAGE_URL + row.imageUrl}`} alt="image vehicle" className='rounded-full object-cover' />
+                                            </TableCell>
+
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.maxCapacity} </TableCell>
+                                            <TableCell align="center">{getVechileType(row.vehicleTypeId)} </TableCell>
+                                            <TableCell align="center">  <div className={`bg-[${row.color}] h-5 w-5`} /></TableCell>
+                                            <TableCell align="center">{row.isAvailable ? <Chip label="متاح" color="primary" variant='outlined' /> : <Chip label="غير متاح" color="error" variant='outlined' />}</TableCell>
+                                            <TableCell align="center">
+                                                <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                                ) : null
+                                }
+                            </TableBody>
+                        </Table>
+                }
+
+                <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
+                    <Pagination count={pagination.totalPages}
+                        page={pagination.pageIndex}
+                        onChange={(event, page) => setPagination({ ...pagination, pageIndex: page })} />
+                </Stack>
+            </TableContainer>
+
+
+            {/* {
                 isLoading ?
                     <div className='flex justify-center items-center'>
                         <CircularProgress />
@@ -150,7 +281,7 @@ export default function Vehicle() {
                             </Card>
                         ))}
                     </div>
-            }
+            } */}
 
         </Box>
     )

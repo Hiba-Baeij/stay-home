@@ -71,14 +71,6 @@ export const navLinks = [
 
 
     {
-        name: "الاشعارات",
-        path: "/notifications",
-        icon: NotificationsNoneIcon,
-        component: Notifiation,
-        layout: Dashboard
-    },
-
-    {
         name: "الاعدادات",
         path: "/settings",
         icon: SettingsIcon,

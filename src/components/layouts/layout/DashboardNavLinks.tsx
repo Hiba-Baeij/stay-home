@@ -79,6 +79,7 @@ export default function DashboardNavLinks(props: Props) {
             </List>
             <List>
                 <ListItem sx={({ palette }) => ({
+                    mt: 12,
                     py: 0.8,
                     px: 2,
                     borderRadius: "0.5rem",
