@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, Chip, CircularProgress, IconButton, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store';
@@ -24,7 +24,7 @@ export default function Vehicle() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const { paginate, pagination, setPagination } = usePagination(6, 1)
-
+    const [search, setsearch] = useState('')
     const vehicles = useSelector<RootState>(state => state.vehicle.vehicles) as TypeVehicle[];
     const vehiclesType = useSelector<RootState>(state => state.setting.vehicles) as { name: string, id: string }[];
     const swal = withReactContent(Swal)
@@ -35,11 +35,14 @@ export default function Vehicle() {
         },
     })
 
+
+    // const filterdVehicles = useMemo(() => vehicles.filter((v) => v.name.includes(search)), [search, vehicles])
+
     function getDetails(item: TypeVehicle) {
         dispatch(vehicleActions.setVehicleDialog(true))
-        VehicleApi.getVehicleDetails(item.id as string).then((data: { response: TypeVehicle }) => {
-            dispatch(vehicleActions.setVehicleFormDto(data.response))
-        })
+        // VehicleApi.getVehicleDetails(item.id as string).then((data: { response: TypeVehicle }) => {
+        dispatch(vehicleActions.setVehicleFormDto(item))
+        // })
     }
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +122,7 @@ export default function Vehicle() {
                     <h2 className='text-lg font-bold'>المركبات</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    <TextField size="small" label='ابحث عن المركبات' title='shop' sx={{ width: '300px' }} name='shopSearch'></TextField>
+                    <TextField size="small" label='ابحث عن المركبات' value={search} onChange={(e) => setsearch(e.target.value)} title='shop' sx={{ width: '300px' }} name='shopSearch'></TextField>
                     <VehcileDialog />
 
                 </div>

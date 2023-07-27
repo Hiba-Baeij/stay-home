@@ -152,11 +152,18 @@ export default function VehcileDialog() {
                             />
 
                             <Controller rules={{ required: '  اللون مطلوب' }} name='color' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error} type="color"
-                                    helperText={fieldState.error?.message}
-                                    {...field} name='color' id='color' label='اللون'
+                                <Box display={'flex'} gap={2} alignItems={'center'}>
 
-                                />
+                                    <TextField error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='text' id='color' label='اللون'
+
+                                    />
+                                    <TextField error={!!fieldState.error}
+                                        helperText={fieldState.error?.message}
+                                        {...field} name='text' id='color' variant='standard' sx={{ width: '40px' }} type="color" value={field.value} />
+                                </Box>
+
                             }
                             />
 
