@@ -161,7 +161,9 @@ export default function CustomerDetails() {
                                 <LinearProgress />
                             </Box> : null
                     }
+                    
                     {/* {JSON.stringify(customerDto)} */}
+
                     <CardContent>
 
                         <div className='grid grid-cols-5 gap-5 '>
