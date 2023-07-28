@@ -37,17 +37,24 @@ a:hover {
   color: #6659B3;
 }
 
-::-webkite-scollbar {
+/* width */
+::-webkit-scrollbar {
   width: 10px;
 }
 
+/* Track */
 ::-webkit-scrollbar-track {
-  background: #e0e0e0;
+  background: #f1f1f1;
+  border-radius: 30px;
 }
 
+/* Handle */
 ::-webkit-scrollbar-thumb {
-  background-color: #000000;
+  background: #cfd0d3;
+  border-radius: 30px;
 }
+
+
 
 * {
   font-family: "Tajawal", sans-serif !important;

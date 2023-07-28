@@ -84,7 +84,7 @@ export default function product(props: { shopId: string }) {
 
                                     <Card sx={{ borderRadius: '30px' }}>
                                         <CardMedia
-                                            sx={{ height: "240px", borderRadius: "22px" }}
+                                            sx={{ height: "180px", borderRadius: "22px" }}
                                             component="img"
                                             image={`${IMAGE_URL + product.imageUrl}`}
 

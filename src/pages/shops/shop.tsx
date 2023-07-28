@@ -15,6 +15,7 @@ import { ShopApi } from '@/api/shop/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import StoreIcon from '@mui/icons-material/Store';
 import ShopComponent from '@/components/pages/Shop'
+import CardSkeleton from '@/components/skeletons/card'
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
@@ -59,7 +60,7 @@ export default function Shop() {
     }
 
     return (
-        <Box sx={{ width: '100%', padding: '10px' }}>
+        <Box sx={{ width: '100%' }}>
             <div className='flex justify-between items-center w-full gap-5 my-5'>
 
                 <div className='flex justify-start items-center gap-3'>
@@ -77,7 +78,7 @@ export default function Shop() {
             {
                 isLoading ?
                     <div className='flex justify-center items-center h-80'>
-                        <CircularProgress />
+                        <CardSkeleton />
                     </div>
                     :
 
@@ -117,9 +118,7 @@ export default function Shop() {
                                         >
                                             {shop.name}
                                         </Typography>
-                                        {/* <div>
-                                            {shop.workTimes[index]?.startTime.ticks}
-                                        </div> */}
+
                                     </div>
 
                                 </CardContent>
@@ -139,9 +138,13 @@ export default function Shop() {
 
                                 </CardActions>
                             </Card>
-                        ))}
+
+                        ))
+
+                        }
                     </div>
             }
+
 
         </Box>
 

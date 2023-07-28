@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, Checkbox, Chip, IconButton, LinearProgress, Pagination, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Chip, IconButton, LinearProgress, MenuItem, Pagination, Select, Stack, TextField, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CustomerApi } from "@/api/customer/endpoints"
 import { Customer as TypeCustomer } from "@/api/customer/dto"
@@ -134,7 +134,20 @@ export default function Customer() {
                     <h2 className='text-lg font-bold'>الزبائن</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    <TextField value={searchItem} onChange={handleSearch} size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
+                    <Select
+                        fullWidth
+                        name='isBlock'
+                        labelId="block-id-label"
+                        label="حالة"
+                        size='small'
+                    >
+
+                        <MenuItem value={'true'}>محظور</MenuItem>
+                        <MenuItem value={'false'}>غير محظور</MenuItem>
+                        <MenuItem value={''}>الكل</MenuItem>
+                    </Select>
+                    <TextField fullWidth value={searchItem} onChange={handleSearch} size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
+
                     <CustomerDialog />
 
                 </div>
@@ -160,7 +173,7 @@ export default function Customer() {
                             ) : null
                     }
                     {
-                        isLoading ? <TableSkeleton headers={['', 'الاسم', 'المدينة', 'رقم الموبايل', 'تاريخ الميلاد', 'عدد الطلبات ', 'تفاصيل']} />
+                        isLoading ? <TableSkeleton headers={['', 'الاسم', 'المدينة', 'رقم الموبايل', 'تاريخ الميلاد', 'عدد الطلبات ', 'الحالة', 'تفاصيل']} />
 
                             : <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>

@@ -1,9 +1,9 @@
-import { Shop, WorkTimes } from '@/api/shop/dto';
+import { Days, Shop, WorkTimes } from '@/api/shop/dto';
 import { ShopApi } from '@/api/shop/endpoints';
 import { AppDispatch, RootState } from '@/store';
 import shop, { shopActions } from '@/store/shop';
 import { Add, Close, Label } from '@mui/icons-material'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormHelperText, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormHelperText, Icon, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +20,9 @@ import { SettingApi } from '@/api/setting/endpoints';
 
 export default function ShopComponent() {
     const [isLoading, setIsLoading] = useState(false);
+    const [days, setDays] = useState<Days>(new Days());
+    const [day, setDay] = React.useState('');
+
     const [imageUrl, setImageUrl] = useState('');
     const isOpen = useSelector<RootState>(state => state.shop.openDialogShop) as boolean;
     const shopDto = useSelector<RootState>(state => state.shop.shopDto) as Shop;
@@ -94,6 +97,13 @@ export default function ShopComponent() {
             }).catch(() => setIsLoading(false))
         }
     }
+
+    const handleChange = (event: any) => {
+        console.log(event.target.value);
+
+        setDay(event.target.value);
+    };
+
     const resetForm = () => {
         reset({ ...new Shop() });
         setImageUrl('')
@@ -194,7 +204,31 @@ export default function ShopComponent() {
                                             <div>
 
                                                 <label> اليوم :</label>
+                                                {day}
                                                 <Controller rules={{ required: ' اليوم مطلوب' }} name={`workTimes.${index}.dayOfWeek`} control={control} render={({ field, fieldState }) =>
+                                                    <FormControl fullWidth error={!!fieldState.error}>
+
+                                                        <Select
+                                                            fullWidth
+                                                            {...field}
+                                                            name={`workTimes.${index}.dayOfWeek`}
+                                                            labelId={`workTimes.${index}.dayOfWeek`}
+                                                            sx={{ marginTop: '10px' }}
+                                                            onChange={handleChange}
+                                                            value={day}
+                                                        >
+                                                            {
+
+                                                                days.days.map((day) => <MenuItem key={day.id} value={day.id}>{day.id}</MenuItem>)
+                                                            }
+
+                                                        </Select>
+                                                        <FormHelperText>
+                                                            {fieldState.error?.message}
+                                                        </FormHelperText>
+                                                    </FormControl>
+                                                } />
+                                                {/* <Controller rules={{ required: ' اليوم مطلوب' }} name={`workTimes.${index}.dayOfWeek`} control={control} render={({ field, fieldState }) =>
                                                     <TextField error={!!fieldState.error} fullWidth
                                                         helperText={fieldState.error?.message}
                                                         {...field} name={`workTimes.${index}.dayOfWeek`} id={`workTimes_dayOfWeek_${index}`}
@@ -203,7 +237,7 @@ export default function ShopComponent() {
 
                                                     />
 
-                                                } />
+                                                } /> */}
                                             </div>
 
                                         </div>

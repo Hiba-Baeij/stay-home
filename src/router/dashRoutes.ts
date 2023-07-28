@@ -43,14 +43,14 @@ export const navLinks = [
     {
         name: "السائقين",
         path: "/drivers",
-        icon: StoreIcon,
+        icon: PersonIcon,
         component: Driver,
         layout: Dashboard
     },
     {
         name: "المتاجر",
         path: "/shops",
-        icon: ShoppingCartIcon,
+        icon: StoreIcon,
         component: Shop,
         layout: Dashboard
     },

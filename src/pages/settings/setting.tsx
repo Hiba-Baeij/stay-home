@@ -26,7 +26,7 @@ export default function Setting() {
 
     return (
         <Box>
-            <div className='flex justify-start items-center gap-3 my-5 mb-2'>
+            <div className='flex justify-start items-center gap-3 my-5'>
                 <SettingsIcon></SettingsIcon>
                 <h2 className='text-lg font-bold '>الاعدادات</h2>
             </div>

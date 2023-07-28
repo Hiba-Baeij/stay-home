@@ -113,7 +113,7 @@ export default function Vehicle() {
     // src = "http://stayhome22-001-site1.ftempurl.com/Uploads\2023-6\58e090a8-c23a-4bff-a8e8-fa5b2a0c5fdbpexels-miguel-marmolejos-fernández-6389711.jpg"
     // src = "http://stayhome22-001-site1.ftempurl.com/Uploads\2023-6\58e090a8-c23a-4bff-a8e8-fa5b2a0c5fdbpexels-miguel-marmolejos-fernández-6389711.jpg"
     return (
-        <Box sx={{ width: '100%', padding: '10px' }}>
+        <Box sx={{ width: '100%' }}>
             <div className='flex justify-between items-center w-full gap-5 my-5'>
 
                 <div className='flex justify-start items-center gap-3'>

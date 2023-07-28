@@ -24,3 +24,29 @@ export class Products {
     imageUrl = '';
     cost = 0;
 }
+export class Days {
+    days = [
+        {
+            id: 'Saturday'
+        },
+        {
+            id: 'Sunday'
+        },
+        {
+            id: 'Monday'
+        },
+        {
+            id: 'Tuesday'
+        },
+        {
+            id: 'Wednesday'
+        },
+        {
+            id: 'Thursday'
+        },
+        {
+            id: 'Friday'
+        },
+    ]
+
+}

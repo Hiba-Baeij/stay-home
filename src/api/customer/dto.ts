@@ -9,8 +9,7 @@ export class Customer {
     email = "";
     fullName = "";
     password = "";
-    imageFile?: File | null = null;
-    imageUrl?= "";
+
     isBlock?= false;
     gender = '';
 

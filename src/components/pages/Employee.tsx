@@ -205,11 +205,8 @@ export default function DialogEmployee() {
                                 />
                             </div>
                             <div className='col-span-2'>
-                                {/* <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label> */}
-                                {/* <Upload onChange={(file: null | File) => { setImageFile(file) }} url={imageUrl} onChangeUrl={setImageUrl} name='image' label='صورة الموظف'></Upload> */}
                                 <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
                                 />
-                                {/* <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload> */}
                             </div>
 
                         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button, TextField, Select, MenuItem, Box, Divider, IconButton, FormControl, InputLabel, FormHelperText, FormControlLabel, RadioGroup, FormLabel, Radio } from '@mui/material'
 import { Controller, useForm } from "react-hook-form";
 import Dialog from '@mui/material/Dialog';
@@ -17,6 +17,7 @@ import { customerActions } from '@/store/customer';
 
 export default function DialogCustomer() {
     const [isLoading, setIsLoading] = useState(false);
+    const [gender, setGender] = useState('Female');
     const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.customer.openDialogCustomer) as boolean;
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as Customer;
@@ -34,10 +35,12 @@ export default function DialogCustomer() {
         }
     }, [customerDto])
     const onSubmit = (data: Customer) => {
+        console.log(data);
+
         if (data.id) {
             setIsLoading(true)
             CustomerApi.ModifyCustomer(data).then((res) => {
-                dispatch(customerActions.modifyCustomer({ ...res.response, fullName: res.response.name, orderCount: 0 }))
+                dispatch(customerActions.modifyCustomer({ ...res.response, gender: gender, fullName: res.response.name, orderCount: 0 }))
                 setIsLoading(false)
                 resetForm();
                 toast('تم التعديل بنجاح', {
@@ -102,8 +105,10 @@ export default function DialogCustomer() {
         dispatch(customerActions.setCustomerDialog(false));
         dispatch(customerActions.resetForm());
     }
-    const handleChange = (event: React.ChangeEvent<unknown>, value: string) => {
-        customerDto.gender = value
+    const handleChange = (event: any) => {
+        console.log(event.target.value);
+        setGender(event.target.value)
+
     };
     const modifyBlockCustomer = (blocked: boolean) => {
         CustomerApi.BlockCustomer(customerDto.id as string).then(() => {
@@ -136,7 +141,7 @@ export default function DialogCustomer() {
                     <div className="flex justify-between items-center pl-4 ">
                         <DialogTitle>
                             {
-                                customerDto.id ? 'تعديل زبون' : 'اضافة زيون'
+                                customerDto.id ? 'تعديل زبون' : 'اضافة زبون'
                             }
                         </DialogTitle>
                         <IconButton onClick={() => { dispatch(customerActions.setCustomerDialog(false)); resetForm() }}><Close /></IconButton>
@@ -219,14 +224,16 @@ export default function DialogCustomer() {
                             <div className='col-span-2'>
 
                                 <FormLabel id="demo-radio-buttons-group-label">جنس الزبون</FormLabel>
-                                {customerDto.gender}
-                                <Controller name='gender' control={control} render={({ field, fieldState }) =>
+                                {gender}
+                                <Controller name='gender' control={control} render={({ field }) => (
+
                                     <RadioGroup
-                                        aria-labelledby="demo-radio-buttons-group-label"
+                                        {...field}
+                                        aria-labelledby="gender"
                                         defaultValue="Female"
-                                        name="radio-buttons-group"
+                                        name="gender"
                                         row
-                                        value={customerDto.gender}
+                                        value={gender}
                                         onChange={handleChange}
 
                                     >
@@ -234,6 +241,8 @@ export default function DialogCustomer() {
                                         <FormControlLabel value="Male" control={<Radio />} label="ذكر" />
                                         <FormControlLabel value="Other" control={<Radio />} label="اخر" />
                                     </RadioGroup>
+                                )
+
                                 }
                                 />
 

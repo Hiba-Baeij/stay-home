@@ -9,7 +9,7 @@ import Navbar from "@/components/layouts/layout/Navbar";
 import BottomNavigation from "@/components/layouts/layout/BottomNavigation";
 import { BsChevronCompactLeft } from 'react-icons/bs'
 import DashboardNavLinks from "./layout/DashboardNavLinks";
-
+import Logo from '@/assets/svg/logo.svg';
 const drawerFullWidth = 240;
 const miniSizedDrawerWidth = 88
 
@@ -103,7 +103,7 @@ export default function MiniDrawer(props: any) {
                         alignItems={"center"}
                         px={1}
                     >
-                        <img width="48" src="/logo.png" />
+                        <img width="50" src={Logo} />
                         {
                             open &&
                             <Typography fontSize={20} fontWeight={"bold"} variant="h2">
@@ -151,7 +151,7 @@ export default function MiniDrawer(props: any) {
                     <img width="48" src="/logo.png" />
 
                     <Typography fontSize={13} fontWeight={"bold"} variant="h2">
-                        MDX Dashboard
+                        Stay Home
                     </Typography>
                 </DrawerHeader>
                 <DashboardNavLinks isOpen={true} />
