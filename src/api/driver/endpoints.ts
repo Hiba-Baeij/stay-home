@@ -1,6 +1,6 @@
 
 import { axiosIns } from "@/lib/axios"
-import { Driver } from "./dto";
+import { Driver, DriverDto } from "./dto";
 import { serialize } from "object-to-formdata";
 
 export enum API_DRIVER {
@@ -37,7 +37,7 @@ export class DriverApi {
 
     }
 
-    static AddDriver = async (payload: Driver) => {
+    static AddDriver = async (payload: DriverDto) => {
         try {
             const res = await axiosIns.post(API_DRIVER.Add, serialize(payload));
             return res.data
@@ -48,7 +48,7 @@ export class DriverApi {
         }
 
     }
-    static ModifyDriver = async (payload: Driver) => {
+    static ModifyDriver = async (payload: DriverDto) => {
         try {
             const res = await axiosIns.post(API_DRIVER.Modify, serialize(payload));
             return res.data

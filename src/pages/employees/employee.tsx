@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip, TableFooter } from '@mui/material';
+import { Box, Checkbox, Chip, IconButton, Pagination, Stack, TextField, Tooltip, TableFooter, Divider } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { EmployeeApi } from "@/api/employee/endpoints"
 import { Employee as TypeEmployee } from "@/api/employee/dto"
@@ -224,6 +224,7 @@ export default function Employee() {
                             </TableBody>
                         </Table>
                 }
+
                 <Stack spacing={2} sx={{ padding: "20px", display: 'flex ', justifyContent: 'center', alignItems: 'center' }}>
 
                     <Pagination count={pagination.totalPages}

@@ -134,7 +134,7 @@ export default function Customer() {
                     <h2 className='text-lg font-bold'>الزبائن</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    <Select
+                    {/* <Select
                         fullWidth
                         name='isBlock'
                         labelId="block-id-label"
@@ -145,7 +145,7 @@ export default function Customer() {
                         <MenuItem value={'true'}>محظور</MenuItem>
                         <MenuItem value={'false'}>غير محظور</MenuItem>
                         <MenuItem value={''}>الكل</MenuItem>
-                    </Select>
+                    </Select> */}
                     <TextField fullWidth value={searchItem} onChange={handleSearch} size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
 
                     <CustomerDialog />

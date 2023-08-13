@@ -61,13 +61,13 @@ export const navLinks = [
         component: Order,
         layout: Dashboard
     },
-    {
-        name: "المركبات",
-        path: "/vehicles",
-        icon: LocalShippingIcon,
-        component: Vehicle,
-        layout: Dashboard
-    },
+    // {
+    //     name: "المركبات",
+    //     path: "/vehicles",
+    //     icon: LocalShippingIcon,
+    //     component: Vehicle,
+    //     layout: Dashboard
+    // },
 
 
     {

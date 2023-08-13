@@ -14,15 +14,15 @@ export default function card() {
 
                         <Box sx={{ height: '370px' }}>
 
-                            <Skeleton variant="rectangular" sx={{ borderRadius: '30px' }} width={340} height={230} />
+                            <Skeleton variant="rectangular" sx={{ borderRadius: '30px' }} width='100%' height={230} />
 
                             <Box sx={{ pt: 0.5 }}>
                                 <Skeleton />
                                 <Skeleton width="60%" />
                             </Box>
                             <Box sx={{ pt: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Skeleton height={40} width={230} />
-                                <Skeleton height={40} width={60} />
+                                <Skeleton height={40} width='100%' />
+                                <Skeleton height={40} width='100%' />
                             </Box>
 
                         </Box>

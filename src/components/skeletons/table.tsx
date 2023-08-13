@@ -23,6 +23,7 @@ export default function TableSkeleton(props: { headers: string[] }) {
                             hover
                             role="checkbox"
                             tabIndex={-1}
+                            key={head}
                         >
                             <TableCell align="center">
                                 <Skeleton width={20} height={20} variant='rectangular' />

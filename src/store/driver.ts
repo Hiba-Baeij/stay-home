@@ -1,15 +1,15 @@
 
-import { Driver } from "@/api/driver/dto"
+import { Driver, DriverDto } from "@/api/driver/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface initialState {
     drivers: Driver[],
     openDialogDriver: boolean,
-    driverDto: Driver,
+    driverDto: DriverDto,
 }
 
 const state: initialState = {
     drivers: [],
-    driverDto: { ...new Driver() },
+    driverDto: { ...new DriverDto() },
     openDialogDriver: false
 }
 
@@ -26,23 +26,19 @@ const driverSlice = createSlice({
 
         },
 
-        setDriverFormDto(state: initialState, action: PayloadAction<Driver>) {
-            delete action.payload.imageFile
+        setDriverDto(state: initialState, action: PayloadAction<DriverDto>) {
 
-            if (action.payload.id) {
-                state.driverDto = { ...action.payload }
-            }
-            else {
-                state.drivers.unshift({ ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 })
-            }
+            state.driverDto = { ...action.payload }
+
+
         },
         resetForm(state: initialState) {
-            state.driverDto = { ... new Driver() }
+            state.driverDto = { ... new DriverDto() }
         },
 
         modifyDriver(state: initialState, action: PayloadAction<Driver>) {
             const indexData = state.drivers.findIndex(ele => ele.id == action.payload.id);
-            state.drivers[indexData] = { ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 }
+            state.drivers[indexData] = { ...action.payload }
         },
 
         setDriverDialog(state: initialState, action: PayloadAction<boolean>) {

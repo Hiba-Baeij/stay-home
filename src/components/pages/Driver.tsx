@@ -119,95 +119,84 @@ export default function DialogEmployee() {
                 إضافة موظف
                 <Add></Add>
             </Button>
-            <Dialog open={isOpen}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex justify-between items-center pl-4 ">
-                        <DialogTitle>
-                            {
-                                employeeDto.id ? 'تعديل الموظف' : 'اضافة موظف'
-                            }
-                        </DialogTitle>
-                        <IconButton onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}><Close /></IconButton>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+
+                <div className='grid grid-cols-2 gap-5 '>
+                    <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                            {...field} name='fullName' id='employee-fullName' label='اسم الموظف'
+
+                        />
+                    }
+                    />
+                    <Controller rules={{ required: 'رقم الموبايل مطلوب' }} name='phoneNumber' control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                            {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
+
+                        />
+                    }
+                    />
+
+                    <Controller rules={{ required: 'كلمة المرور مطلوبة' }} name='password' control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                            {...field} name='password' id='password' label='كلمة المرور'
+
+                        />
+                    }
+                    />
+
+                    <Controller rules={{ required: ' البريد الالكتروني مطلوب' }} name='email' control={control} render={({ field, fieldState }) =>
+                        <TextField error={!!fieldState.error}
+                            helperText={fieldState.error?.message}
+                            {...field} name='email' id='email' label='البريد الالكتروني'
+
+                        />
+                    }
+                    />
+                    <div className='col-span-2'>
+                        <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
+                            <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
+                                helperText={fieldState.error?.message}
+                                {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
+                        }
+                        />
                     </div>
-                    <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
+                    <div className='col-span-2'>
+                        {/* <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label> */}
+                        {/* <Upload onChange={(file: null | File) => { setImageFile(file) }} url={imageUrl} onChangeUrl={setImageUrl} name='image' label='صورة الموظف'></Upload> */}
+                        <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
+                        />
+                        {/* <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload> */}
+                    </div>
 
-                        <div className='grid grid-cols-2 gap-5 '>
-                            <Controller rules={{ required: 'اسم الموظف مطلوب' }} name='fullName' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
-                                    {...field} name='fullName' id='employee-fullName' label='اسم الموظف'
+                </div>
 
-                                />
-                            }
-                            />
-                            <Controller rules={{ required: 'رقم الموبايل مطلوب' }} name='phoneNumber' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
-                                    {...field} name='phoneNumber' id='employee-phoneNumber' label='رقم الموبايل'
 
-                                />
-                            }
-                            />
-
-                            <Controller rules={{ required: 'كلمة المرور مطلوبة' }} name='password' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
-                                    {...field} name='password' id='password' label='كلمة المرور'
-
-                                />
-                            }
-                            />
-
-                            <Controller rules={{ required: ' البريد الالكتروني مطلوب' }} name='email' control={control} render={({ field, fieldState }) =>
-                                <TextField error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
-                                    {...field} name='email' id='email' label='البريد الالكتروني'
-
-                                />
-                            }
-                            />
-                            <div className='col-span-2'>
-                                <Controller rules={{ required: ' تاريخ الميلاد مطلوب' }} name='birthDate' control={control} render={({ field, fieldState }) =>
-                                    <TextField type='date' label='تاريح الميلاد ' error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                        {...field} name='birthDate' id='birthDate' sx={{ width: '100%' }} />
+                <Box gap={2} display='flex'>
+                    {
+                        isLoading ?
+                            <LoadingButton loading variant='contained'></LoadingButton>
+                            :
+                            <Button variant='contained' type="submit">
+                                {
+                                    employeeDto.id ? 'تعديل الموظف' : 'اضافة موظف'
                                 }
-                                />
-                            </div>
-                            <div className='col-span-2'>
-                                {/* <label htmlFor="imageEmployee" className='pb-4'>صورة الموظف </label> */}
-                                {/* <Upload onChange={(file: null | File) => { setImageFile(file) }} url={imageUrl} onChangeUrl={setImageUrl} name='image' label='صورة الموظف'></Upload> */}
-                                <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
-                                />
-                                {/* <Upload url={imageUrl} onChange={({ file, src }) => { setValue('imageFile', file), setImageUrl(src) }} name='image'></Upload> */}
-                            </div>
+                            </Button>
+                    }
+                    {
+                        employeeDto.id ?
+                            <Button variant='outlined' color='secondary' onClick={blockedEmployee}>{employeeDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
+                    }
+                    <Button variant='outlined' onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
+                </Box>
 
-                        </div>
 
-                    </DialogContent>
-                    <Divider />
-                    <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
-                        <Box gap={2} display='flex'>
-                            {
-                                isLoading ?
-                                    <LoadingButton loading variant='contained'></LoadingButton>
-                                    :
-                                    <Button variant='contained' type="submit">
-                                        {
-                                            employeeDto.id ? 'تعديل الموظف' : 'اضافة موظف'
-                                        }
-                                    </Button>
-                            }
-                            {
-                                employeeDto.id ?
-                                    <Button variant='outlined' color='secondary' onClick={blockedEmployee}>{employeeDto.isBlock ? 'محظور' : 'غير محظور'}</Button> : null
-                            }
-                            <Button variant='outlined' onClick={() => { dispatch(employeeActions.setEmployeeDialog(false)); resetForm() }}>الغاء</Button>
-                        </Box>
-                    </DialogActions>
+            </form>
 
-                </form>
-            </Dialog>
         </div>
 
 
