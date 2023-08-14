@@ -35,9 +35,16 @@ const productSlice = createSlice({
             if (action.payload.id) {
                 state.productDto = { ...action.payload }
             }
-            else {
-                state.products.unshift(action.payload)
-            }
+
+            state.products.unshift(action.payload)
+
+        },
+        addProductDto(state: initialState, action: PayloadAction<Product>) {
+            console.log(action.payload);
+            delete action.payload.imageFile
+
+            state.products.unshift(action.payload)
+
         },
 
         modifyProduct(state: initialState, action: PayloadAction<Product>) {

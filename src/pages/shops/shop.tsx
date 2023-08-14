@@ -86,7 +86,7 @@ export default function Shop() {
                         {shops.map((shop, index) => (
                             <Card
                                 key={shop.id}
-                                sx={{ borderRadius: "24px 24px 10px 10px", padding: "6px", position: 'relative' }}
+                                sx={{ borderRadius: "10px", position: 'relative' }}
                             >
                                 <div className={shop.isOnline ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute left-5 top-5'} ></div>
                                 {shop.imageUrl && (
@@ -94,7 +94,7 @@ export default function Shop() {
 
 
                                     <CardMedia
-                                        sx={{ height: "240px", borderRadius: "22px" }}
+                                        sx={{ height: "220px", borderRadius: "10px" }}
                                         component="img"
                                         image={`${IMAGE_URL}${shop.imageUrl}`}
 

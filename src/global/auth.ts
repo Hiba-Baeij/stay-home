@@ -5,7 +5,7 @@ import jwt_decode from "jwt-decode"
 import { API_USER } from "@/api/auth/endpoints"
 import { AxiosError } from "axios";
 import { API_URL } from "app.config";
-
+import { IMAGE_URL } from '@/../app.config';
 // export interface RefreshTokenDecoded {
 //     aud: string
 //     exp: number
@@ -127,6 +127,8 @@ export function LogOut() {
 
 
 }
+export const getImageUrl = (url: string) => { return IMAGE_URL + url }
+
 // function ActionsGaurd(name: string, action: string) {
 //     if (name === 'Public')
 //         return true

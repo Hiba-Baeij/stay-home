@@ -5,7 +5,7 @@ import { shopActions } from '@/store/shop';
 import Product from '@/components/pages/product/ProductList';
 import { IMAGE_URL } from '@/../app.config';
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import StoreIcon from '@mui/icons-material/Store';
@@ -49,6 +49,11 @@ export default function shopDetails() {
             setImageUrl(IMAGE_URL + data.response.imageUrl)
         },
     })
+    useEffect(() => {
+        return () => {
+            dispatch(shopActions.resetForm())
+        };
+    }, []);
     const deleteShop = () => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',

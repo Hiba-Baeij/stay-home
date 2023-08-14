@@ -61,8 +61,10 @@ export default function AddProduct(props: { shopId: string }) {
         }
         else {
             setIsLoading(true)
-            ProductApi.AddProduct({ ...data, shopId: props.shopId }).then(() => {
-                dispatch(productActions.setProductDto({ ...data }))
+            ProductApi.AddProduct({ ...data, shopId: props.shopId }).then((res) => {
+                console.log(res.response);
+
+                dispatch(productActions.addProductDto(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -118,7 +120,7 @@ export default function AddProduct(props: { shopId: string }) {
                             />
                         }
                         />
-                        <Controller rules={{ required: 'يرجى رفع صورة' }}
+                        <Controller
                             control={control} name='imageFile' render={({ field, fieldState }) =>
 
                                 <FormControl error={!!fieldState.error} fullWidth>

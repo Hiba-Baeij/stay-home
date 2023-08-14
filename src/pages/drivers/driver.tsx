@@ -208,7 +208,7 @@ export default function Driver() {
                                             <TableCell align="center">{row.isAvailable ? <Chip label="متاح" color="error" variant='outlined' /> : <Chip label="غير متاح" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">
-                                                <MoreVertIcon onClick={() => getDetails(row)} />
+                                                <MoreVertIcon onClick={() => navigation(`/drivers/${row.id}`)} />
                                             </TableCell>
                                         </TableRow>
                                     )

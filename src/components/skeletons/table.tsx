@@ -3,7 +3,10 @@ import React from 'react'
 
 export default function TableSkeleton(props: { headers: string[] }) {
     const rowsSkeleton = ['', '', '', ''];
-
+    const keysArray = rowsSkeleton.map(() => ({
+        key: Math.random().toString(36).substr(2, 9), // Generate a random alphanumeric key
+        value: ''
+    }));
     return (
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -17,13 +20,13 @@ export default function TableSkeleton(props: { headers: string[] }) {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {rowsSkeleton ? rowsSkeleton.map((head) => {
+                {keysArray ? keysArray.map((head) => {
                     return (
                         <TableRow
                             hover
                             role="checkbox"
                             tabIndex={-1}
-                            key={head}
+                            key={head.key}
                         >
                             <TableCell align="center">
                                 <Skeleton width={20} height={20} variant='rectangular' />

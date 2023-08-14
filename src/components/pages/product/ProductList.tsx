@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, LinearProgress, Paper, Typography } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, CardMedia, IconButton, LinearProgress, ListItemIcon, Menu, MenuItem, Paper, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
 import { IMAGE_URL } from '@/../app.config';
 import { ProductApi } from '@/api/Product/endpoints';
@@ -13,12 +13,15 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getImageUrl } from '@/global/auth';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 export default function product(props: { shopId: string }) {
     const dispatch = useDispatch<AppDispatch>()
     const products = useSelector<RootState>(state => state.product.products) as Product[];
     const swal = withReactContent(Swal)
-
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
     const { isLoading } = useQuery({
         queryKey: ["product"],
         queryFn: () => ProductApi.fetchProduct(props.shopId as string),
@@ -27,6 +30,12 @@ export default function product(props: { shopId: string }) {
 
         },
     })
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     useEffect(() => {
         dispatch(productActions.setLoading(isLoading))
     }, [isLoading])
@@ -80,13 +89,54 @@ export default function product(props: { shopId: string }) {
                         {
                             products.map(product =>
                             (
-                                <div className='col-span-5 md:col-span-1' key={product.id}>
+                                <div className='col-span-5 md:col-span-1 relative' key={product.id}>
+                                    {/* {getImageUrl(product.imageUrl)} */}
+                                    <div className='absolute top-2 left-3'>
+                                        <IconButton
+                                            aria-label="more"
+                                            id="long-button"
+                                            aria-controls={open ? 'long-menu' : undefined}
+                                            aria-expanded={open ? 'true' : undefined}
+                                            aria-haspopup="true"
+                                            onClick={handleClick}
+                                            color='primary'
+                                            sx={{ backgroundColor: 'white', borderRadius: '20px', height: '30px', width: '30px' }}
+                                        >
+                                            <MoreVertIcon fontSize='small' />
+                                        </IconButton>
+                                        <Menu
+                                            id="long-menu"
+                                            MenuListProps={{
+                                                'aria-labelledby': 'long-button',
+                                            }}
+                                            anchorEl={anchorEl}
+                                            open={open}
+                                            onClose={handleClose}
+                                            onClick={handleClose}
+
+                                        >
+
+                                            <MenuItem onClick={() => getByIdProduct(product.id)}>
+                                                <ListItemIcon>
+                                                    <Edit fontSize="small" />
+                                                </ListItemIcon>
+                                                تعديل
+                                            </MenuItem>
+                                            <MenuItem onClick={() => deleteEmployee(product.id)}>
+                                                <ListItemIcon>
+                                                    <DeleteOutlineIcon fontSize="small" />
+                                                </ListItemIcon>
+                                                حذف
+                                            </MenuItem>
+
+                                        </Menu>
+                                    </div>
 
                                     <Card sx={{ borderRadius: '30px' }}>
                                         <CardMedia
                                             sx={{ height: "180px", borderRadius: "22px" }}
                                             component="img"
-                                            image={`${IMAGE_URL + product.imageUrl}`}
+                                            image={getImageUrl(product.imageUrl)}
 
                                             alt="green iguana"
                                         />
@@ -119,7 +169,7 @@ export default function product(props: { shopId: string }) {
                                             </div>
 
                                         </CardContent>
-                                        <CardActions className="gap-2" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                                        {/* <CardActions className="gap-2" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
                                             <Button variant="contained" color='primary' onClick={() => getByIdProduct(product.id)}>
                                                 <Edit />
@@ -128,7 +178,7 @@ export default function product(props: { shopId: string }) {
                                                 <DeleteOutlineIcon />
                                             </Button>
 
-                                        </CardActions>
+                                        </CardActions> */}
                                     </Card>
                                 </div>
 

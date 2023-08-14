@@ -39,25 +39,29 @@ a:hover {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 30px;
+  border-radius: 10px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #cfd0d3;
-  border-radius: 30px;
+  border-radius: 10px;
 }
 
 
 
 * {
   font-family: "Tajawal", sans-serif !important;
+}
+
+.swal2-container {
+  z-index: 100000 !important;
 }
 
 @media (prefers-color-scheme: light) {

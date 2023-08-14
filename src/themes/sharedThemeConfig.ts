@@ -7,14 +7,14 @@ export const sharedThemeConfig: Partial<Theme> = {
 
             styleOverrides: {
                 root: () => ({
-                    borderRadius: '1rem',
+                    borderRadius: '0.5rem',
                 })
             }
         },
         MuiOutlinedInput: {
             styleOverrides: {
                 root: (t) => ({
-                    borderRadius: '1rem',
+                    borderRadius: '0.5rem',
                     backgroundColor: t.ownerState.variant === 'outlined' ? t.theme.palette.background.default : 'transparent',
                 })
             }
@@ -36,7 +36,7 @@ export const sharedThemeConfig: Partial<Theme> = {
 
             styleOverrides: {
                 root: () => ({
-                    borderRadius: '1.5rem',
+                    borderRadius: '0.6rem',
 
                 })
             }

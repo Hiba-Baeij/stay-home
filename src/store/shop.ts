@@ -27,9 +27,13 @@ const shopSlice = createSlice({
             console.log(action.payload);
             delete action.payload.imageFile;
             if (action.payload.id) {
+                console.log("in modify shopppp");
+
                 state.shopDto = { ...action.payload }
             }
             else {
+                console.log("in add shopppp");
+
                 state.shops.unshift(action.payload)
             }
         },

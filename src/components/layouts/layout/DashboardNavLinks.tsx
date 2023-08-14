@@ -25,8 +25,8 @@ export default function DashboardNavLinks(props: Props) {
                         {({ isActive }) => {
                             return (
                                 <ListItem>
-                                    <Tooltip title={item.name} placement='left'>
-                                        <ListItemButton
+                                    {
+                                        props.isOpen ? <ListItemButton
                                             sx={({ palette }) => ({
                                                 py: 0.8,
                                                 px: 2,
@@ -66,8 +66,51 @@ export default function DashboardNavLinks(props: Props) {
                                                 <item.icon size={"1.4rem"} />
                                             </ListItemIcon>
                                             {props.isOpen && <ListItemText primary={item.name} />}
-                                        </ListItemButton>
-                                    </Tooltip>
+                                        </ListItemButton> : <Tooltip title={item.name} placement='left'>
+                                            <ListItemButton
+                                                sx={({ palette }) => ({
+                                                    py: 0.8,
+                                                    px: 2,
+                                                    borderRadius: "0.5rem",
+                                                    minHeight: 45,
+                                                    transition: '0.2s',
+                                                    color: isActive ? "white" : palette.text.primary,
+                                                    ":hover": {
+                                                        background: 'transparent',
+                                                        color: palette.primary.main,
+                                                    },
+                                                    "&.Mui-selected , &.Mui-selected:hover": {
+                                                        backgroundColor: palette.background.default,
+                                                        // backgroundColor: 'transparent',
+                                                        color: palette.primary.main,
+                                                        "::after": ({ palette }) => ({
+                                                            content: "''",
+                                                            background: palette.primary.main,
+                                                            width: '5px',
+                                                            position: 'absolute',
+                                                            height: '35px',
+                                                            right: '-16px',
+                                                            borderRadius: '5px 0 0 5px',
+
+                                                        })
+                                                    },
+                                                })}
+                                                selected={isActive}
+                                            >
+                                                <ListItemIcon
+                                                    sx={() => ({
+                                                        minWidth: 40,
+                                                        color: 'inherit'
+                                                    })}
+                                                >
+
+                                                    <item.icon size={"1.4rem"} />
+                                                </ListItemIcon>
+                                                {props.isOpen && <ListItemText primary={item.name} />}
+                                            </ListItemButton>
+                                        </Tooltip>
+                                    }
+
                                 </ListItem>
 
 
@@ -106,8 +149,8 @@ export default function DashboardNavLinks(props: Props) {
                         })
                     },
                 })}>
-                    <Tooltip title='تسجيل خروج' placement='left' >
-                        <ListItemButton onClick={logOut}>
+                    {
+                        props.isOpen ? <ListItemButton onClick={logOut}>
                             <ListItemIcon
                                 sx={() => ({
                                     minWidth: 40,
@@ -117,8 +160,22 @@ export default function DashboardNavLinks(props: Props) {
                                 <LogoutIcon ></LogoutIcon>
                             </ListItemIcon>
                             {props.isOpen && <ListItemText primary='تسجيل الدخول' />}
-                        </ListItemButton>
-                    </Tooltip>
+                        </ListItemButton> :
+
+                            <Tooltip title='تسجيل خروج' placement='left' >
+                                <ListItemButton onClick={logOut}>
+                                    <ListItemIcon
+                                        sx={() => ({
+                                            minWidth: 40,
+                                            color: 'inherit'
+                                        })}
+                                    >
+                                        <LogoutIcon ></LogoutIcon>
+                                    </ListItemIcon>
+                                    {props.isOpen && <ListItemText primary='تسجيل الدخول' />}
+                                </ListItemButton>
+                            </Tooltip>
+                    }
                 </ListItem>
             </List>
         </>

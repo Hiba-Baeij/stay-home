@@ -16,6 +16,7 @@ import { LoadingButton } from '@mui/lab';
 import { Area, settingActions } from '@/store/setting';
 import { useQuery } from '@tanstack/react-query';
 import { SettingApi } from '@/api/setting/endpoints';
+import { IMAGE_URL } from 'app.config';
 // import TimePicker from "@mui/x-date-pickers"
 
 export default function ShopComponent() {
@@ -80,8 +81,8 @@ export default function ShopComponent() {
         }
         else {
             setIsLoading(true)
-            ShopApi.AddShop(data).then(() => {
-                dispatch(shopActions.setShopDto({ ...data }))
+            ShopApi.AddShop(data).then((res) => {
+                dispatch(shopActions.setShopDto({ ...res.response }))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -287,7 +288,8 @@ export default function ShopComponent() {
 
 
                             <div className='col-span-2'>
-                                <Controller rules={{ required: 'يرجى رفع صورة' }}
+                                {/* rules={{ required: 'يرجى رفع صورة' }} */}
+                                <Controller
                                     control={control} name='imageFile' render={({ field, fieldState }) =>
 
                                         <FormControl error={!!fieldState.error} fullWidth>
