@@ -61,6 +61,7 @@ const settingSlice = createSlice({
 
         UpsertCategory(state: initialState, action: PayloadAction<Base>) {
             console.log(action.payload);
+            delete action.payload.imageFile;
             if (action.payload.id) {
 
                 const index = state.categories.findIndex(ele => ele.id == action.payload.id);

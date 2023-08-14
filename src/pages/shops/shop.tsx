@@ -18,6 +18,7 @@ import ShopComponent from '@/components/pages/Shop'
 import CardSkeleton from '@/components/skeletons/card'
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { getImageUrl } from '@/global/auth'
 
 export default function Shop() {
     const dispatch = useDispatch<AppDispatch>()
@@ -28,6 +29,9 @@ export default function Shop() {
             dispatch(shopActions.setShop(data.response))
         },
     })
+    const categories = useSelector<RootState>(state => state.setting.categories) as Base[];
+
+    const getCategoryName = (id: string) => categories.find(ele => ele.id === id)?.name
     const deleteShop = (id: string) => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
@@ -96,7 +100,7 @@ export default function Shop() {
                                     <CardMedia
                                         sx={{ height: "220px", borderRadius: "10px" }}
                                         component="img"
-                                        image={`${IMAGE_URL}${shop.imageUrl}`}
+                                        image={getImageUrl(shop.imageUrl)}
 
                                         alt="green iguana"
                                     />
@@ -117,6 +121,17 @@ export default function Shop() {
                                             component="div"
                                         >
                                             {shop.name}
+                                        </Typography>
+                                        <Typography
+                                            className="text-gray-700"
+                                            fontWeight={300}
+                                            gutterBottom
+                                            variant="h6"
+                                            fontSize={16}
+                                            margin={0}
+                                            component="div"
+                                        >
+                                            {getCategoryName(shop.categoryId)}
                                         </Typography>
 
                                     </div>

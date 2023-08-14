@@ -20,7 +20,7 @@ export const lightTheme = createTheme({
             primary: "#2f2f2f",
             secondary: "#777777"
         },
-        divider: '#eeeeee'
+        divider: '#0000001f'
     },
 
 });

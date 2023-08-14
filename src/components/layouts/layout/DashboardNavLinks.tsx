@@ -5,7 +5,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Tooltip } from "@mui/material";
+import { Divider, Tooltip } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { LogOut } from "@/global/auth";
 type Props = {
@@ -120,9 +120,9 @@ export default function DashboardNavLinks(props: Props) {
                     </NavLink>
                 ))}
             </List>
-            <List>
+            <List sx={{ mt: 19 }}>
+                <Divider />
                 <ListItem sx={({ palette }) => ({
-                    mt: 10,
                     py: 0.8,
                     px: 2,
                     borderRadius: "0.5rem",

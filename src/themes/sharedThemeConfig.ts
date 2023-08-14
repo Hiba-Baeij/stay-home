@@ -2,9 +2,7 @@ import { Theme } from '@mui/material'
 import { TypographyOptions } from '@mui/material/styles/createTypography'
 export const sharedThemeConfig: Partial<Theme> = {
     components: {
-
         MuiButton: {
-
             styleOverrides: {
                 root: () => ({
                     borderRadius: '0.5rem',

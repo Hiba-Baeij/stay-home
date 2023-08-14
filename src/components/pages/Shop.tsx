@@ -82,7 +82,7 @@ export default function ShopComponent() {
         else {
             setIsLoading(true)
             ShopApi.AddShop(data).then((res) => {
-                dispatch(shopActions.setShopDto({ ...res.response }))
+                dispatch(shopActions.addShopDto(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -205,7 +205,7 @@ export default function ShopComponent() {
                                             <div>
 
                                                 <label> اليوم :</label>
-                                                {day}
+                                                {/* {day} */}
                                                 <Controller rules={{ required: ' اليوم مطلوب' }} name={`workTimes.${index}.dayOfWeek`} control={control} render={({ field, fieldState }) =>
                                                     <FormControl fullWidth error={!!fieldState.error}>
 
@@ -220,7 +220,7 @@ export default function ShopComponent() {
                                                         >
                                                             {
 
-                                                                days.days.map((day) => <MenuItem key={day.id} value={day.id}>{day.id}</MenuItem>)
+                                                                days.days.map((day) => <MenuItem key={day.value} value={day.value}>{day.title}</MenuItem>)
                                                             }
 
                                                         </Select>

@@ -96,6 +96,8 @@ export default function shopDetails() {
         setImageUrl('')
     }
     const onSubmit = (data: Shop) => {
+        console.log(data)
+
         setIsLoading(true)
         ShopApi.ModifyShop(data).then((res) => {
             dispatch(shopActions.modifyShop({ ...res.response }))
@@ -140,7 +142,7 @@ export default function shopDetails() {
                     <div className='flex justify-center items-center gap-3'>
                         {
 
-                            isLoading ? <LoadingButton loading variant='contained'></LoadingButton>
+                            isLoading ? <LoadingButton sx={{ height: '36px' }} loading variant='contained' className='h'></LoadingButton>
                                 : <Button variant='contained' type='submit'>تعديل</Button>
                         }
                         <Button variant='outlined' color='error' onClick={() => deleteShop}>حذف</Button>
@@ -238,7 +240,7 @@ export default function shopDetails() {
                                                             >
                                                                 {
 
-                                                                    days.days.map((day) => <MenuItem key={day.id} value={day.id}>{day.id}</MenuItem>)
+                                                                    days.days.map((day) => <MenuItem key={day.value} value={day.value}>{day.title}</MenuItem>)
                                                                 }
 
                                                             </Select>
@@ -306,7 +308,7 @@ export default function shopDetails() {
                                 </div>
                             </div>
                             <div className='col-span-6 md:col-span-2'>
-                                <Controller rules={{ required: 'يرجى رفع صورة' }}
+                                <Controller
                                     control={control} name='imageFile' render={({ field, fieldState }) =>
 
                                         <FormControl error={!!fieldState.error} fullWidth>

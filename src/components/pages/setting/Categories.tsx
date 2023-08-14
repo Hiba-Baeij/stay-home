@@ -26,6 +26,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { IMAGE_URL } from '@/../app.config';
 import VehicleType from './VehicleType';
 import { usePagination } from '@/global/usePagination';
+import { getImageUrl } from '@/global/auth';
 
 
 interface initialDto {
@@ -232,7 +233,7 @@ export default function Categories() {
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            <img width={35} src={`${IMAGE_URL + row.imageUrl}`} alt="image category" className='rounded-full object-cover' />
+                                            <img width={35} src={getImageUrl(row.imageUrl)} alt="image category" className='rounded-full object-cover' />
                                         </TableCell>
                                         <TableCell align="center">{row.name}</TableCell>
                                         {/* <TableCell align="center">{new Date().toLocaleDateString()}</TableCell> */}

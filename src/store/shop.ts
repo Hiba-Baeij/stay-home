@@ -24,18 +24,18 @@ const shopSlice = createSlice({
         },
 
         setShopDto(state: initialState, action: PayloadAction<Shop>) {
-            console.log(action.payload);
+
             delete action.payload.imageFile;
-            if (action.payload.id) {
-                console.log("in modify shopppp");
 
-                state.shopDto = { ...action.payload }
-            }
-            else {
-                console.log("in add shopppp");
+            state.shopDto = { ...action.payload }
 
-                state.shops.unshift(action.payload)
-            }
+
+
+        },
+        addShopDto(state: initialState, action: PayloadAction<Shop>) {
+            delete action.payload.imageFile;
+            state.shops.unshift(action.payload)
+
         },
 
         modifyShop(state: initialState, action: PayloadAction<Shop>) {

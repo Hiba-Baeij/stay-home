@@ -38,9 +38,51 @@ export default function Driver() {
     const swal = withReactContent(Swal)
     const navigation = useNavigate();
     // const { paginate, pagination } = usePagination()
-    const { isLoading } = useQuery(['employee'], DriverApi.fetchDriver, {
+    const { isLoading } = useQuery(['driver'], DriverApi.fetchDriver, {
         onSuccess: (data: { response: TypeDriver[]; }) => {
-            dispatch(driverActions.setDriver(data.response))
+            dispatch(driverActions.setDriver([
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Nasser Nassan",
+                    "phoneNumber": "0939844573",
+                    "isAvailable": true,
+                    "birthDate": "2023-08-14T23:17:46.931Z",
+                    "orderCount": 2
+                },
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Ahmad Hader",
+                    "phoneNumber": "0947484346",
+                    "isAvailable": true,
+                    "birthDate": "2023-08-14T23:17:46.931Z",
+                    "orderCount": 3
+                },
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Baraa Nayyal",
+                    "phoneNumber": "0947645523",
+                    "isAvailable": true,
+                    "birthDate": "2023-08-14T23:17:46.931Z",
+                    "orderCount": 0
+                },
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Taym Khalil",
+                    "phoneNumber": "09884526233",
+                    "isAvailable": true,
+                    "birthDate": "2023-08-14T23:17:46.931Z",
+                    "orderCount": 0
+                },
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "Najeb Hallak",
+                    "phoneNumber": "0937524326",
+                    "isAvailable": true,
+                    "birthDate": "2023-08-14T23:17:46.931Z",
+                    "orderCount": 0
+                }
+            ]
+            ))
         },
     })
 
@@ -200,12 +242,12 @@ export default function Driver() {
                                             </TableCell> */}
 
                                             <TableCell component="th" scope="row" align="left">
-                                                {row.fullName}
+                                                {row.name}
                                             </TableCell>
                                             <TableCell align="center">{row.phoneNumber}</TableCell>
                                             <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>
                                             <TableCell align="center">{row.orderCount} </TableCell>
-                                            <TableCell align="center">{row.isAvailable ? <Chip label="متاح" color="error" variant='outlined' /> : <Chip label="غير متاح" color="primary" variant='outlined' />}</TableCell>
+                                            <TableCell align="center">{row.isAvailable ? <Chip label="متاح" color="secondary" variant='outlined' /> : <Chip label="غير متاح" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">
                                                 <MoreVertIcon onClick={() => navigation(`/drivers/${row.id}`)} />

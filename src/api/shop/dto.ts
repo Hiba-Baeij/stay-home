@@ -27,25 +27,32 @@ export class Products {
 export class Days {
     days = [
         {
-            id: 'Saturday'
+            title: 'السبت',
+            value: 'Saturday'
         },
         {
-            id: 'Sunday'
+            title: 'الاحد',
+            value: 'Sunday'
         },
         {
-            id: 'Monday'
+            title: 'الاثنين',
+            value: 'Monday'
         },
         {
-            id: 'Tuesday'
+            title: 'الثلاثاء',
+            value: 'Tuesday'
         },
         {
-            id: 'Wednesday'
+            title: 'الاربعاء',
+            value: 'Wednesday'
         },
         {
-            id: 'Thursday'
+            title: 'الخميس',
+            value: 'Thursday'
         },
         {
-            id: 'Friday'
+            title: 'الجمعة',
+            value: 'Friday'
         },
     ]
 

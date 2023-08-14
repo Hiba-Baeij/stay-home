@@ -105,9 +105,10 @@ export default function DialogCustomer() {
         dispatch(customerActions.setCustomerDialog(false));
         dispatch(customerActions.resetForm());
     }
-    const handleChange = (event: any) => {
+    const handleChange = (event: any, newValue: string) => {
         console.log(event.target.value);
         setGender(event.target.value)
+        setValue('gender', newValue)
 
     };
     const modifyBlockCustomer = (blocked: boolean) => {
@@ -224,7 +225,7 @@ export default function DialogCustomer() {
                             <div className='col-span-2'>
 
                                 <FormLabel id="demo-radio-buttons-group-label">جنس الزبون</FormLabel>
-                                {gender}
+                                {/* {gender} */}
                                 <Controller name='gender' control={control} render={({ field }) => (
 
                                     <RadioGroup

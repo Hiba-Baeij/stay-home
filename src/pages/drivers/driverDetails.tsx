@@ -133,7 +133,7 @@ export default function DriverDetails() {
                             isLoading ?
                                 <LoadingButton loading variant='contained'></LoadingButton>
                                 :
-                                <Button variant='contained' type="submit">إضافة السائق</Button>
+                                <Button variant='contained' type="submit">إضافة </Button>
                         }
                         {
                             driverDto.id ?
@@ -251,20 +251,23 @@ export default function DriverDetails() {
 
 
                                 <Controller rules={{ required: ' رقم المركبة مطلوب' }} name='vehicle.number' control={control} render={({ field, fieldState }) =>
-                                    <TextField type='date' label='رقم المركبة' error={!!fieldState.error}
+                                    <TextField label='رقم المركبة' error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                         {...field} name='vehicle.number' id='vehicle-number' sx={{ width: '100%' }} />
                                 }
                                 />
                             </div>
+
                             <div className='col-span-2 md:col-span-1'>
 
                                 <Controller rules={{ required: ' اسم المركبة مطلوب' }} name='vehicle.name' control={control} render={({ field, fieldState }) =>
+
                                     <TextField error={!!fieldState.error}
                                         helperText={fieldState.error?.message}
                                         {...field} name='vehicle.name' id='vehicle-name' label='اسم المركبة' fullWidth
 
                                     />
+                                    // <input type="color" />
                                 }
                                 />
                             </div>

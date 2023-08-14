@@ -1,9 +1,10 @@
 export class Driver {
     id?= '';
-    fullName = "";
+    // fullName = "";
+    name = "";
     phoneNumber = '';
-    isAvailable = '';
-    email = "";
+    isAvailable = false;
+    email?= "";
     birthDate = '';
     orderCount = 0;
     isBlock?= false;
