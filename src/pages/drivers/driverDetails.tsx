@@ -26,7 +26,7 @@ export default function DriverDetails() {
     const driverDto = useSelector<RootState>(state => state.driver.driverDto) as DriverDto;
     const dispatch = useDispatch<AppDispatch>()
     const [imageUrl, setImageUrl] = useState('');
-
+    const vehcilesType = useSelector<RootState>(state => state.setting.vehicles) as { name: string, id: string }[];
     const { handleSubmit, control, reset } = useForm<DriverDto>({
         defaultValues: { ...new DriverDto() }
     });
@@ -50,7 +50,7 @@ export default function DriverDetails() {
                 dispatch(driverActions.setDriverDto({ ...data }))
                 setIsLoading(false)
                 resetForm();
-                toast('تمت تعديل بنجاح', {
+                toast('تم تعديل بنجاح', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -60,13 +60,13 @@ export default function DriverDetails() {
                     theme: "light",
                     type: 'success'
                 })
-
+                navigation('/drivers')
             }).catch(() => setIsLoading(false))
         }
         else {
             setIsLoading(true)
             DriverApi.AddDriver(data).then(() => {
-                dispatch(driverActions.setDriverDto({ ...data }))
+                dispatch(driverActions.setDriverDto(data))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -79,6 +79,7 @@ export default function DriverDetails() {
                     theme: "light",
                     type: 'success'
                 })
+                navigation('/drivers')
             }).catch(() => setIsLoading(false))
         }
     };
@@ -99,7 +100,7 @@ export default function DriverDetails() {
             if (result.isConfirmed) {
                 DriverApi.DeleteDriver([id] as string[]).then(() => {
                     dispatch(driverActions.deleteDriver([id] as string[]))
-                    toast('تمت الحذف بنجاح', {
+                    toast('تم الحذف بنجاح', {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -226,30 +227,50 @@ export default function DriverDetails() {
                                 <h2>معلومات المركبة</h2>
                             </div>
                             <div className='col-span-3'>
-                                <div className='grid grid-cols-2 gap-5 mt-8'>
+                                <div className='grid grid-cols-2 gap-5 mt-3'>
 
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: 'نوع المركبة مطلوب' }} name='vehicle.vehicleTypeId' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='vehicle.vehicleTypeId' id='vehicle-fullName' label='نوع المركبة'
 
-                                            />
-                                        }
-                                        />
+                                        <Controller rules={{ required: 'يرجى اختيار نوع المركبة' }} name='vehicle.vehicleTypeId' control={control} render={({ field, fieldState }) =>
+                                            <FormControl fullWidth error={!!fieldState.error}>
+                                                <InputLabel id="vehcile-id-label">نوع المركبة</InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    name='vehicle.vehicleTypeId'
+                                                    labelId="vehcile-id-label"
+                                                    label="نوع المركبة"
+                                                >
+                                                    {
+                                                        vehcilesType.map((t) => <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>)
+                                                    }
+
+                                                </Select>
+                                                <FormHelperText>
+                                                    {fieldState.error?.message}
+                                                </FormHelperText>
+                                            </FormControl>
+                                        } />
                                     </div>
 
 
                                     <div className='col-span-1'>
                                         <Controller rules={{ required: 'لون مطلوب' }} name='vehicle.color' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error} fullWidth
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='vehicle.color' id='vehicle-phoneNumber' label='اللون'
+                                            <Box display={'flex'} gap={2} alignItems={'center'}>
 
-                                            />
+                                                <TextField error={!!fieldState.error}
+                                                    helperText={fieldState.error?.message}
+                                                    {...field} name='text' id='color' label='اللون'
+                                                    fullWidth
+
+                                                />
+                                                <TextField error={!!fieldState.error}
+                                                    helperText={fieldState.error?.message}
+                                                    {...field} name='text' id='color' variant='standard' sx={{ width: '40px' }} type="color" value={field.value} />
+                                            </Box>
                                         }
                                         />
                                     </div>
+
                                     <div className='col-span-1'>
 
 
@@ -270,7 +291,7 @@ export default function DriverDetails() {
                                                 {...field} name='vehicle.name' id='vehicle-name' label='اسم المركبة' fullWidth
 
                                             />
-                                            // <input type="color" />
+
                                         }
                                         />
                                     </div>
@@ -290,7 +311,7 @@ export default function DriverDetails() {
 
                             </div>
                             <div className='col-span-2 '>
-                                <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
+                                <Controller control={control} name='vehicle.imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
                                 />
                             </div>
 

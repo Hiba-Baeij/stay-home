@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-interface Base {
+export interface Base {
     name: string,
     id: string,
     imageFile?: File,

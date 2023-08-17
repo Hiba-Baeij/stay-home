@@ -54,7 +54,7 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            }).catch((er: Error) => {
+            }).then(() => EmployeeApi.fetchEmpolyee()).catch((er: Error) => {
                 setIsLoading(false);
                 toast.error(er.message, {
                     position: "top-right",
@@ -84,7 +84,7 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            }).catch((er: any) => {
+            }).then(() => EmployeeApi.fetchEmpolyee()).catch((er: any) => {
                 console.log(er);
 
                 setIsLoading(false);

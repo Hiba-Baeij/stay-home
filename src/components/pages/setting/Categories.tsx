@@ -76,7 +76,7 @@ export default function Categories() {
             })
             setIsLoading(false);
             setIsOpen(false)
-
+            SettingApi.fetchCategory()
         }).catch(() => setIsLoading(false))
 
     }
@@ -134,6 +134,7 @@ export default function Categories() {
                         theme: "light",
                         type: 'success'
                     })
+                    setSelected([])
                 }
                 )
             }

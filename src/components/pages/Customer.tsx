@@ -17,7 +17,7 @@ import { customerActions } from '@/store/customer';
 
 export default function DialogCustomer() {
     const [isLoading, setIsLoading] = useState(false);
-    const [gender, setGender] = useState('Female');
+    const [gender, setGender] = useState('');
     const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.customer.openDialogCustomer) as boolean;
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as Customer;
@@ -31,7 +31,9 @@ export default function DialogCustomer() {
         console.log(customerDto);
         if (customerDto && customerDto.id) {
             console.log("in Effect modify");
+            console.log(customerDto.gender);
             reset({ ...customerDto })
+
         }
     }, [customerDto])
     const onSubmit = (data: Customer) => {
@@ -53,6 +55,7 @@ export default function DialogCustomer() {
                     theme: "light",
                     type: 'success'
                 })
+                CustomerApi.fetchCustomer()
             }).catch((er: Error) => {
                 setIsLoading(false);
                 toast.error(er.message, {
@@ -83,6 +86,7 @@ export default function DialogCustomer() {
                     theme: "light",
                     type: 'success'
                 })
+                CustomerApi.fetchCustomer()
             }).catch((er: any) => {
                 console.log(er);
 
@@ -107,8 +111,9 @@ export default function DialogCustomer() {
     }
     const handleChange = (event: any, newValue: string) => {
         console.log(event.target.value);
+        console.log(newValue);
         setGender(event.target.value)
-        setValue('gender', newValue)
+        setValue('gender', event.target.value)
 
     };
     const modifyBlockCustomer = (blocked: boolean) => {
@@ -225,13 +230,12 @@ export default function DialogCustomer() {
                             <div className='col-span-2'>
 
                                 <FormLabel id="demo-radio-buttons-group-label">جنس الزبون</FormLabel>
-                                {/* {gender} */}
+                                {gender}
                                 <Controller name='gender' control={control} render={({ field }) => (
 
                                     <RadioGroup
                                         {...field}
                                         aria-labelledby="gender"
-                                        defaultValue="Female"
                                         name="gender"
                                         row
                                         value={gender}

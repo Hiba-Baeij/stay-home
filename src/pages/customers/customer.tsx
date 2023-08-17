@@ -55,24 +55,13 @@ export default function Customer() {
         })
     }
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = customers.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
-
     const handleSearch = (event: any) => {
         setSearchItem(event.target.value);
     };
 
-    // const filteredItems = customers.filter((item) => {
-    //     return (item.fullName.toLowerCase().includes(searchItem.toLowerCase()) ||
-    //         item.email.toLowerCase().includes(searchItem.toLowerCase()) ||
-    //         item.phoneNumber.toLowerCase().includes(searchItem.toLowerCase()))
-    // });
+    const filteredItems = customers.filter((item) => {
+        return (item.name?.toLowerCase().includes(searchItem.toLowerCase()))
+    });
 
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
@@ -96,6 +85,7 @@ export default function Customer() {
         setSelected(newSelected);
         console.log(selected);
     };
+
     const deleteCustomer = () => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
@@ -109,7 +99,7 @@ export default function Customer() {
             if (result.isConfirmed) {
                 CustomerApi.DeleteCustomer(selected).then(() => {
                     dispatch(customerActions.deleteCustomer(selected))
-                    toast('تمت الحذف بنجاح', {
+                    toast('تم الحذف بنجاح', {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -134,22 +124,8 @@ export default function Customer() {
                     <h2 className='text-lg font-bold'>الزبائن</h2>
                 </div>
                 <div className='flex justify-center items-center gap-3'>
-                    {/* <Select
-                        fullWidth
-                        name='isBlock'
-                        labelId="block-id-label"
-                        label="حالة"
-                        size='small'
-                    >
-
-                        <MenuItem value={'true'}>محظور</MenuItem>
-                        <MenuItem value={'false'}>غير محظور</MenuItem>
-                        <MenuItem value={''}>الكل</MenuItem>
-                    </Select> */}
                     <TextField fullWidth value={searchItem} onChange={handleSearch} size='small' sx={{ width: '300px' }} label='ابحث عن زبون' title='customer' name='customerSearch'></TextField>
-
                     <CustomerDialog />
-
                 </div>
 
             </div>
@@ -158,20 +134,7 @@ export default function Customer() {
                     width: '100%'
                 }}>
 
-                    {
-                        selected.length > 0 ?
-                            (
-                                <div className='flex justify-start items-center w-full px-2 mt-2'>
 
-                                    <Tooltip title="Delete">
-                                        <IconButton onClick={deleteCustomer}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                </div>
-
-                            ) : null
-                    }
                     {
                         isLoading ? <TableSkeleton headers={['', 'الاسم', 'المدينة', 'رقم الموبايل', 'تاريخ الميلاد', 'عدد الطلبات ', 'الحالة', 'تفاصيل']} />
 
@@ -179,13 +142,20 @@ export default function Customer() {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                                onChange={handleSelectAllClick}
-                                                inputProps={{
-                                                    'aria-label': 'select all desserts',
-                                                }}
-                                            />
+                                            {
+                                                selected.length > 0 ?
+                                                    (
+                                                        <div className='flex justify-start items-center w-full px-2 mt-2'>
+
+                                                            <Tooltip title="Delete">
+                                                                <IconButton onClick={deleteCustomer}>
+                                                                    <DeleteIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </div>
+
+                                                    ) : null
+                                            }
                                         </TableCell>
                                         <TableCell>الاسم</TableCell>
                                         <TableCell align="center"> المدينة</TableCell>
@@ -197,7 +167,7 @@ export default function Customer() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {customers ? paginate(customers).map((row: TypeCustomer, index: number) => {
+                                    {filteredItems ? paginate(filteredItems).map((row: TypeCustomer, index: number) => {
 
                                         return (
                                             <TableRow

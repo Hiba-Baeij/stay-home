@@ -9,7 +9,6 @@ export class Customer {
     email = "";
     fullName = "";
     password = "";
-
     isBlock?= false;
     gender = '';
 

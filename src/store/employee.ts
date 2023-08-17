@@ -36,6 +36,8 @@ const employeeSlice = createSlice({
                 state.employeeDto = { ...action.payload }
             }
             else {
+                console.log("in add employee");
+
                 state.employees.unshift({ ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 })
             }
         },

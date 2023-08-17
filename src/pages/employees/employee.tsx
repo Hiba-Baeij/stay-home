@@ -25,12 +25,12 @@ import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import TableSkeleton from '@/components/skeletons/table';
+import { getImageUrl } from '@/global/auth';
 
 export default function Employee() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const [searchItem, setSearchItem] = React.useState('');
-    const [searchDate, setSearchDate] = React.useState('');
     const employees = useSelector<RootState>(state => state.employee.employees) as TypeEmployee[];
     const swal = withReactContent(Swal)
     const { paginate, pagination, setPagination } = usePagination(6, 1)
@@ -50,9 +50,6 @@ export default function Employee() {
     const handleSearch = (event: any) => {
         setSearchItem(event.target.value);
     };
-    const handleFilerDate = (event: any) => {
-        setSearchDate(event.target.value);
-    };
 
 
     const filteredItems = employees.filter((item) => {
@@ -62,14 +59,7 @@ export default function Employee() {
     });
 
 
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = employees.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
+
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -100,7 +90,7 @@ export default function Employee() {
             if (result.isConfirmed) {
                 EmployeeApi.DeleteEmpolyee(selected).then(() => {
                     dispatch(employeeActions.deleteEmployee(selected))
-                    toast('تمت الحذف بنجاح', {
+                    toast('تم الحذف بنجاح', {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -110,9 +100,11 @@ export default function Employee() {
                         theme: "light",
                         type: 'success'
                     })
+                    setSelected([])
                 }
                 )
             }
+
         })
 
     }
@@ -139,22 +131,7 @@ export default function Employee() {
             }}>
 
 
-                {
-                    selected.length > 0 ?
 
-                        (
-                            <div className='flex justify-start items-center w-full px-2 mt-2'>
-
-                                <Tooltip title="Delete">
-                                    <IconButton onClick={deleteEmployee}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-
-                        ) : null
-
-                }
 
 
                 {
@@ -164,13 +141,22 @@ export default function Employee() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell padding="checkbox">
-                                        <Checkbox
-                                            color="primary"
-                                            onChange={handleSelectAllClick}
-                                            inputProps={{
-                                                'aria-label': 'select all desserts',
-                                            }}
-                                        />
+                                        {
+                                            selected.length > 0 ?
+
+                                                (
+                                                    <div className='flex justify-start items-center w-full px-2 mt-2'>
+
+                                                        <Tooltip title="Delete">
+                                                            <IconButton onClick={deleteEmployee}>
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </div>
+
+                                                ) : null
+
+                                        }
                                     </TableCell>
                                     <TableCell>الصورة</TableCell>
                                     <TableCell>الاسم</TableCell>
@@ -201,7 +187,7 @@ export default function Employee() {
                                                 />
                                             </TableCell>
                                             <TableCell component="th" scope="row" align="left">
-                                                <img width={40} height={40} src={`${IMAGE_URL + row.imageUrl}`} alt="image employee" className='rounded-full object-cover' />
+                                                <img width={40} height={40} src={getImageUrl(row.imageUrl)} alt="image employee" className='rounded-full object-cover' />
                                             </TableCell>
 
                                             <TableCell component="th" scope="row" align="left">
