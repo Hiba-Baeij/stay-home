@@ -102,7 +102,7 @@ export default function login() {
 
                     </form>
 
-                    <Grid container sx={{ marginTop: '50px' }}>
+                    {/* <Grid container sx={{ marginTop: '50px' }}>
                         <Grid item xs>
                             <Link href="/resetPassword" variant="body2">
                                 هل نسيت كلمة المرور؟
@@ -113,7 +113,7 @@ export default function login() {
                                 {"ليس لديك حساب؟ أنشئ الان "}
                             </Link>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
 
                     {/* </Box> */}
                 </Box>

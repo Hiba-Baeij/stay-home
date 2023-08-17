@@ -25,7 +25,7 @@ export default function DriverDetails() {
     const swal = withReactContent(Swal)
     const driverDto = useSelector<RootState>(state => state.driver.driverDto) as DriverDto;
     const dispatch = useDispatch<AppDispatch>()
-
+    const [imageUrl, setImageUrl] = useState('');
 
     const { handleSubmit, control, reset } = useForm<DriverDto>({
         defaultValues: { ...new DriverDto() }
@@ -221,66 +221,76 @@ export default function DriverDetails() {
 
 
                         </div>
-                        <div className='grid grid-cols-4 gap-5 mt-8'>
-                            <div className='col-span-4'>
+                        <div className='grid grid-cols-5 gap-5 mt-8'>
+                            <div className='col-span-5'>
                                 <h2>معلومات المركبة</h2>
                             </div>
-                            <div className='col-span-2 md:col-span-1'>
-                                <Controller rules={{ required: 'نوع المركبة مطلوب' }} name='vehicle.vehicleTypeId' control={control} render={({ field, fieldState }) =>
-                                    <TextField error={!!fieldState.error} fullWidth
-                                        helperText={fieldState.error?.message}
-                                        {...field} name='vehicle.vehicleTypeId' id='vehicle-fullName' label='نوع المركبة'
+                            <div className='col-span-3'>
+                                <div className='grid grid-cols-2 gap-5 mt-8'>
 
-                                    />
-                                }
-                                />
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: 'نوع المركبة مطلوب' }} name='vehicle.vehicleTypeId' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error} fullWidth
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='vehicle.vehicleTypeId' id='vehicle-fullName' label='نوع المركبة'
+
+                                            />
+                                        }
+                                        />
+                                    </div>
+
+
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: 'لون مطلوب' }} name='vehicle.color' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error} fullWidth
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='vehicle.color' id='vehicle-phoneNumber' label='اللون'
+
+                                            />
+                                        }
+                                        />
+                                    </div>
+                                    <div className='col-span-1'>
+
+
+                                        <Controller rules={{ required: ' رقم المركبة مطلوب' }} name='vehicle.number' control={control} render={({ field, fieldState }) =>
+                                            <TextField label='رقم المركبة' error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='vehicle.number' id='vehicle-number' sx={{ width: '100%' }} />
+                                        }
+                                        />
+                                    </div>
+
+                                    <div className='col-span-1'>
+
+                                        <Controller rules={{ required: ' اسم المركبة مطلوب' }} name='vehicle.name' control={control} render={({ field, fieldState }) =>
+
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='vehicle.name' id='vehicle-name' label='اسم المركبة' fullWidth
+
+                                            />
+                                            // <input type="color" />
+                                        }
+                                        />
+                                    </div>
+                                    <div className='col-span-1'>
+
+
+                                        <Controller rules={{ required: '  سعة المركبة مطلوبة' }} name='vehicle.maxCapacity' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message} fullWidth
+                                                {...field} name='vehicle.maxCapacity' id='vehicle-maxCapacity' label='سعة المركبة'
+
+                                            />
+                                        }
+                                        />
+                                    </div>
+                                </div>
+
                             </div>
-
-
-                            <div className='col-span-2 md:col-span-1'>
-                                <Controller rules={{ required: 'لون مطلوب' }} name='vehicle.color' control={control} render={({ field, fieldState }) =>
-                                    <TextField error={!!fieldState.error} fullWidth
-                                        helperText={fieldState.error?.message}
-                                        {...field} name='vehicle.color' id='vehicle-phoneNumber' label='اللون'
-
-                                    />
-                                }
-                                />
-                            </div>
-                            <div className='col-span-2 md:col-span-1'>
-
-
-                                <Controller rules={{ required: ' رقم المركبة مطلوب' }} name='vehicle.number' control={control} render={({ field, fieldState }) =>
-                                    <TextField label='رقم المركبة' error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                        {...field} name='vehicle.number' id='vehicle-number' sx={{ width: '100%' }} />
-                                }
-                                />
-                            </div>
-
-                            <div className='col-span-2 md:col-span-1'>
-
-                                <Controller rules={{ required: ' اسم المركبة مطلوب' }} name='vehicle.name' control={control} render={({ field, fieldState }) =>
-
-                                    <TextField error={!!fieldState.error}
-                                        helperText={fieldState.error?.message}
-                                        {...field} name='vehicle.name' id='vehicle-name' label='اسم المركبة' fullWidth
-
-                                    />
-                                    // <input type="color" />
-                                }
-                                />
-                            </div>
-                            <div className='col-span-2 md:col-span-1'>
-
-
-                                <Controller rules={{ required: '  سعة المركبة مطلوبة' }} name='vehicle.maxCapacity' control={control} render={({ field, fieldState }) =>
-                                    <TextField error={!!fieldState.error}
-                                        helperText={fieldState.error?.message} fullWidth
-                                        {...field} name='vehicle.maxCapacity' id='vehicle-maxCapacity' label='سعة المركبة'
-
-                                    />
-                                }
+                            <div className='col-span-2 '>
+                                <Controller control={control} name='imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
                                 />
                             </div>
 

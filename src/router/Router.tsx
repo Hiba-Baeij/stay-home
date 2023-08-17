@@ -16,6 +16,7 @@ import Shop from '@/pages/shops/shop'
 import Vehicle from '@/pages/vehicles/vehicle'
 import Rating from '@/pages/ratings/rating'
 import DriverDetails from '@/pages/drivers/driverDetails';
+import OrderDetails from '@/pages/orders/orderDetails';
 import { IsLoggedIn } from '@/global/auth'
 import ShopDetails from '../pages/shops/shopDetails';
 const routeList = [
@@ -133,6 +134,14 @@ function Router() {
                 <div className='h-screen'>
                     <Dashboard>
                         <ShopDetails />
+                    </Dashboard>
+                </div>
+            }>
+            </Route>
+            <Route path={`/order/:id`} element={
+                <div className='h-screen'>
+                    <Dashboard>
+                        <OrderDetails />
                     </Dashboard>
                 </div>
             }>

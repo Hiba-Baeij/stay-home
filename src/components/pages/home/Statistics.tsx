@@ -16,29 +16,29 @@ export default function Statistics() {
     const stats: Array<StatItem> = [
         {
             label: 'عدد الموظفين',
-            icon: BiUpArrow,
-            value: '152,000',
-            prefix: '$',
-            color: 'primary'
-        },
-        {
-            label: 'عدد السائقين',
-            icon: BiDownArrow,
-            value: '8,700',
-            prefix: '$',
-            color: 'error'
-        },
-        {
-            label: 'عدد الطلبات',
             icon: HiUsers,
-            value: '120',
+            value: '5',
             prefix: '+',
             color: 'primary'
         },
         {
-            label: 'عدد المنتجات',
+            label: 'عدد السائقين',
+            icon: HiUsers,
+            value: '7',
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد الطلبات',
             icon: FaBoxes,
-            value: '25',
+            value: '3',
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد المتاجر',
+            icon: FaBoxes,
+            value: '4',
             prefix: '+',
             color: 'primary'
         },
@@ -77,10 +77,7 @@ export default function Statistics() {
                                 </div>
 
                                 <Typography fontSize={
-                                    {
-                                        xs: 32,
-                                        md: 36
-                                    }
+                                    30
                                 } fontWeight={'bold'} >
                                     <span className='dark:text-gray-400 mx-1' >{s.prefix}</span>{s.value}
                                 </Typography>

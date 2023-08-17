@@ -6,6 +6,7 @@ import shopSlice from "@/store/shop"
 import productSlice from "@/store/product"
 import vehicleSlice from "@/store/vehicle"
 import driverSlice from "@/store/driver"
+import orderSlice from "@/store/order"
 export const store = configureStore({
     reducer: {
         employee: employeeSlice,
@@ -15,6 +16,7 @@ export const store = configureStore({
         product: productSlice,
         vehicle: vehicleSlice,
         driver: driverSlice,
+        order: orderSlice,
     }
 });
 
