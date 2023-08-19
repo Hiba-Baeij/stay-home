@@ -16,6 +16,10 @@ import { Area, settingActions } from './store/setting';
 import { useDarkMode } from 'usehooks-ts'
 import { darkTheme } from "@/themes/dark.theme";
 import { lightTheme } from "@/themes/light.theme";
+import { CustomerApi } from './api/customer/endpoints';
+import { customerActions } from './store/customer';
+import { DriverApi } from './api/driver/endpoints';
+import { driverActions } from './store/driver';
 
 // import 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap';
 
@@ -58,6 +62,16 @@ const StartupCalls = (props: React.PropsWithChildren) => {
   useQuery(['vechile'], SettingApi.fetchVehicle, {
     onSuccess: (data: { response: { name: string, id: string }[]; }) => {
       dispatch(settingActions.setVehicle(data.response))
+    },
+  })
+  useQuery(['customerName'], CustomerApi.getCustomerNames, {
+    onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+      dispatch(customerActions.setCustomerNames(data.response))
+    },
+  })
+  useQuery(['driverName'], DriverApi.getDriverNames, {
+    onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+      dispatch(driverActions.setDriverNames(data.response))
     },
   })
 

@@ -1,14 +1,52 @@
-import { Avatar, Box, Button, Card, CardContent, List, ListItem, ListItemAvatar, ListItemText, TextField, Divider } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, List, ListItem, ListItemAvatar, ListItemText, TextField, Divider, Select, FormControl, InputLabel, FormHelperText, MenuItem } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { OrderDetails } from '@/api/order/dto';
+import { useQuery } from '@tanstack/react-query';
+import { OrderApi } from '@/api/order/endpoints';
+import order, { orderActions } from '@/store/order';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/store';
+import { ProductApi } from '@/api/Product/endpoints';
+import { Product } from '@/api/Product/dto';
+import { productActions } from '@/store/product';
+import moment from 'moment';
 
 export default function orderDetails() {
+    let { id } = useParams();
     const navigation = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const shopId = queryParams.get('shopId')
+    const dispatch = useDispatch<AppDispatch>();
+    const orderDto = useSelector<RootState>(state => state.order.orderDto) as OrderDetails;
+    const products = useSelector<RootState>(state => state.product.products) as Product[];
+    const customerNames = useSelector<RootState>(state => state.customer.customerNames) as { fullName: string, id: string }[];
+
     const { handleSubmit, control, setValue, reset } = useForm<OrderDetails>({
         defaultValues: { ...new OrderDetails() }
     });
+
+
+    useQuery({
+        queryKey: ["orderDetails"],
+        queryFn: () => OrderApi.getOrderDetails(id as string),
+        onSuccess: (data: { response: OrderDetails }) => {
+            dispatch(orderActions.setOrderDto({
+                ...data.response, scheduleDate: moment(data.response.scheduleDate).format('YYYY-MM-DD')
+            }))
+            reset({ ...data.response })
+        },
+    })
+    useQuery({
+        queryKey: ["product"],
+        queryFn: () => ProductApi.fetchProduct(shopId as string),
+        onSuccess: (data: { response: Product[] }) => {
+            dispatch(productActions.setProduct(data.response))
+        },
+    })
+    const getProductName = (id: string) => products.find(ele => ele.id === id)?.name;
     return (
         <div>
             <div className='flex justify-between items-center w-full gap-5 '>
@@ -36,85 +74,120 @@ export default function orderDetails() {
                                 <h2 className='mb-6'>معلومات الطلب</h2>
                                 <div className='grid grid-cols-2 gap-8'>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: 'اسم الزبون مطلوب' }} name='customerId' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='customerId' id='customer-name' label='اسم الزبون'
+                                        <Controller name='customerId' control={control} render={({ field, fieldState }) =>
+                                            // <TextField error={!!fieldState.error}
+                                            //     helperText={fieldState.error?.message}
+                                            //     {...field} name='customerId' id='customer-name' label='اسم الزبون'
+                                            //     fullWidth
+                                            // />
+                                            <FormControl fullWidth error={!!fieldState.error}>
+                                                <InputLabel id="city-id-label">اسم الزبون</InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    name='customerId'
+                                                    labelId="customer-id"
+                                                    label=" اسم الزبون"
+                                                >
+                                                    {
+                                                        customerNames.map((c) => <MenuItem key={c.id} value={c.id}>{c.fullName}</MenuItem>)
+                                                    }
 
-                                            />
+                                                </Select>
+                                                <FormHelperText>
+                                                    {fieldState.error?.message}
+                                                </FormHelperText>
+                                            </FormControl>
                                         }
                                         />
 
                                     </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: 'تاريخ الطلب مطلوب' }} name='scheduleDate' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                type='date'
-                                                {...field} name='scheduleDate' id='date-order' label='تاريخ الطلب'
+                                    {
+                                        orderDto.scheduleDate ?
+                                            <div className='col-span-1'>
+                                                <Controller name='scheduleDate' control={control} render={({ field, fieldState }) =>
+                                                    <TextField error={!!fieldState.error}
+                                                        helperText={fieldState.error?.message}
+                                                        type='date'
+                                                        {...field} name='scheduleDate' id='date-order' label='تاريخ الطلب'
+                                                        fullWidth
+                                                    />
+                                                }
+                                                />
 
-                                            />
-                                        }
-                                        />
-
-                                    </div>
+                                            </div> : null
+                                    }
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: ' التكلفة مطلوبة' }} name='coast' control={control} render={({ field, fieldState }) =>
+                                        <Controller name='coast' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
                                                 type='number'
                                                 helperText={fieldState.error?.message}
-                                                {...field} name='coast' id='cost' label='التكلفة'
-
+                                                {...field} name='coast' id='cost' label='تكلفة الطلب'
+                                                fullWidth
                                             />
                                         }
                                         />
 
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: ' المصدر مطلوب' }} name='source' control={control} render={({ field, fieldState }) =>
+                                        <Controller name='deliveryCoast' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                type='number'
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='deliveryCoast' id='deliveryCoast' label='تكلفة التوصيل'
+                                                fullWidth
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller name='source' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
                                                 helperText={fieldState.error?.message}
                                                 {...field} name='source' id='source' label=' المصدر'
-
+                                                fullWidth
                                             />
                                         }
                                         />
 
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: ' الوجهة مطلوبة' }} name='destination' control={control} render={({ field, fieldState }) =>
+                                        <Controller name='destination' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
                                                 helperText={fieldState.error?.message}
                                                 {...field} name='destination' id='destination' label='الوجهة'
-
+                                                fullWidth
                                             />
                                         }
                                         />
 
                                     </div>
                                     <div className='col-span-1'>
-                                        <Controller rules={{ required: ' الملاحظة مطلوبة' }} name='note' control={control} render={({ field, fieldState }) =>
+                                        <Controller name='note' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
                                                 helperText={fieldState.error?.message}
                                                 {...field} name='note' id='note' label=' الملاحظة'
-
+                                                fullWidth
                                             />
                                         }
                                         />
 
                                     </div>
-                                    <div className='col-span-1'>
-                                        <Controller rules={{ required: ' الوزن مطلوب' }} name='weight' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='weight' id='weight' label='الوزن'
-                                                type='number'
+                                    {
+                                        orderDto.weight !== 0 ?
+                                            <div className='col-span-1'>
+                                                <Controller name='weight' control={control} render={({ field, fieldState }) =>
+                                                    <TextField error={!!fieldState.error}
+                                                        helperText={fieldState.error?.message}
+                                                        {...field} name='weight' id='weight' label='الوزن'
+                                                        type='number'
+                                                        fullWidth
+                                                    />
+                                                }
+                                                />
 
-                                            />
-                                        }
-                                        />
-
-                                    </div>
+                                            </div> : null
+                                    }
                                 </div>
                             </CardContent>
                         </form>
@@ -126,23 +199,27 @@ export default function orderDetails() {
                         <CardContent>
                             <h2 className='mb-6'>سلة المشتريات</h2>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                                <ListItem alignItems="flex-start" >
-                                    <Avatar alt="Remy Sharp" src="/brgur.jpg" />
-                                    <span className='mx-6'>برغر</span>
-                                    <span>(2)</span>
-
-
-                                </ListItem>
-                                <ListItem alignItems="flex-start">
+                                {
+                                    orderDto.cart.length > 0 ? orderDto.cart.map((ele) => {
+                                        return (
+                                            <ListItem key={ele.productId} alignItems="flex-start" >
+                                                <Avatar alt="Remy Sharp" src="/brgur.jpg" />
+                                                <span className='mx-6'>{getProductName(ele.productId)}</span>
+                                                <span>({ele.quantity})</span>
+                                            </ListItem>
+                                        )
+                                    }) : <h2 className='font-bold text-lg text-center'>لايوجد منتجات</h2>
+                                }
+                                {/* <ListItem alignItems="flex-start">
 
                                     <Avatar alt="Remy Sharp" src="/pizza.jpg" />
                                     <span className='mx-6'>بيتزا</span>
                                     <span>(1)</span>
 
-                                </ListItem>
+                                </ListItem> */}
                             </List>
                             <Divider />
-                            <h2 className='my-4 font-bold text-center'>50000 ل.س</h2>
+                            <h2 className='my-4 font-bold text-center'>{orderDto.coast} ل.س</h2>
                         </CardContent>
                     </Card>
 

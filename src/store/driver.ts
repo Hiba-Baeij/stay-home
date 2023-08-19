@@ -1,16 +1,24 @@
 
 import { Driver, DriverDto } from "@/api/driver/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+interface DriverName {
+    id: string,
+    fullName: string
+}
 interface initialState {
     drivers: Driver[],
     openDialogDriver: boolean,
     driverDto: DriverDto,
+    driverNames: DriverName[],
+
 }
 
 const state: initialState = {
     drivers: [],
     driverDto: { ...new DriverDto() },
-    openDialogDriver: false
+    openDialogDriver: false,
+    driverNames: []
+
 }
 
 const driverSlice = createSlice({
@@ -19,6 +27,10 @@ const driverSlice = createSlice({
     reducers: {
         setDriver(state: initialState, action: PayloadAction<Driver[]>) {
             state.drivers = action.payload
+        },
+
+        setDriverNames(state: initialState, action: PayloadAction<DriverName[]>) {
+            state.driverNames = action.payload
         },
 
         setBlocked(state: initialState, action: PayloadAction<boolean>) {

@@ -185,7 +185,7 @@ export default function Driver() {
                                             </TableCell> */}
 
                                             <TableCell component="th" scope="row" align="left">
-                                                {row.name}
+                                                {row.fullName}
                                             </TableCell>
                                             <TableCell align="center">{row.phoneNumber}</TableCell>
                                             <TableCell align="center">{new Date(row.birthDate).toLocaleDateString()}</TableCell>

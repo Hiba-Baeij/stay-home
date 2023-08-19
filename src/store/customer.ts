@@ -1,16 +1,22 @@
 
 import { Customer } from "@/api/customer/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+interface CustomerName {
+    id: string,
+    fullName: string
+}
 interface initialState {
     customers: Customer[],
     openDialogCustomer: boolean,
     customerDto: Customer,
+    customerNames: CustomerName[],
 }
 
 const state: initialState = {
     customers: [],
     customerDto: { ...new Customer() },
-    openDialogCustomer: false
+    openDialogCustomer: false,
+    customerNames: []
 }
 
 const customerSlice = createSlice({
@@ -31,6 +37,10 @@ const customerSlice = createSlice({
             else {
                 state.customers.unshift({ ...action.payload, orderCount: 0 })
             }
+
+        },
+        setCustomerNames(state: initialState, action: PayloadAction<CustomerName[]>) {
+            state.customerNames = action.payload
 
         },
 

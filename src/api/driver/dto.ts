@@ -1,7 +1,7 @@
 export class Driver {
     id?= '';
-    // fullName = "";
-    name = "";
+    fullName = "";
+    // name = "";
     phoneNumber = '';
     isAvailable = false;
     email?= "";

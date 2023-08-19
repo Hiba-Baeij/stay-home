@@ -26,6 +26,17 @@ export class CustomerApi {
         }
 
     }
+    static getCustomerNames = async () => {
+        try {
+            const res = await axiosIns.get(API_CUSTOMER.GetNames);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
     static getCustomerDetails = async (id: string) => {
         try {
             const res = await axiosIns.get(API_CUSTOMER.GetById + `?id=${id}`);

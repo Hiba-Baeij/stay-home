@@ -24,14 +24,25 @@ import TableSkeleton from '@/components/skeletons/table';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { ShopApi } from '@/api/shop/endpoints';
+import { Shop } from '@/api/shop/dto';
+import { shopActions } from '@/store/shop';
+import { LoadingButton } from '@mui/lab';
 
 export default function Order() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const [searchItem, setSearchItem] = React.useState('');
+    const [driverId, setDriverId] = React.useState('');
     const [orderId, setOrderId] = React.useState('');
+    const [loadingHandle, setLoadingHandle] = React.useState(false);
     const orders = useSelector<RootState>(state => state.order.orders) as TypeOrder[];
+    const customerNames = useSelector<RootState>(state => state.customer.customerNames) as { fullName: string, id: string }[];
+    const driverNames = useSelector<RootState>(state => state.driver.driverNames) as { fullName: string, id: string }[];
+    const shops = useSelector<RootState>(state => state.shop.shops) as Shop[];
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
+    const getCustomerName = (id: string) => customerNames.find(ele => ele.id === id)?.fullName
+    const getShopName = (id: string) => shops.find(ele => ele.id === id)?.name
     const navigation = useNavigate();
     const swal = withReactContent(Swal)
     const { paginate, pagination, setPagination } = usePagination(6, 1)
@@ -40,17 +51,21 @@ export default function Order() {
             dispatch(orderActions.setOrder(data.response))
         },
     })
+    useQuery(['shop'], ShopApi.fetchShop, {
+        onSuccess: (data: { response: Shop[]; }) => {
+            dispatch(shopActions.setShop(data.response))
+        },
+    })
 
     function getDetails(item: TypeOrder) {
         dispatch(orderActions.setOrderDialog(true));
-        OrderApi.getOrderDetails(item.id as string).then((data: { response: OrderDetails }) => {
-            dispatch(orderActions.setOrderDto(data.response))
-        })
         setOrderId(item.id)
+        // navigation(`/order/${item.id}?shopId=${item.shopId}`)
     }
     function handleOrder() {
         // dispatch(orderActions.setOrderDialog(true));
-        OrderApi.HandleOrder({ driverId: '', id: orderId }).then((data: { response: OrderDetails }) => {
+        setLoadingHandle(true)
+        OrderApi.HandleOrder({ driverId: driverId, id: orderId }).then((data: { response: OrderDetails }) => {
             dispatch(orderActions.setOrderDto(data.response))
             toast('تمت المعالجة بنجاح', {
                 position: "top-right",
@@ -62,7 +77,10 @@ export default function Order() {
                 theme: "light",
                 type: 'success'
             })
-            navigation(`/order/${data.response.id}`)
+            dispatch(orderActions.setOrderDialog(false));
+            navigation(`/order/${item.id}?shopId=${item.shopId}`)
+
+            setLoadingHandle(false)
         })
     }
 
@@ -78,15 +96,11 @@ export default function Order() {
     //         item.phoneNumber.toLowerCase().includes(searchItem.toLowerCase()))
     // });
 
-
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = orders.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
+    const handleSelectChange = (event: any) => {
+        const newValue = event.target.value;
+        setDriverId(newValue);
     };
+
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -104,53 +118,7 @@ export default function Order() {
         }
         setSelected(newSelected);
     };
-    // const array = [
-    //     {
-    //         id: "",
-    //         customerId: "Majd Sallora",
-    //         destination: "حلب, جميلية",
-    //         isScheduled: true,
-    //         source: "حلب, الفرقان",
-    //         shopId: "مفروشات الفتال"
-    //     },
-    //     {
-    //         id: "",
-    //         customerId: "Aisha Biazed",
-    //         destination: "دمشق, المزة",
-    //         isScheduled: true,
-    //         source: "دمشق, باب توما",
-    //         shopId: "شوبينغ للالبسة"
-    //     },
-    // ]
-    // const deleteOrder = () => {
-    //     swal.fire({
-    //         title: 'هل انت متأكد من الحذف؟ ',
-    //         text: "لن تتمكن من التراجع عن هذا!",
-    //         icon: 'warning',
-    //         confirmButtonText: 'نعم',
-    //         cancelButtonText: 'الغاء',
-    //         showCancelButton: true,
-    //         showCloseButton: true
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             OrderApi.DeleteOrder(selected).then(() => {
-    //                 dispatch(orderActions.deleteEmployee(selected))
-    //                 toast('تمت الحذف بنجاح', {
-    //                     position: "top-right",
-    //                     autoClose: 5000,
-    //                     hideProgressBar: false,
-    //                     closeOnClick: true,
-    //                     pauseOnHover: true,
-    //                     progress: undefined,
-    //                     theme: "light",
-    //                     type: 'success'
-    //                 })
-    //             }
-    //             )
-    //         }
-    //     })
 
-    // }
     return (
         <Box sx={{ width: '100%' }}>
             <div className='flex justify-between items-center w-full gap-5 my-5'>
@@ -176,27 +144,27 @@ export default function Order() {
                 <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
 
                     <InputLabel id="city-id-label">السائق</InputLabel>
+                    {driverId}
                     <Select
-
                         name='driverId'
                         labelId="driver-id-label"
                         label=" اسم السائق"
+                        value={driverId}
+                        onChange={handleSelectChange}
                     >
-                        <MenuItem>Nasser Nassan</MenuItem>
-                        <MenuItem>Ahmad Hader</MenuItem>
-                        <MenuItem>Baraa Nayyal</MenuItem>
-                        <MenuItem>Taym Khalil</MenuItem>
-                        <MenuItem>Najeb Hallak</MenuItem>
-
+                        {driverNames.map((ele) => <MenuItem key={ele.id} value={ele.id}>{ele.fullName}</MenuItem>)}
 
                     </Select>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center', padding: '15px' }}>
                     <Box gap={2} display='flex'>
-
-                        <Button variant='contained' type="submit" onClick={handleOrder}>
-                            معالجة
-                        </Button>
+                        {
+                            loadingHandle ? <LoadingButton loading variant='contained'></LoadingButton>
+                                :
+                                <Button variant='contained' type="submit" onClick={handleOrder}>
+                                    معالجة
+                                </Button>
+                        }
 
                         <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء</Button>
                     </Box>
@@ -261,14 +229,14 @@ export default function Order() {
 
 
                                             <TableCell component="th" scope="row" align="left">
-                                                {row.customerId}
+                                                {getCustomerName(row.customerId)}
                                             </TableCell>
                                             <TableCell align="center">{row.destination}</TableCell>
                                             <TableCell align="center">{row.source} </TableCell>
                                             {/* <TableCell align="center">{row.isScheduled } </TableCell> */}
                                             <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>
 
-                                            <TableCell align="center">{row.shopId}</TableCell>
+                                            <TableCell align="center">{getShopName(row.shopId)}</TableCell>
                                             <TableCell align="center">
                                                 <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
                                             </TableCell>

@@ -25,6 +25,19 @@ export class DriverApi {
         }
 
     }
+
+    static getDriverNames = async () => {
+        try {
+            const res = await axiosIns.get(API_DRIVER.GetNames);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+
     static getDriverDetails = async (id: string) => {
         try {
             const res = await axiosIns.get(API_DRIVER.GetById + `?id=${id}`);

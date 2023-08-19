@@ -60,7 +60,7 @@ export default function Customer() {
     };
 
     const filteredItems = customers.filter((item) => {
-        return (item.name?.toLowerCase().includes(searchItem.toLowerCase()))
+        return (item.fullName?.toLowerCase().includes(searchItem.toLowerCase()))
     });
 
     const handleClick = (id: string) => {
@@ -129,6 +129,7 @@ export default function Customer() {
                 </div>
 
             </div>
+
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <TableContainer component={Paper} sx={{
                     width: '100%'
@@ -186,7 +187,7 @@ export default function Customer() {
                                                 </TableCell>
 
                                                 <TableCell component="th" scope="row" align="left">
-                                                    {row.name}
+                                                    {row.fullName}
                                                 </TableCell>
                                                 <TableCell align="center" component="th" scope="row" >
                                                     {getCityName(row.cityId)}
