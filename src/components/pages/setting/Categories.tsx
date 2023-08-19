@@ -62,8 +62,8 @@ export default function Categories() {
     function addMoreCategory() {
         setIsLoading(true);
         console.log(dto);
-        SettingApi.UpsertCategory({ ...dto, id: dto.id == '' ? null : dto.id, imageFile: imageFile }).then(() => {
-            dispatch(settingActions.UpsertCategory(dto))
+        SettingApi.UpsertCategory({ ...dto, id: dto.id == '' ? null : dto.id, imageFile: imageFile }).then((res) => {
+            dispatch(settingActions.UpsertCategory(res.response))
             toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
                 position: "top-right",
                 autoClose: 5000,
@@ -76,7 +76,7 @@ export default function Categories() {
             })
             setIsLoading(false);
             setIsOpen(false)
-            SettingApi.fetchCategory()
+
         }).catch(() => setIsLoading(false))
 
     }
@@ -124,7 +124,7 @@ export default function Categories() {
             if (result.isConfirmed) {
                 SettingApi.DeleteCategory(selected).then(() => {
                     dispatch(settingActions.deleteCategory(selected))
-                    toast('تمت الحذف الصنف بنجاح', {
+                    toast('تم الحذف الصنف بنجاح', {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: false,

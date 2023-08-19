@@ -16,9 +16,6 @@ import { AppDispatch, RootState } from '@/store';
 import { orderActions } from '@/store/order';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { IMAGE_URL } from '@/../app.config';
-import moment from 'moment';
-import PersonIcon from '@mui/icons-material/Person';
 import { useQuery } from '@tanstack/react-query';
 import { usePagination } from "@/global/usePagination"
 import Swal from 'sweetalert2'
@@ -26,14 +23,16 @@ import withReactContent from 'sweetalert2-react-content'
 import TableSkeleton from '@/components/skeletons/table';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Close } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Order() {
     const [selected, setSelected] = React.useState<string[]>([]);
     const dispatch = useDispatch<AppDispatch>()
     const [searchItem, setSearchItem] = React.useState('');
+    const [orderId, setOrderId] = React.useState('');
     const orders = useSelector<RootState>(state => state.order.orders) as TypeOrder[];
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
-
+    const navigation = useNavigate();
     const swal = withReactContent(Swal)
     const { paginate, pagination, setPagination } = usePagination(6, 1)
     const { isLoading } = useQuery(['order'], OrderApi.fetchOrder, {
@@ -46,6 +45,24 @@ export default function Order() {
         dispatch(orderActions.setOrderDialog(true));
         OrderApi.getOrderDetails(item.id as string).then((data: { response: OrderDetails }) => {
             dispatch(orderActions.setOrderDto(data.response))
+        })
+        setOrderId(item.id)
+    }
+    function handleOrder() {
+        // dispatch(orderActions.setOrderDialog(true));
+        OrderApi.HandleOrder({ driverId: '', id: orderId }).then((data: { response: OrderDetails }) => {
+            dispatch(orderActions.setOrderDto(data.response))
+            toast('تمت المعالجة بنجاح', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                progress: undefined,
+                theme: "light",
+                type: 'success'
+            })
+            navigation(`/order/${data.response.id}`)
         })
     }
 
@@ -87,24 +104,24 @@ export default function Order() {
         }
         setSelected(newSelected);
     };
-    const array = [
-        {
-            id: "",
-            customerId: "Majd Sallora",
-            destination: "حلب, جميلية",
-            isScheduled: true,
-            source: "حلب, الفرقان",
-            shopId: "مفروشات الفتال"
-        },
-        {
-            id: "",
-            customerId: "Aisha Biazed",
-            destination: "دمشق, المزة",
-            isScheduled: true,
-            source: "دمشق, باب توما",
-            shopId: "شوبينغ للالبسة"
-        },
-    ]
+    // const array = [
+    //     {
+    //         id: "",
+    //         customerId: "Majd Sallora",
+    //         destination: "حلب, جميلية",
+    //         isScheduled: true,
+    //         source: "حلب, الفرقان",
+    //         shopId: "مفروشات الفتال"
+    //     },
+    //     {
+    //         id: "",
+    //         customerId: "Aisha Biazed",
+    //         destination: "دمشق, المزة",
+    //         isScheduled: true,
+    //         source: "دمشق, باب توما",
+    //         shopId: "شوبينغ للالبسة"
+    //     },
+    // ]
     // const deleteOrder = () => {
     //     swal.fire({
     //         title: 'هل انت متأكد من الحذف؟ ',
@@ -177,11 +194,11 @@ export default function Order() {
                 <DialogActions sx={{ justifyContent: 'center', padding: '15px' }}>
                     <Box gap={2} display='flex'>
 
-                        <Button variant='contained' type="submit">
+                        <Button variant='contained' type="submit" onClick={handleOrder}>
                             معالجة
                         </Button>
 
-                        <Button variant='outlined' >الغاء</Button>
+                        <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء</Button>
                     </Box>
                 </DialogActions>
 
@@ -192,25 +209,6 @@ export default function Order() {
 
             }}>
 
-
-                {
-                    selected.length > 0 ?
-
-                        (
-                            <div className='flex justify-start items-center w-full px-2 mt-2'>
-
-                                <Tooltip title="Delete">
-                                    <IconButton>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </div>
-
-                        ) : null
-
-                }
-
-
                 {
                     isLoading ? <TableSkeleton headers={['', 'اسم الزبون', ' الوجهة', 'المصدر', 'حالة الطلب', 'اسم المتجر', 'تفاصيل']} />
 
@@ -218,13 +216,22 @@ export default function Order() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell padding="checkbox">
-                                        <Checkbox
-                                            color="primary"
-                                            onChange={handleSelectAllClick}
-                                            inputProps={{
-                                                'aria-label': 'select all desserts',
-                                            }}
-                                        />
+                                        {
+                                            selected.length > 0 ?
+
+                                                (
+                                                    <div className='flex justify-start items-center w-full px-2 mt-2'>
+
+                                                        <Tooltip title="Delete">
+                                                            <IconButton>
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </div>
+
+                                                ) : null
+
+                                        }
                                     </TableCell>
                                     <TableCell > اسم الزبون</TableCell>
                                     <TableCell align="center">الوجهة</TableCell>
@@ -235,7 +242,7 @@ export default function Order() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {array ? array.map((row: TypeOrder, index: number) => {
+                                {orders ? paginate(orders).map((row: TypeOrder, index: number) => {
                                     return (
                                         <TableRow
                                             hover

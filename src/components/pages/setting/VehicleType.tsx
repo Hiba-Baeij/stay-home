@@ -48,8 +48,8 @@ export default function VehicleType() {
     function addMoreVehicle() {
         setIsLoading(true);
         console.log(dto);
-        SettingApi.UpsertVehicle({ ...dto, id: dto.id == '' ? null : dto.id }).then(() => {
-            dispatch(settingActions.upsertVehicle(dto))
+        SettingApi.UpsertVehicle({ ...dto, id: dto.id == '' ? null : dto.id }).then((res) => {
+            dispatch(settingActions.upsertVehicle(res.response))
             toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
                 position: "top-right",
                 autoClose: 5000,

@@ -27,8 +27,17 @@ const driverSlice = createSlice({
         },
 
         setDriverDto(state: initialState, action: PayloadAction<DriverDto>) {
+            action.payload.vehicle.imageFile = null
+
 
             state.driverDto = { ...action.payload }
+
+
+        },
+        addDriver(state: initialState, action: PayloadAction<Driver>) {
+
+
+            state.drivers.unshift(action.payload)
 
 
         },

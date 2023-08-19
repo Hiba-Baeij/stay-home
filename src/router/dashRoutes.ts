@@ -12,9 +12,6 @@ import Customer from '@/pages/customers/customer';
 import Driver from '@/pages/drivers/driver';
 import Shop from '@/pages/shops/shop';
 import Order from '@/pages/orders/order';
-import Vehicle from '@/pages/vehicles/vehicle';
-import Rating from '@/pages/ratings/rating';
-import Notifiation from '@/pages/notifications/notifiation';
 import Setting from '@/pages/settings/setting';
 
 export const navLinks = [

@@ -27,7 +27,7 @@ export default function DriverDetails() {
     const dispatch = useDispatch<AppDispatch>()
     const [imageUrl, setImageUrl] = useState('');
     const vehcilesType = useSelector<RootState>(state => state.setting.vehicles) as { name: string, id: string }[];
-    const { handleSubmit, control, reset } = useForm<DriverDto>({
+    const { handleSubmit, setValue, control, reset } = useForm<DriverDto>({
         defaultValues: { ...new DriverDto() }
     });
 
@@ -39,6 +39,8 @@ export default function DriverDetails() {
         onSuccess: (data: { response: DriverDto }) => {
             dispatch(driverActions.setDriverDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
             reset({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') })
+            // setValue('vehicle.imageUrl', data.response.vehicle.imageUrl)
+            // setImageUrl(data.response.vehicle.imageUrl)
 
         },
     });
@@ -46,8 +48,8 @@ export default function DriverDetails() {
     const onSubmit = (data: DriverDto) => {
         if (id != "0") {
             setIsLoading(true)
-            DriverApi.ModifyDriver(data).then(() => {
-                dispatch(driverActions.setDriverDto({ ...data }))
+            DriverApi.ModifyDriver(data).then((res) => {
+                dispatch(driverActions.setDriverDto(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تم تعديل بنجاح', {
@@ -65,8 +67,8 @@ export default function DriverDetails() {
         }
         else {
             setIsLoading(true)
-            DriverApi.AddDriver(data).then(() => {
-                dispatch(driverActions.setDriverDto(data))
+            DriverApi.AddDriver(data).then((res) => {
+                dispatch(driverActions.addDriver(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -134,7 +136,7 @@ export default function DriverDetails() {
                             isLoading ?
                                 <LoadingButton loading variant='contained'></LoadingButton>
                                 :
-                                <Button variant='contained' type="submit">إضافة </Button>
+                                <Button variant='contained' type="submit">{driverDto.id ? 'تعديل' : 'اضافة'} </Button>
                         }
                         {
                             driverDto.id ?
@@ -311,7 +313,20 @@ export default function DriverDetails() {
 
                             </div>
                             <div className='col-span-2 '>
-                                <Controller control={control} name='vehicle.imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
+                                {imageUrl}
+                                {/* <Controller control={control} name='vehicle.imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
+                                /> */}
+
+                                <Controller
+                                    control={control} name='vehicle.imageFile' render={({ field, fieldState }) =>
+
+                                        <FormControl error={!!fieldState.error} fullWidth>
+                                            <Upload {...field} url={imageUrl} onChangeUrl={setImageUrl} name='vehicle.imageFile' label='صورة المركبة'></Upload>
+                                            <FormHelperText>
+                                                {fieldState.error?.message}
+                                            </FormHelperText>
+                                        </FormControl>
+                                    }
                                 />
                             </div>
 

@@ -43,7 +43,7 @@ export default function Employee() {
     function getDetails(item: TypeEmployee) {
         dispatch(employeeActions.setEmployeeDialog(true))
         EmployeeApi.getEmpolyeeDetails(item.id as string).then((data: { response: TypeEmployee }) => {
-            dispatch(employeeActions.setEmployeeFormDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
+            dispatch(employeeActions.setEmployeeDto({ ...data.response, birthDate: moment(data.response.birthDate).format('YYYY-MM-DD') }))
         })
     }
 

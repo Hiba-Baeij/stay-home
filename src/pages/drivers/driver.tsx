@@ -51,15 +51,6 @@ export default function Driver() {
     //     })
     // }
 
-
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = drivers.map((n: any) => n.name);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -202,7 +193,7 @@ export default function Driver() {
                                             <TableCell align="center">{row.isAvailable ? <Chip label="متاح" color="secondary" variant='outlined' /> : <Chip label="غير متاح" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isBlock ? <Chip label="محظور" color="error" variant='outlined' /> : <Chip label="غير محظور" color="primary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">
-                                                <MoreVertIcon onClick={() => navigation(`/drivers/${row.id}`)} />
+                                                <MoreVertIcon onClick={() => navigation(`/driver/${row.id}`)} />
                                             </TableCell>
                                         </TableRow>
                                     )

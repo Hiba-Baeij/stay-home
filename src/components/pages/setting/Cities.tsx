@@ -51,8 +51,8 @@ export default function Countries() {
     function addMoreCity() {
         setIsLoading(true);
         console.log(dto);
-        SettingApi.UpsertCity({ ...dto, id: dto.id == '' ? null : dto.id }).then(() => {
-            dispatch(settingActions.UpsertCity(dto))
+        SettingApi.UpsertCity({ ...dto, id: dto.id == '' ? null : dto.id }).then((res) => {
+            dispatch(settingActions.UpsertCity(res.response))
             toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
                 position: "top-right",
                 autoClose: 5000,

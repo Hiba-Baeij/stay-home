@@ -17,7 +17,7 @@ import { customerActions } from '@/store/customer';
 
 export default function DialogCustomer() {
     const [isLoading, setIsLoading] = useState(false);
-    const [gender, setGender] = useState('');
+    const [gender, setGender] = useState('Male');
     const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.customer.openDialogCustomer) as boolean;
     const customerDto = useSelector<RootState>(state => state.customer.customerDto) as Customer;
@@ -33,6 +33,7 @@ export default function DialogCustomer() {
             console.log("in Effect modify");
             console.log(customerDto.gender);
             reset({ ...customerDto })
+            setGender(customerDto.gender)
 
         }
     }, [customerDto])
@@ -105,9 +106,10 @@ export default function DialogCustomer() {
         }
     };
     const resetForm = () => {
-        reset({ ...new Customer(), id: '' });
+        reset({ ...new Customer(), id: '', gender: '' });
         dispatch(customerActions.setCustomerDialog(false));
         dispatch(customerActions.resetForm());
+        setGender('')
     }
     const handleChange = (event: any, newValue: string) => {
         console.log(event.target.value);
@@ -230,7 +232,7 @@ export default function DialogCustomer() {
                             <div className='col-span-2'>
 
                                 <FormLabel id="demo-radio-buttons-group-label">جنس الزبون</FormLabel>
-                                {gender}
+
                                 <Controller name='gender' control={control} render={({ field }) => (
 
                                     <RadioGroup
@@ -238,6 +240,7 @@ export default function DialogCustomer() {
                                         aria-labelledby="gender"
                                         name="gender"
                                         row
+                                        defaultValue={gender}
                                         value={gender}
                                         onChange={handleChange}
 

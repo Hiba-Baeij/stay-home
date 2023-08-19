@@ -29,17 +29,21 @@ const employeeSlice = createSlice({
         },
 
 
-        setEmployeeFormDto(state: initialState, action: PayloadAction<Employee>) {
+        setEmployeeDto(state: initialState, action: PayloadAction<Employee>) {
             delete action.payload.imageFile
 
-            if (action.payload.id) {
-                state.employeeDto = { ...action.payload }
-            }
-            else {
-                console.log("in add employee");
+            state.employeeDto = { ...action.payload }
 
-                state.employees.unshift({ ...action.payload, dateCreated: new Date().toLocaleDateString(), handledOrdersCount: 0 })
-            }
+
+        },
+
+        addEmploye(state: initialState, action: PayloadAction<Employee>) {
+            console.log("in addddddd");
+
+            delete action.payload.imageFile
+
+            state.employees.unshift({ ...action.payload, dateCreated: "", handledOrdersCount: 0 })
+
         },
         resetForm(state: initialState) {
             state.employeeDto = { ... new Employee() }

@@ -19,7 +19,6 @@ import { IMAGE_URL } from '@/../app.config';
 
 export default function DialogEmployee() {
     const [imageUrl, setImageUrl] = useState('');
-    // const [imageFile, setImageFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isBlocked, setIsBlocked] = useState(false);
     const isOpen = useSelector<RootState>(state => state.employee.openDialogEmployee) as boolean;
@@ -41,7 +40,7 @@ export default function DialogEmployee() {
         if (data.id) {
             setIsLoading(true)
             EmployeeApi.ModifyEmpolyee(data).then((res) => {
-                dispatch(employeeActions.modifyEmployee({ ...res.response }))
+                dispatch(employeeActions.modifyEmployee(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تم التعديل بنجاح', {
@@ -54,7 +53,7 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            }).then(() => EmployeeApi.fetchEmpolyee()).catch((er: Error) => {
+            }).catch((er: Error) => {
                 setIsLoading(false);
                 toast.error(er.message, {
                     position: "top-right",
@@ -70,8 +69,8 @@ export default function DialogEmployee() {
         }
         else {
             setIsLoading(true)
-            EmployeeApi.AddEmpolyee(data).then(() => {
-                dispatch(employeeActions.setEmployeeFormDto({ ...data }))
+            EmployeeApi.AddEmpolyee(data).then((res) => {
+                dispatch(employeeActions.addEmploye(res.response))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {
@@ -84,7 +83,7 @@ export default function DialogEmployee() {
                     theme: "light",
                     type: 'success'
                 })
-            }).then(() => EmployeeApi.fetchEmpolyee()).catch((er: any) => {
+            }).catch((er: any) => {
                 console.log(er);
 
                 setIsLoading(false);

@@ -1,8 +1,14 @@
 import { Avatar, Box, Button, Card, CardContent, List, ListItem, ListItemAvatar, ListItemText, TextField, Divider } from '@mui/material';
-import React from 'react'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useNavigate } from 'react-router-dom';
+import { Controller, useForm } from 'react-hook-form';
+import { OrderDetails } from '@/api/order/dto';
 
 export default function orderDetails() {
+    const navigation = useNavigate();
+    const { handleSubmit, control, setValue, reset } = useForm<OrderDetails>({
+        defaultValues: { ...new OrderDetails() }
+    });
     return (
         <div>
             <div className='flex justify-between items-center w-full gap-5 '>
@@ -15,59 +21,103 @@ export default function orderDetails() {
                 </div>
                 <Box gap={2} display='flex' sx={{ marginY: '20px' }}>
 
-                    <Button variant='contained' type="submit">تم التوصيل </Button>
+                    {/* <Button variant='contained' type="submit">تم التوصيل </Button> */}
 
                     <Button color='error' variant='outlined'>حذف</Button>
 
-                    <Button color='secondary' variant='outlined' >تراجع</Button>
+                    <Button color='secondary' variant='outlined' onClick={() => navigation('/orders')}>تراجع</Button>
                 </Box>
             </div>
             <div className='grid grid-cols-4 gap-5'>
                 <div className='col-span-3'>
                     <Card>
+                        <form>
+                            <CardContent>
+                                <h2 className='mb-6'>معلومات الطلب</h2>
+                                <div className='grid grid-cols-2 gap-8'>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: 'اسم الزبون مطلوب' }} name='customerId' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='customerId' id='customer-name' label='اسم الزبون'
 
-                        <CardContent>
-                            <h2 className='mb-6'>معلومات الطلب</h2>
-                            <div className='grid grid-cols-2 gap-8'>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        name='customer' id='customer' label='اسم الزبون'
-                                    />
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: 'تاريخ الطلب مطلوب' }} name='scheduleDate' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                type='date'
+                                                {...field} name='scheduleDate' id='date-order' label='تاريخ الطلب'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: ' التكلفة مطلوبة' }} name='coast' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                type='number'
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='coast' id='cost' label='التكلفة'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: ' المصدر مطلوب' }} name='source' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='source' id='source' label=' المصدر'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: ' الوجهة مطلوبة' }} name='destination' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='destination' id='destination' label='الوجهة'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: ' الملاحظة مطلوبة' }} name='note' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='note' id='note' label=' الملاحظة'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
+                                    <div className='col-span-1'>
+                                        <Controller rules={{ required: ' الوزن مطلوب' }} name='weight' control={control} render={({ field, fieldState }) =>
+                                            <TextField error={!!fieldState.error}
+                                                helperText={fieldState.error?.message}
+                                                {...field} name='weight' id='weight' label='الوزن'
+                                                type='number'
+
+                                            />
+                                        }
+                                        />
+
+                                    </div>
                                 </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        type='date'
-                                        name='customer' id='customer' label='تاريخ الطلب'
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        name='customer' id='customer' label='التكلفة'
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        name='customer' id='customer' label=' المصدر'
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        name='customer' id='customer' label='الوجهة'
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        name='customer' id='customer' label=' الملاحظة'
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <TextField fullWidth
-                                        type='number'
-                                        name='customer' id='customer' label='الوزن'
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
+                            </CardContent>
+                        </form>
                     </Card>
                 </div>
                 <div className='col-span-1'>
@@ -77,9 +127,7 @@ export default function orderDetails() {
                             <h2 className='mb-6'>سلة المشتريات</h2>
                             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                                 <ListItem alignItems="flex-start" >
-                                    {/* <ListItemAvatar> */}
                                     <Avatar alt="Remy Sharp" src="/brgur.jpg" />
-                                    {/* </ListItemAvatar> */}
                                     <span className='mx-6'>برغر</span>
                                     <span>(2)</span>
 
@@ -87,9 +135,7 @@ export default function orderDetails() {
                                 </ListItem>
                                 <ListItem alignItems="flex-start">
 
-                                    {/* <ListItemAvatar> */}
                                     <Avatar alt="Remy Sharp" src="/pizza.jpg" />
-                                    {/* </ListItemAvatar> */}
                                     <span className='mx-6'>بيتزا</span>
                                     <span>(1)</span>
 

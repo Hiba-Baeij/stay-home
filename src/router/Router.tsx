@@ -13,8 +13,6 @@ import Employee from '@/pages/employees/employee'
 import Order from '@/pages/orders/order'
 import Setting from '@/pages/settings/setting'
 import Shop from '@/pages/shops/shop'
-import Vehicle from '@/pages/vehicles/vehicle'
-import Rating from '@/pages/ratings/rating'
 import DriverDetails from '@/pages/drivers/driverDetails';
 import OrderDetails from '@/pages/orders/orderDetails';
 import { IsLoggedIn } from '@/global/auth'
@@ -32,18 +30,7 @@ const routeList = [
         component: Login,
         layout: FullScreen
     },
-    {
-        path: '/signup',
-        key: 'signup',
-        component: Signup,
-        layout: FullScreen
-    },
-    {
-        path: '/resetPassword',
-        key: 'resetPassword',
-        component: ResetPassword,
-        layout: FullScreen
-    },
+
     {
         path: '/customers',
         key: 'customer',
@@ -86,24 +73,7 @@ const routeList = [
         component: Shop,
         layout: Dashboard
     },
-    {
-        path: '/ratings',
-        key: 'rating',
-        component: Rating,
-        layout: Dashboard
-    },
-    {
-        path: '/vehicles',
-        key: 'vehicle',
-        component: Vehicle,
-        layout: Dashboard
-    },
-    {
-        path: '/vehicles',
-        key: 'vehicle',
-        component: Vehicle,
-        layout: Dashboard
-    },
+
 
 
 ]

@@ -59,8 +59,8 @@ export default function Areas() {
     const onSubmit = (data: Area) => {
         setIsLoading(true);
         console.log(data);
-        SettingApi.UpsertArea({ ...data }).then(() => {
-            dispatch(settingActions.UpsertArea(data))
+        SettingApi.UpsertArea({ ...data }).then((res) => {
+            dispatch(settingActions.UpsertArea(res.response))
             toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
                 position: "top-right",
                 autoClose: 5000,
