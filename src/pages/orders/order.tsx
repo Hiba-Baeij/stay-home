@@ -34,6 +34,7 @@ export default function Order() {
     const dispatch = useDispatch<AppDispatch>()
     const [searchItem, setSearchItem] = React.useState('');
     const [driverId, setDriverId] = React.useState('');
+    const [shopId, setShopId] = React.useState('');
     const [orderId, setOrderId] = React.useState('');
     const [loadingHandle, setLoadingHandle] = React.useState(false);
     const orders = useSelector<RootState>(state => state.order.orders) as TypeOrder[];
@@ -60,6 +61,7 @@ export default function Order() {
     function getDetails(item: TypeOrder) {
         dispatch(orderActions.setOrderDialog(true));
         setOrderId(item.id)
+        setShopId(item.shopId)
         // navigation(`/order/${item.id}?shopId=${item.shopId}`)
     }
     function handleOrder() {
@@ -78,7 +80,7 @@ export default function Order() {
                 type: 'success'
             })
             dispatch(orderActions.setOrderDialog(false));
-            navigation(`/order/${item.id}?shopId=${item.shopId}`)
+            navigation(`/order/${orderId}?shopId=${shopId}`)
 
             setLoadingHandle(false)
         })
@@ -144,7 +146,7 @@ export default function Order() {
                 <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
 
                     <InputLabel id="city-id-label">السائق</InputLabel>
-                    {driverId}
+                    {/* {driverId} */}
                     <Select
                         name='driverId'
                         labelId="driver-id-label"
