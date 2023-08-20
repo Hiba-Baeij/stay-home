@@ -5,11 +5,11 @@ import { BiUpArrow, BiDownArrow } from 'react-icons/bi'
 import { FaBoxes } from 'react-icons/fa'
 import { HiUsers } from 'react-icons/hi2'
 
-export default function Statistics() {
+export default function Statistics(props: { employeesCount: number, driversCount: number, customersCount: number, shopsCount: number, ordersCount: number }) {
     interface StatItem {
         label: string,
         icon: React.ElementType,
-        value: string,
+        value: number,
         prefix: string,
         color: string
     }
@@ -17,28 +17,35 @@ export default function Statistics() {
         {
             label: 'عدد الموظفين',
             icon: HiUsers,
-            value: '5',
+            value: props.employeesCount,
             prefix: '+',
             color: 'primary'
         },
         {
             label: 'عدد السائقين',
             icon: HiUsers,
-            value: '7',
+            value: props.driversCount,
+            prefix: '+',
+            color: 'primary'
+        },
+        {
+            label: 'عدد الزبائن',
+            icon: HiUsers,
+            value: props.customersCount,
             prefix: '+',
             color: 'primary'
         },
         {
             label: 'عدد الطلبات',
             icon: FaBoxes,
-            value: '3',
+            value: props.ordersCount,
             prefix: '+',
             color: 'primary'
         },
         {
             label: 'عدد المتاجر',
             icon: FaBoxes,
-            value: '4',
+            value: props.shopsCount,
             prefix: '+',
             color: 'primary'
         },
@@ -54,7 +61,7 @@ export default function Statistics() {
             }} paddingY={3}>
                 {
                     stats.map((s) =>
-                        <Grid xs={12} md={3} display={'flex'} justifyContent={'center'}>
+                        <Grid sx={{ marginX: '20px' }} display={'flex'} justifyContent={'center'}>
                             <Box display={'flex'} flexDirection={'column'} >
                                 <div className="flex gap-4 justify-between items-center">
                                     <Typography variant='h6'>

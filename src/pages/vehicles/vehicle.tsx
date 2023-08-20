@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Vehicle as TypeVehicle } from '@/api/vehicle/dto';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { vehicleActions } from '@/store/vehicle';
+import { vehicleActions } from '@/store/home';
 import { VehicleApi } from '@/api/vehicle/endpoints';
 import { Link } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';

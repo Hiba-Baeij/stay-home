@@ -15,7 +15,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Upload from '@/components/shared/Upload';
 import { IMAGE_URL } from '@/../app.config';
 import { VehicleApi } from '@/api/vehicle/endpoints';
-import { vehicleActions } from '@/store/vehicle';
+import { vehicleActions } from '@/store/home';
 
 export default function VehcileDialog() {
     const [imageUrl, setImageUrl] = useState('');

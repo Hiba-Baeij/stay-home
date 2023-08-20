@@ -4,7 +4,7 @@ import { Order, OrderDetails } from "./dto";
 import { serialize } from "object-to-formdata";
 
 export enum API_ORDER {
-    GetAll = "Order/GetAll",
+    GetAll = "Order/GetAllShippingOrder",
     GetByIdShippingOrder = "Order/GetByIdShippingOrder",
     Handle = "Order/Handle",
 

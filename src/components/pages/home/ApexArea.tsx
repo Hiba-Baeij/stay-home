@@ -1,7 +1,7 @@
 import React from 'react'
 import Chart, { Props } from "react-apexcharts";
 import { useTheme } from '@mui/material/styles';
-export default function ApexArea() {
+export default function ApexArea(props: { passengerOrderCountMonthly: number[], deliveryOrderCountMonthly: number[], shippingOrderCountMonthly: number[] }) {
 
     const theme = useTheme()
 
@@ -32,7 +32,7 @@ export default function ApexArea() {
             },
 
             xaxis: {
-                categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]
+                categories: ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
             },
             tooltip: {
                 enabled: true,
@@ -46,15 +46,20 @@ export default function ApexArea() {
         },
 
         series: [{
-            name: 'series1',
-            data: [31, 40, 28, 51, 42, 109, 100],
+            name: 'عدد طلبات الشحن البضائع شهريا',
+            data: props.shippingOrderCountMonthly,
             color: theme.palette.primary.main,
 
         },
         {
-            name: 'series2',
-            data: [11, 32, 45, 32, 34, 52, 41],
+            name: 'عدد طلبات التوصيل الاغراض شهريا',
+            data: props.deliveryOrderCountMonthly,
             color: theme.palette.secondary.main
+        },
+        {
+            name: 'عدد طلبات التوصيل الأشخاص شهريا',
+            data: props.passengerOrderCountMonthly,
+            color: theme.palette.grey[400]
         }
         ],
 
