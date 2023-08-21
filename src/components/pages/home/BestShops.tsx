@@ -15,7 +15,7 @@ export default function BestShops(props: { bestShops: Best[], bestDrivers: Best[
                     {
                         props.bestShops.map((ele) => {
                             return (
-                                <ListItem alignItems="flex-start">
+                                <ListItem alignItems="flex-start" key={ele.id}>
                                     <ListItemAvatar>
                                         <Avatar alt="Remy Sharp" src={getImageUrl(ele.imageUrl)} />
                                     </ListItemAvatar>
@@ -42,7 +42,7 @@ export default function BestShops(props: { bestShops: Best[], bestDrivers: Best[
                     {
                         props.bestDrivers.map((ele) => {
                             return (
-                                <ListItem alignItems="flex-start">
+                                <ListItem alignItems="flex-start" key={ele.id}>
                                     <ListItemAvatar>
                                         <Avatar alt="Remy Sharp" src={getImageUrl(ele.imageUrl)} />
                                     </ListItemAvatar>

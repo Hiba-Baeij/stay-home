@@ -110,7 +110,7 @@ export class OrderApi {
 
     static CancelOrder = async (id: string) => {
         try {
-            const res = await axiosIns.delete(API_ORDER.Cancel + `?id=${id}`);
+            const res = await axiosIns.post(API_ORDER.Cancel + `?id=${id}`);
             return res.data
         }
 

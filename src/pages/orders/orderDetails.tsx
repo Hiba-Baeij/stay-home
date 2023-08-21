@@ -12,10 +12,15 @@ import { ProductApi } from '@/api/Product/endpoints';
 import { Product } from '@/api/Product/dto';
 import { productActions } from '@/store/product';
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
 
 export default function orderDetails() {
     let { id } = useParams();
     const navigation = useNavigate();
+    const swal = withReactContent(Swal)
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const status = queryParams.get('status')
@@ -86,6 +91,75 @@ export default function orderDetails() {
         else if (status === 'shipping') return ' توصيل البضائع'
         else return 'توصيل الاغراض'
     }
+
+    const deleteOrder = () => {
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                OrderApi.DeleteOrder([id as string]).then(() => {
+                    if (status == 'passenger')
+                        dispatch(orderActions.deletePassengerOrder([id as string]))
+                    else if (status == 'shipping')
+                        dispatch(orderActions.deleteShippingOrder([id as string]))
+                    else
+                        dispatch(orderActions.deleteDeliveryOrder([id as string]))
+                    toast('تم الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+
+                }
+                )
+            }
+
+        })
+
+    }
+    const cancelOrder = () => {
+        swal.fire({
+            title: 'هل انت متأكد من إلغاء هذا الطلب ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'لا',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                OrderApi.CancelOrder(id as string).then(() => {
+
+                    toast('تم إلغاء الطلب بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                    navigation('/orders')
+
+                }
+                )
+            }
+
+        })
+
+    }
     return (
         <div>
             <div className='flex justify-between items-center w-full gap-5 '>
@@ -100,10 +174,10 @@ export default function orderDetails() {
 
                     {/* <Button variant='contained' type="submit">تم التوصيل </Button> */}
 
-                    <Button color='error' variant='outlined'>حذف</Button>
+                    <Button color='error' variant='outlined' onClick={deleteOrder}>حذف</Button>
 
                     <Button color='secondary' variant='outlined' onClick={() => navigation('/orders')}>تراجع</Button>
-                    <Button color='primary' variant='contained'>إلغاء</Button>
+                    <Button color='primary' variant='contained' onClick={cancelOrder}>إلغاء</Button>
                 </Box>
             </div>
             <div className='grid grid-cols-4 gap-5'>
@@ -131,7 +205,7 @@ export default function orderDetails() {
                                     <div className='col-span-1'>
                                         {
 
-                                            status === 'passenger' || 'delivery' ? <Controller name='customer' control={control} render={({ field, fieldState }) =>
+                                            status === 'passenger' || status === 'delivery' ? <Controller name='customer' control={control} render={({ field, fieldState }) =>
                                                 <TextField error={!!fieldState.error}
                                                     helperText={fieldState.error?.message}
                                                     {...field} name='customer' id='customer-name' label='اسم الزبون'
@@ -237,28 +311,33 @@ export default function orderDetails() {
 
                                             </div> : null
                                     }
-                                    <div className='col-span-1'>
-                                        <Controller name='source' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='source' id='source' label=' المصدر'
-                                                fullWidth
-                                            />
-                                        }
-                                        />
+                                    {
+                                        orderDto.source ?
+                                            <div className='col-span-1'>
+                                                <Controller name='source' control={control} render={({ field, fieldState }) =>
+                                                    <TextField error={!!fieldState.error}
+                                                        helperText={fieldState.error?.message}
+                                                        {...field} name='source' id='source' label=' المصدر'
+                                                        fullWidth
+                                                    />
+                                                }
+                                                />
+                                            </div> : null
+                                    }
+                                    {
+                                        orderDto.destination ?
+                                            <div className='col-span-1'>
+                                                <Controller name='destination' control={control} render={({ field, fieldState }) =>
+                                                    <TextField error={!!fieldState.error}
+                                                        helperText={fieldState.error?.message}
+                                                        {...field} name='destination' id='destination' label='الوجهة'
+                                                        fullWidth
+                                                    />
+                                                }
+                                                />
 
-                                    </div>
-                                    <div className='col-span-1'>
-                                        <Controller name='destination' control={control} render={({ field, fieldState }) =>
-                                            <TextField error={!!fieldState.error}
-                                                helperText={fieldState.error?.message}
-                                                {...field} name='destination' id='destination' label='الوجهة'
-                                                fullWidth
-                                            />
-                                        }
-                                        />
-
-                                    </div>
+                                            </div> : null
+                                    }
                                     <div className='col-span-1'>
                                         <Controller name='note' control={control} render={({ field, fieldState }) =>
                                             <TextField error={!!fieldState.error}
@@ -271,7 +350,7 @@ export default function orderDetails() {
 
                                     </div>
                                     {
-                                        orderDto.weight !== 0 && status != 'passenger' ?
+                                        status != 'passenger' ?
                                             <div className='col-span-1'>
                                                 <Controller name='weight' control={control} render={({ field, fieldState }) =>
                                                     <TextField error={!!fieldState.error}
@@ -290,46 +369,52 @@ export default function orderDetails() {
                         </form>
                     </Card>
                 </div>
-                <div className='col-span-1'>
-                    <Card>
+                {
 
-                        <CardContent>
-                            <h2 className='mb-6'>سلة المشتريات</h2>
-                            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                                {
-                                    orderDto.cart && orderDto.cart?.length > 0 ? orderDto.cart?.map((ele) => {
-                                        return (
-                                            <ListItem key={ele.productId} alignItems="flex-start" >
-                                                <Avatar alt="Remy Sharp" src="/brgur.jpg" />
-                                                <span className='mx-6'>{getProductName(ele.productId)}</span>
-                                                <span>({ele.quantity})</span>
-                                            </ListItem>
-                                        )
-                                    }) : <h2 className='font-bold text-lg text-center mb-4'>لايوجد منتجات</h2>
-                                }
-                            </List>
-                            <Divider />
-                            <div className='flex justify-center items-center gap-5 my-4'>
+                    status === 'passenger' ?
+                        null
+                        :
+                        <div className='col-span-1'>
+                            <Card>
 
-                                <span> تكلفة الطلب :</span>
-                                <h2 className=' font-bold text-center'>{orderDto.coast} ل.س</h2>
-                            </div>
-                            <div className='flex justify-center items-center gap-5'>
+                                <CardContent>
+                                    <h2 className='mb-6'>سلة المشتريات</h2>
+                                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                                        {
+                                            orderDto.cart && orderDto.cart?.length > 0 ? orderDto.cart?.map((ele) => {
+                                                return (
+                                                    <ListItem key={ele.productId} alignItems="flex-start" >
+                                                        <Avatar alt="Remy Sharp" src="/brgur.jpg" />
+                                                        <span className='mx-6'>{getProductName(ele.productId)}</span>
+                                                        <span>({ele.quantity})</span>
+                                                    </ListItem>
+                                                )
+                                            }) : <h2 className='font-bold text-lg text-center mb-4'>لايوجد منتجات</h2>
+                                        }
+                                    </List>
+                                    <Divider />
+                                    <div className='flex justify-center items-center gap-5 my-4'>
 
-                                <span >سعر التوصيل :</span>
-                                <h2 className='font-bold text-center'>{orderDto.deliveryCoast ? orderDto.deliveryCoast : 0} ل.س</h2>
-                            </div>
-                            <Divider className='py-4' />
-                            <div className='flex justify-center items-center gap-5 my-4'>
+                                        <span> تكلفة الطلب :</span>
+                                        <h2 className=' font-bold text-center'>{orderDto.coast} ل.س</h2>
+                                    </div>
+                                    <div className='flex justify-center items-center gap-5'>
 
-                                <span >التكلفة الاجمالية :</span>
-                                <h2 className=' font-bold text-center'>{orderDto.deliveryCoast ? orderDto.coast + orderDto.deliveryCoast : orderDto.coast + 0} ل.س</h2>
-                            </div>
+                                        <span >سعر التوصيل :</span>
+                                        <h2 className='font-bold text-center'>{orderDto.deliveryCoast ? orderDto.deliveryCoast : 0} ل.س</h2>
+                                    </div>
+                                    <Divider className='py-4' />
+                                    <div className='flex justify-center items-center gap-5 my-4'>
 
-                        </CardContent>
-                    </Card>
+                                        <span >التكلفة الاجمالية :</span>
+                                        <h2 className=' font-bold text-center'>{orderDto.deliveryCoast ? orderDto.coast + orderDto.deliveryCoast : orderDto.coast + 0} ل.س</h2>
+                                    </div>
 
-                </div>
+                                </CardContent>
+                            </Card>
+
+                        </div>
+                }
             </div>
 
         </div>

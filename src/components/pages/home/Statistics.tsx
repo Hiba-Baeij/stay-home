@@ -61,7 +61,7 @@ export default function Statistics(props: { employeesCount: number, driversCount
             }} paddingY={3}>
                 {
                     stats.map((s) =>
-                        <Grid sx={{ marginX: '20px' }} display={'flex'} justifyContent={'center'}>
+                        <Grid key={s.label} sx={{ marginX: '20px' }} display={'flex'} justifyContent={'center'}>
                             <Box display={'flex'} flexDirection={'column'} >
                                 <div className="flex gap-4 justify-between items-center">
                                     <Typography variant='h6'>
