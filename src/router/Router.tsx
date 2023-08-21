@@ -108,7 +108,7 @@ function Router() {
                 </div>
             }>
             </Route>
-            <Route path={`/order/:id`} element={
+            <Route path={`/orderDetails/:id`} element={
                 <div className='h-screen'>
                     <Dashboard>
                         <OrderDetails />
@@ -116,6 +116,7 @@ function Router() {
                 </div>
             }>
             </Route>
+
 
         </Routes>
 

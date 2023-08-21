@@ -1,19 +1,23 @@
 
 import { axiosIns } from "@/lib/axios"
-import { Order, OrderDetails } from "./dto";
-import { serialize } from "object-to-formdata";
 
 export enum API_ORDER {
-    GetAll = "Order/GetAllShippingOrder",
     GetByIdShippingOrder = "Order/GetByIdShippingOrder",
+    GetByIdDeliveryOrder = "Order/GetByIdDeliveryOrder",
+    GetByIdPassengerOrder = "Order/GetByIdPassengerOrder",
+    GetAllShippingOrder = "Order/GetAllShippingOrder",
+    GetAllDeliveryOrder = "Order/GetAllDeliveryOrder",
+    GetAllPassengerOrder = "Order/GetAllPassengerOrder",
+    Delete = "Order/Delete",
+    Cancel = "Order/Cancel",
     Handle = "Order/Handle",
 
 }
 
 export class OrderApi {
-    static fetchOrder = async () => {
+    static getAllDeliveryOrder = async () => {
         try {
-            const res = await axiosIns.get(API_ORDER.GetAll);
+            const res = await axiosIns.get(API_ORDER.GetAllDeliveryOrder);
             return res.data
         }
 
@@ -22,9 +26,53 @@ export class OrderApi {
         }
 
     }
-    static getOrderDetails = async (id: string) => {
+    static getAllPassengerOrder = async () => {
+        try {
+            const res = await axiosIns.get(API_ORDER.GetAllPassengerOrder);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static getAllShippingOrder = async () => {
+        try {
+            const res = await axiosIns.get(API_ORDER.GetAllShippingOrder);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static getByIdShippingOrder = async (id: string) => {
         try {
             const res = await axiosIns.get(API_ORDER.GetByIdShippingOrder + `?id=${id}`);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static getByIdDeliveryOrder = async (id: string) => {
+        try {
+            const res = await axiosIns.get(API_ORDER.GetByIdDeliveryOrder + `?id=${id}`);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static getByIdPassengerOrder = async (id: string) => {
+        try {
+            const res = await axiosIns.get(API_ORDER.GetByIdPassengerOrder + `?id=${id}`);
             return res.data
         }
 
@@ -48,15 +96,27 @@ export class OrderApi {
 
     }
 
-    // static DeleteOrder= async (ids: string[]) => {
-    //     try {
-    //         const res = await axiosIns.delete(API_ORDER.Delete, { data: [...ids] });
-    //         return res.data
-    //     }
+    static DeleteOrder = async (ids: string[]) => {
+        try {
+            const res = await axiosIns.delete(API_ORDER.Delete, { data: [...ids] });
+            return res.data
+        }
 
-    //     catch (er) {
-    //         throw er
-    //     }
+        catch (er) {
+            throw er
+        }
 
-    // }
+    }
+
+    static CancelOrder = async (id: string) => {
+        try {
+            const res = await axiosIns.delete(API_ORDER.Cancel + `?id=${id}`);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
 }
