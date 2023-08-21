@@ -79,7 +79,7 @@ export const navLinks = [
         icon: SettingsIcon,
         component: Setting,
         layout: Dashboard,
-        roles: ['Employee']
+        roles: ['Employee', 'Admin']
     },
 
 

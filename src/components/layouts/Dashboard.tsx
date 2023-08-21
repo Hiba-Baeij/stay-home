@@ -46,7 +46,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open", })<{ drawerWidth: number }>(({ theme, open, drawerWidth }) => ({
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "drawerWidth" })<{ drawerWidth: number }>(({ theme, open, drawerWidth }) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",

@@ -7,12 +7,32 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Divider, Tooltip } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-import { LogOut } from "@/global/auth";
+import { GetAccessTokenDecoded, LogOut } from "@/global/auth";
+import { useMemo } from "react";
 type Props = {
     isOpen: boolean;
 };
 export default function DashboardNavLinks(props: Props) {
     const navigation = useNavigate();
+    const tokenDecoded = GetAccessTokenDecoded();
+    console.log(tokenDecoded);
+
+    const filterNavigation = useMemo(() => {
+        if (tokenDecoded) {
+            return navLinks.filter((ele) =>
+                ele.roles.includes(
+                    tokenDecoded[
+                    'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+                    ]
+                )
+            );
+        } else {
+            return navLinks;
+        }
+    }, [tokenDecoded]);
+
+    console.log(filterNavigation);
+
     function logOut() {
         LogOut();
         navigation('/login')
@@ -20,7 +40,7 @@ export default function DashboardNavLinks(props: Props) {
     return (
         <>
             <List>
-                {navLinks.map((item) => (
+                {filterNavigation.map((item) => (
                     <NavLink to={{ pathname: item.path }} end key={item.path}>
                         {({ isActive }) => {
                             return (
@@ -120,7 +140,7 @@ export default function DashboardNavLinks(props: Props) {
                     </NavLink>
                 ))}
             </List>
-            <List sx={{ mt: 19 }}>
+            <List sx={{ width: '100%', position: 'absolute', bottom: '0px' }}>
                 <Divider />
                 <ListItem sx={({ palette }) => ({
                     py: 0.8,
