@@ -36,7 +36,7 @@ export default function Setting() {
                     <Tab label="مناطق والمدن" value={1} />
                 </Tabs>
             </Box>
-            <div className='mt-10'>
+            <div className='mt-4'>
 
                 <SwitchComponent value={value} />
             </div>

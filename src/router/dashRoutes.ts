@@ -20,21 +20,24 @@ export const navLinks = [
         path: "/",
         icon: HomeIcon,
         component: Home,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Employee', 'Admin']
     },
     {
         name: "الموظفين",
         path: "/employees",
         icon: PersonIcon,
         component: Employee,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Admin']
     },
     {
         name: "الزبائن",
         path: "/customers",
         icon: PersonIcon,
         component: Customer,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Admin']
     },
 
     {
@@ -42,21 +45,24 @@ export const navLinks = [
         path: "/drivers",
         icon: PersonIcon,
         component: Driver,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Admin']
     },
     {
         name: "المتاجر",
         path: "/shops",
         icon: StoreIcon,
         component: Shop,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Employee', 'Admin']
     },
     {
         name: "الطلبات",
         path: "/orders",
         icon: ShoppingCartIcon,
         component: Order,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Employee', 'Admin']
     },
     // {
     //     name: "المركبات",
@@ -72,7 +78,8 @@ export const navLinks = [
         path: "/settings",
         icon: SettingsIcon,
         component: Setting,
-        layout: Dashboard
+        layout: Dashboard,
+        roles: ['Employee']
     },
 
 
