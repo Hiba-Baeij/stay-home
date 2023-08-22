@@ -70,7 +70,7 @@ export default function DialogEmployee() {
         else {
             setIsLoading(true)
             EmployeeApi.AddEmpolyee(data).then((res) => {
-                dispatch(employeeActions.addEmploye(res.response))
+                dispatch(employeeActions.addEmploye({ ...res.response, dateCreated: new Date(res.response.dateCreated).toLocaleDateString() }))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {

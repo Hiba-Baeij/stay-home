@@ -2,7 +2,7 @@ import { Product } from '@/api/Product/dto'
 import { RootState } from '@/store'
 import { productActions } from '@/store/product'
 import { Add, Close } from '@mui/icons-material'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormHelperText, IconButton, TextField } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, FormHelperText, FormLabel, IconButton, Radio, RadioGroup, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,9 +15,10 @@ import { IMAGE_URL } from '@/../app.config';
 
 export default function AddProduct(props: { shopId: string }) {
     const [imageUrl, setImageUrl] = useState('');
+    const [isAvailable, setIsAvailable] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch()
-    const { control, handleSubmit, reset } = useForm<Product>({
+    const { control, handleSubmit, reset, setValue } = useForm<Product>({
         defaultValues: { ...new Product() }
     });
     const productDto = useSelector<RootState>(state => state.product.productDto) as Product;
@@ -28,7 +29,7 @@ export default function AddProduct(props: { shopId: string }) {
             reset({ ...productDto })
         }
     }, [productDto])
-    const onSubmit = (data: Product) => {
+    const onSubmitProduct = (data: Product) => {
         if (data.id) {
             setIsLoading(true)
             ProductApi.ModifyProduct({ ...data, shopId: props.shopId }).then((res) => {
@@ -80,6 +81,15 @@ export default function AddProduct(props: { shopId: string }) {
             }).catch(() => setIsLoading(false))
         }
     }
+
+    const handleChange = (event: any) => {
+        console.log(event.target.value);
+        // console.log(newValue);
+        setIsAvailable(event.target.value)
+        setValue('isAvailable', event.target.value)
+
+    };
+
     const resetForm = () => {
         reset({ ...new Product() });
         setImageUrl('')
@@ -93,7 +103,7 @@ export default function AddProduct(props: { shopId: string }) {
                 <Add></Add>
             </Button>
             <Dialog open={isOpen}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmitProduct)}>
                     <div className="flex justify-between items-center pl-4 ">
                         <DialogTitle>
                             {
@@ -131,6 +141,32 @@ export default function AddProduct(props: { shopId: string }) {
                                 </FormControl>
                             }
                         />
+                        <div className='col-span-2'>
+
+                            <FormLabel id="demo-radio-buttons-group-label">هل المنتج متاح ؟</FormLabel>
+
+                            <Controller name='isAvailable' control={control} render={({ field }) => (
+
+                                <RadioGroup
+                                    {...field}
+                                    aria-labelledby="isAvailable"
+                                    name="isAvailable"
+                                    row
+                                    defaultValue={true}
+                                    value={isAvailable}
+                                    onChange={handleChange}
+
+                                >
+                                    <FormControlLabel value="true" control={<Radio />} label="نعم" />
+                                    <FormControlLabel value="false" control={<Radio />} label="لا" />
+                                </RadioGroup>
+                            )
+
+                            }
+                            />
+
+
+                        </div>
 
 
                     </DialogContent>

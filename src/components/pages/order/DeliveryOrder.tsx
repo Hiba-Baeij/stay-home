@@ -16,6 +16,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { usePagination } from '@/global/usePagination';
 import { Shop } from '@/api/shop/dto';
 import { useNavigate } from 'react-router-dom';
+import { FaBoxes } from 'react-icons/fa';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 export default function DeliveryOrder() {
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
@@ -44,18 +46,14 @@ export default function DeliveryOrder() {
         const newValue = event.target.value;
         setDriverId(newValue);
     };
-    function getDetails(item: Order) {
 
-        if (item.isHandled)
-            navigation(`/orderDetails/${item.id}?status=delivery&shopId=${item.shopId}`)
-        else {
-            dispatch(orderActions.setOrderDialog(true));
-            setOrderId(item.id)
-            setShopId(item.shopId)
-        }
+    function openHandleDialog(item: Order) {
+        dispatch(orderActions.setOrderDialog(true));
+        setOrderId(item.id)
+        setShopId(item.shopId)
     }
+
     function handleOrder() {
-        // dispatch(orderActions.setOrderDialog(true));
         setLoadingHandle(true)
         OrderApi.HandleOrder({ driverId: driverId, id: orderId }).then((data: { response: OrderDetails }) => {
             dispatch(orderActions.setOrderDto(data.response))
@@ -74,6 +72,7 @@ export default function DeliveryOrder() {
             navigation(`/orderDetails/${orderId}?status=delivery&shopId=${shopId}`)
         })
     }
+
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: string[] = [];
@@ -124,7 +123,7 @@ export default function DeliveryOrder() {
                             </Button>
                     }
 
-                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء</Button>
+                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء الطلب</Button>
                 </Box>
             </DialogActions>
 
@@ -136,7 +135,7 @@ export default function DeliveryOrder() {
             }}>
 
                 {
-                    isLoading ? <TableSkeleton headers={['', 'اسم الزبون', ' الوجهة', 'المصدر', 'حالة الطلب', 'اسم المتجر', 'تفاصيل']} />
+                    isLoading ? <TableSkeleton headers={['', 'اسم الزبون', ' الوجهة', 'المصدر', 'اسم المتجر', 'حالة الطلب', 'وقت الطلب', 'معالجة الطلب', 'تفاصيل']} />
 
                         : <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
@@ -165,6 +164,7 @@ export default function DeliveryOrder() {
                                     <TableCell align="center">اسم المتجر</TableCell>
                                     <TableCell align="center">حالة الطلب</TableCell>
                                     <TableCell align="center">وقت الطلب</TableCell>
+                                    <TableCell align="center">معالجة الطلب</TableCell>
                                     <TableCell align="center">تفاصيل</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -197,7 +197,10 @@ export default function DeliveryOrder() {
                                             <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>
 
                                             <TableCell align="center">
-                                                <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
+                                                <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row)} />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => navigation(`/orderDetails/${row.id}?status=delivery&shopId=${row.shopId}`)} />
                                             </TableCell>
                                         </TableRow>
                                     )

@@ -85,17 +85,12 @@ export default function shopDetails() {
 
     }
 
-    const handleChange = (event: any) => {
-        console.log(event.target.value);
-
-        setDay(event.target.value);
-    };
 
     const resetForm = () => {
         reset({ ...new Shop() });
         setImageUrl('')
     }
-    const onSubmit = (data: Shop) => {
+    const onSubmitShop = (data: Shop) => {
         console.log(data)
 
         setIsLoading(true)
@@ -127,10 +122,12 @@ export default function shopDetails() {
                 type: 'success'
             })
         })
+
+
     }
     return (
         <div className=' p-3 pt-0'>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmitShop)}>
 
                 <div className='flex justify-between items-center w-full gap-5 my-5'>
 
@@ -235,8 +232,7 @@ export default function shopDetails() {
                                                                 name={`workTimes.${index}.dayOfWeek`}
                                                                 labelId={`workTimes.${index}.dayOfWeek`}
                                                                 sx={{ marginTop: '10px' }}
-                                                                onChange={handleChange}
-                                                                value={day}
+
                                                             >
                                                                 {
 
@@ -254,10 +250,10 @@ export default function shopDetails() {
                                                 </div>
                                                 <div className='md:col-span-1 col-span-3'>
                                                     <label>وقت البدء :</label>
-                                                    <Controller rules={{ required: 'وقت الفتح مطلوب' }} name={`workTimes.${index}.startTime.ticks`} control={control} render={({ field, fieldState }) =>
+                                                    <Controller rules={{ required: 'وقت الفتح مطلوب' }} name={`workTimes.${index}.startTime`} control={control} render={({ field, fieldState }) =>
                                                         <TextField error={!!fieldState.error} fullWidth
                                                             helperText={fieldState.error?.message}
-                                                            {...field} name={`workTimes.${index}.startTime.ticks`} id={`workTimes_startTime_${index}`}
+                                                            {...field} name={`workTimes.${index}.startTime`} id={`workTimes_startTime_${index}`}
                                                             type='time'
                                                             inputProps={{
                                                                 step: "2"
@@ -275,7 +271,7 @@ export default function shopDetails() {
                                                         <label>وقت الاغلاق :</label>
 
 
-                                                        <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name={`workTimes.${index}.endTime.ticks`} control={control} render={({ field, fieldState }) =>
+                                                        <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name={`workTimes.${index}.endTime`} control={control} render={({ field, fieldState }) =>
 
                                                             <TextField error={!!fieldState.error} fullWidth
                                                                 helperText={fieldState.error?.message}
@@ -284,7 +280,7 @@ export default function shopDetails() {
                                                                     step: "2"
                                                                 }}
                                                                 type='time'
-                                                                name={`workTimes.${index}.endTime.ticks`} id={`workTimes_endTime_${index}`}
+                                                                name={`workTimes.${index}.endTime`} id={`workTimes_endTime_${index}`}
                                                                 sx={{ marginTop: '10px' }}
                                                             />
 
@@ -324,22 +320,22 @@ export default function shopDetails() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card sx={{ marginTop: '25px' }}>
-                    {
-                        loadingProduct ?
-                            <Box sx={{ width: '100%' }}>
-                                <LinearProgress />
-                            </Box> : null
-                    }
-                    <div className='flex justify-between items-center mx-6 my-4'>
-
-                        <h2 className=' text-lg'>المنتجات</h2>
-                        <AddProduct shopId={id as string} />
-                    </div>
-                    <Product shopId={id as string} />
-                </Card>
 
             </form>
+            <Card sx={{ marginTop: '25px' }}>
+                {
+                    loadingProduct ?
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress />
+                        </Box> : null
+                }
+                <div className='flex justify-between items-center mx-6 my-4'>
+
+                    <h2 className=' text-lg'>المنتجات</h2>
+                    <AddProduct shopId={id as string} />
+                </div>
+                <Product shopId={id as string} />
+            </Card>
 
         </div>
     )

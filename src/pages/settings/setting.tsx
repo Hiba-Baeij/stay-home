@@ -1,6 +1,7 @@
 import React from 'react'
 import Categories from '@/components/pages/setting/Categories'
 import Cities from '@/components/pages/setting/Cities'
+import Pricing from '@/components/pages/setting/Pricing'
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -11,14 +12,15 @@ function SwitchComponent(props: { value: number }) {
     switch (props.value) {
         case 0:
             return <Categories />;
-        default:
+        case 1:
             return <Cities />;
+        default:
+            return <Pricing />;
     }
 }
 
 export default function Setting() {
     const [value, setValue] = React.useState(0);
-    const dispatch = useDispatch<AppDispatch>()
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -34,6 +36,7 @@ export default function Setting() {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="تصنيفات والمركبات" value={0} />
                     <Tab label="مناطق والمدن" value={1} />
+                    <Tab label="تسعير المناطق" value={2} />
                 </Tabs>
             </Box>
             <div className='mt-4'>

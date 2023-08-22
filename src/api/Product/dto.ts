@@ -4,6 +4,7 @@ export class Product {
     name = "";
     imageUrl = '';
     cost = 0;
+    isAvailable = true;
     imageFile?= null;
 
 }
