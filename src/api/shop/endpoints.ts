@@ -49,7 +49,7 @@ export class ShopApi {
 
     static ModifyShop = async (payload: Shop) => {
         try {
-            const res = await axiosIns.post(API_SHOPS.Modify, serialize(payload, { dotsForObjectNotation: true }));
+            const res = await axiosIns.post(API_SHOPS.Modify, serialize(payload, { dotsForObjectNotation: true, indices: true }));
             return res.data
         }
 
