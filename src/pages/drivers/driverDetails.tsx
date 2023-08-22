@@ -46,9 +46,22 @@ export default function DriverDetails() {
     });
 
     const onSubmit = (data: DriverDto) => {
+        const formattedData = {
+            BirthDate: new Date(data.birthDate).toLocaleDateString(), // Assuming formatDate is a function to format the date
+            PhoneNumber: data.phoneNumber,
+            FullName: data.fullName,
+            Password: data.password,
+            Email: data.email,
+            'Vehicle.ImageFile': data.vehicle.imageFile,
+            'Vehicle.Color': data.vehicle.color,
+            'Vehicle.Number': data.vehicle.number,
+            'Vehicle.MaxCapacity': data.vehicle.maxCapacity,
+            'Vehicle.Name': data.vehicle.name,
+            'Vehicle.VehicleTypeId': data.vehicle.vehicleTypeId,
+        } as unknown as DriverDto;;
         if (id != "0") {
             setIsLoading(true)
-            DriverApi.ModifyDriver(data).then((res) => {
+            DriverApi.ModifyDriver(formattedData).then((res) => {
                 dispatch(driverActions.setDriverDto(res.response))
                 setIsLoading(false)
                 resetForm();
@@ -67,7 +80,7 @@ export default function DriverDetails() {
         }
         else {
             setIsLoading(true)
-            DriverApi.AddDriver(data).then((res) => {
+            DriverApi.AddDriver(formattedData).then((res) => {
                 dispatch(driverActions.addDriver(res.response))
                 setIsLoading(false)
                 resetForm();
@@ -313,19 +326,19 @@ export default function DriverDetails() {
 
                             </div>
                             <div className='col-span-2 '>
-                                {imageUrl}
+                                {/* {imageUrl} */}
                                 {/* <Controller control={control} name='vehicle.imageFile' render={({ field, fieldState }) => <Upload  {...field} onChangeUrl={(e) => { setImageUrl(e) }} url={imageUrl}  ></Upload>}
                                 /> */}
 
                                 <Controller
                                     control={control} name='vehicle.imageFile' render={({ field, fieldState }) =>
 
-                                        <FormControl error={!!fieldState.error} fullWidth>
-                                            <Upload {...field} url={imageUrl} onChangeUrl={setImageUrl} name='vehicle.imageFile' label='صورة المركبة'></Upload>
-                                            <FormHelperText>
-                                                {fieldState.error?.message}
-                                            </FormHelperText>
-                                        </FormControl>
+                                        // <FormControl error={!!fieldState.error} fullWidth>
+                                        <Upload {...field} url={imageUrl} onChangeUrl={setImageUrl} name='vehicle.imageFile' label='صورة المركبة'></Upload>
+                                        //     <FormHelperText>
+                                        //         {fieldState.error?.message}
+                                        //     </FormHelperText>
+                                        // </FormControl>
                                     }
                                 />
                             </div>

@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LinearProgress from '@mui/material/LinearProgress';
 import { SettingApi } from '@/api/setting/endpoints';
-import { settingActions } from '@/store/setting';
+import { Area, Pricing as PricingDto, settingActions } from '@/store/setting';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -23,34 +23,35 @@ import { LoadingButton } from '@mui/lab';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { usePagination } from '@/global/usePagination';
+import { Controller, useForm } from 'react-hook-form';
 
-interface initialDto {
-    name: string, id: string
-}
 export default function Pricing() {
-    const [selected, setSelected] = React.useState<string[]>([]);
     const [isOpen, setIsOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const swal = withReactContent(Swal)
-    const [dto, setDto] = React.useState({
-        id: '',
-        name: '',
-    });
+    const [dto, setDto] = React.useState<{ id: string, price: number, kmBetween: number }>({ id: "", price: 0, kmBetween: 0 });
     const dispatch = useDispatch<AppDispatch>()
     const { paginate, pagination, setPagination } = usePagination(6, 1)
-    const vehicles = useSelector<RootState>(state => state.setting.vehicles) as initialDto[];
-
-    function getDetails(item: initialDto) {
+    const pricing = useSelector<RootState>(state => state.setting.pricing) as [];
+    const areas = useSelector<RootState>(state => state.setting.areas) as Area[];
+    const getAreaName = (id: string) => areas.find(ele => ele.id === id)?.name
+    const { handleSubmit, control, setValue, reset } = useForm<{ id: string, price: number, kmBetween: number }>({
+        defaultValues: { id: "", price: 0, kmBetween: 0 }
+    });
+    function getDetails(item: PricingDto) {
         setIsOpen(true);
-        setDto(item)
+
+        setValue('id', item.id)
+        setValue('price', item.price)
+        setValue('kmBetween', item.kmBetween)
     }
 
-    function addMoreVehicle() {
+    function onSubmit(data: { id: string, price: number, kmBetween: number }) {
         setIsLoading(true);
         console.log(dto);
-        SettingApi.UpsertVehicle({ ...dto, id: dto.id == '' ? null : dto.id }).then((res) => {
-            dispatch(settingActions.upsertVehicle(res.response))
-            toast(dto.id ? 'تم التعديل بنجاح' : 'تمت الاضافة بنجاح', {
+        SettingApi.ModifyAreaPricing(data).then((res) => {
+            dispatch(settingActions.modifyAreaPricing(res.response))
+            toast('تم التعديل بنجاح', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -62,67 +63,16 @@ export default function Pricing() {
             })
             setIsLoading(false);
             setIsOpen(false)
-            setDto({ name: '', id: '' })
+            setValue('id', '')
+            setValue('price', 0)
+            setValue('kmBetween', 0)
         }).catch(() => setIsLoading(false))
 
     }
-    const handleInputChange = (e: any) => {
-        console.log(e.target.value);
 
-        const { name, value } = e.target;
-        setDto({
-            ...dto,
-            [name]: value
-        });
-    };
 
-    const handleClick = (id: string) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: string[] = [];
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1)
-            );
-        }
-        setSelected(newSelected);
-    };
-    const removeVehicle = () => {
-        swal.fire({
-            title: 'هل انت متأكد من الحذف؟ ',
-            text: "لن تتمكن من التراجع عن هذا!",
-            icon: 'warning',
-            confirmButtonText: 'نعم',
-            cancelButtonText: 'الغاء',
-            showCancelButton: true,
-            showCloseButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
 
-                SettingApi.DeleteVehicle(selected).then(() => {
-                    dispatch(settingActions.deleteVehicles(selected))
-                    toast('تم الحذف النوع المركبة بنجاح', {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        progress: undefined,
-                        theme: "light",
-                        type: 'success'
-                    })
-                }
-                )
-            }
 
-        })
-    }
 
     return (
 
@@ -130,25 +80,32 @@ export default function Pricing() {
         <TableContainer component={Paper} sx={{
             width: '100%'
         }}>
-            <Box sx={{
-                p: 2,
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <h2> تسعير المناطق</h2>
-                {/* <Button variant='contained' onClick={() => setIsOpen(true)}> نوع المركبة</Button> */}
 
-                <Dialog open={isOpen}>
+            <Dialog open={isOpen}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+
                     <DialogTitle>
-
                         تعديل التسعير
                     </DialogTitle>
 
                     <DialogContent className='flex flex-col min-w-[35rem] p-2 gap-4'>
-                        <TextField name='name' id='Vehicle-name' label='السعر' value={dto.name} onChange={handleInputChange} />
-                        <TextField prefix='km' name='name' id='Vehicle-name' label='المسافة بين المنطقتين' value={dto.name} onChange={handleInputChange} />
+                        <Controller rules={{ required: 'السعر مطلوب' }} name='price' control={control} render={({ field, fieldState }) =>
+                            <TextField error={!!fieldState.error} fullWidth
+                                helperText={fieldState.error?.message}
+                                {...field} name='price' id='price' label='السعر'
+
+                            />
+                        }
+                        />
+                        <Controller rules={{ required: 'المسافة بين المنطقتين مطلوبة' }} name='kmBetween' control={control} render={({ field, fieldState }) =>
+                            <TextField error={!!fieldState.error} fullWidth
+                                helperText={fieldState.error?.message}
+                                {...field} name='kmBetween' id='kmBetween' label='المسافة بين المنطقتين'
+
+                            />
+                        }
+                        />
+
                     </DialogContent>
                     <Divider />
                     <DialogActions sx={{ justifyContent: 'space-between', padding: '15px' }}>
@@ -158,39 +115,34 @@ export default function Pricing() {
                                 isLoading ?
                                     <LoadingButton sx={{ height: '36px' }} loading variant='contained'></LoadingButton>
                                     :
-                                    <Button variant='contained' onClick={addMoreVehicle}>
+                                    <Button variant='contained' type="submit">
 
                                         تعديل
 
                                     </Button>
                             }
-                            <Button variant='outlined' onClick={() => { setIsOpen(false); setDto({ name: '', id: '' }) }}>الغاء</Button>
+                            <Button variant='outlined' onClick={() => { setIsOpen(false); }}>الغاء</Button>
                         </div>
 
                     </DialogActions>
-                </Dialog>
-            </Box>
+                </form>
+
+            </Dialog>
 
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell padding="checkbox">
 
-                            <IconButton disabled={selected.length == 0} onClick={removeVehicle}>
-                                <DeleteIcon />
-                            </IconButton>
-
-
-                        </TableCell>
                         <TableCell align="center">اسم المنطقة الاولى</TableCell>
                         <TableCell align="center">اسم المنطقة الثانية</TableCell>
                         <TableCell align="center">السعر</TableCell>
                         <TableCell align="center">مسافة بالكيلومتر</TableCell>
+                        <TableCell align="center">تفاصيل</TableCell>
 
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {vehicles ? paginate(vehicles).map((row: { name: string, id: string }, index: number) => {
+                    {pricing ? paginate(pricing).map((row: PricingDto) => {
                         return (
                             <TableRow
                                 hover
@@ -199,15 +151,12 @@ export default function Pricing() {
                                 key={row.id}
 
                             >
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        onChange={() => handleClick(row.id ? row.id : '')}
 
-                                        color="primary"
-                                    />
-                                </TableCell>
 
-                                <TableCell align="center">{row.name}</TableCell>
+                                <TableCell align="center">{getAreaName(row.area1Name)}</TableCell>
+                                <TableCell align="center">{getAreaName(row.area2Name)}</TableCell>
+                                <TableCell align="center">{row.price}</TableCell>
+                                <TableCell align="center">{row.kmBetween}</TableCell>
                                 {/* <TableCell align="center">{new Date().toLocaleDateString()}</TableCell> */}
                                 <TableCell align="center">
                                     <MoreVertIcon onClick={() => getDetails(row)} />

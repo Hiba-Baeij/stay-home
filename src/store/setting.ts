@@ -1,4 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+export class Pricing {
+    id = "";
+    area1Name = "";
+    area2Name = "";
+    price = 0;
+    kmBetween = 0;
+}
 export interface Base {
     name: string,
     id: string,
@@ -15,6 +22,7 @@ interface initialState {
     areas: Area[],
     categories: Base[],
     vehicles: Base[],
+    pricing: Pricing[],
 }
 
 const state: initialState = {
@@ -22,6 +30,7 @@ const state: initialState = {
     areas: [],
     categories: [],
     vehicles: [],
+    pricing: [],
 
 }
 
@@ -93,6 +102,17 @@ const settingSlice = createSlice({
 
             }
             else state.areas.unshift(action.payload)
+        },
+
+        //pricing area
+        setPricingArea(state: initialState, action: PayloadAction<Pricing[]>) {
+            state.pricing = action.payload;
+        },
+        modifyAreaPricing(state: initialState, action: PayloadAction<Pricing>) {
+
+            const index = state.pricing.findIndex(ele => ele.id == action.payload.id);
+            state.pricing[index] = { ...action.payload }
+
         },
 
         // Vechile

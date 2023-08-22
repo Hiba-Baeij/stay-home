@@ -19,6 +19,8 @@ export enum API_SETTING {
     UpsertVehicleType = "Setting/UpsertVehicleType",
     GetAllVehicleTypes = "Setting/GetAllVehicleTypes",
     DeleteVehicleType = "Setting/DeleteVehicleType",
+    ModifyAreaPrice = "Setting/ModifyAreaPrice",
+    GetAllAreaPrices = "Setting/GetAllAreaPrices",
 }
 
 export class SettingApi {
@@ -78,6 +80,18 @@ export class SettingApi {
         }
 
     }
+    static fetchAreaPricing = async () => {
+        try {
+            const res = await axiosIns.get(API_SETTING.GetAllAreaPrices);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+
     static fetchVehicle = async () => {
         try {
             const res = await axiosIns.get(API_SETTING.GetAllVehicleTypes);
@@ -171,6 +185,17 @@ export class SettingApi {
     static UpsertArea = async (payload: Area) => {
         try {
             const res = await axiosIns.post(API_SETTING.UpsertArea, payload.id ? payload : { ...payload, id: null });
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static ModifyAreaPricing = async (payload: { id: string, price: number, kmBetween: number }) => {
+        try {
+            const res = await axiosIns.post(API_SETTING.ModifyAreaPrice, payload);
             return res.data
         }
 

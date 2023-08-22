@@ -6,6 +6,10 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Tab, Tabs, Box } from '@mui/material';
+import { SettingApi } from '@/api/setting/endpoints';
+import { useQuery } from '@tanstack/react-query';
+import { Pricing as PricingDto } from '@/store/setting';
+import { settingActions } from '../../store/setting';
 
 
 function SwitchComponent(props: { value: number }) {
@@ -21,9 +25,16 @@ function SwitchComponent(props: { value: number }) {
 
 export default function Setting() {
     const [value, setValue] = React.useState(0);
+    const dispatch = useDispatch<AppDispatch>()
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+    const { isLoading } = useQuery(['pricing'], SettingApi.fetchAreaPricing, {
+        onSuccess: (data: { response: PricingDto[]; }) => {
+            dispatch(settingActions.setPricingArea(data.response))
+        },
+    })
 
 
     return (
