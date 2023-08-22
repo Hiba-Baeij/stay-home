@@ -35,8 +35,8 @@ const productSlice = createSlice({
             if (action.payload.id) {
                 state.productDto = { ...action.payload }
             }
-
-            state.products.unshift(action.payload)
+            else
+                state.products.unshift(action.payload)
 
         },
         addProductDto(state: initialState, action: PayloadAction<Product>) {

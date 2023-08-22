@@ -8,6 +8,7 @@ export enum API_ORDER {
     GetAllShippingOrder = "Order/GetAllShippingOrder",
     GetAllDeliveryOrder = "Order/GetAllDeliveryOrder",
     GetAllPassengerOrder = "Order/GetAllPassengerOrder",
+    GetAllRejectedOrder = "Order/GetAllRejectedOrder",
     Delete = "Order/Delete",
     Cancel = "Order/Cancel",
     Handle = "Order/Handle",
@@ -18,6 +19,17 @@ export class OrderApi {
     static getAllDeliveryOrder = async () => {
         try {
             const res = await axiosIns.get(API_ORDER.GetAllDeliveryOrder);
+            return res.data
+        }
+
+        catch (er) {
+            throw er
+        }
+
+    }
+    static getAllRejectOrder = async () => {
+        try {
+            const res = await axiosIns.get(API_ORDER.GetAllRejectedOrder);
             return res.data
         }
 

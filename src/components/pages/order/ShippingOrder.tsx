@@ -18,6 +18,8 @@ import { Shop } from '@/api/shop/dto';
 import { ShopApi } from '@/api/shop/endpoints';
 import { shopActions } from '@/store/shop';
 import { useNavigate } from 'react-router-dom';
+import { FaBoxes } from 'react-icons/fa';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 export default function ShippingOrder() {
   const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
@@ -51,18 +53,15 @@ export default function ShippingOrder() {
     const newValue = event.target.value;
     setDriverId(newValue);
   };
-  function getDetails(item: Order) {
-    if (item.isHandled)
-      navigation(`/orderDetails/${item.id}?status=shipping&shopId=${item.shopId}`)
-    else {
-      dispatch(orderActions.setOrderDialog(true));
-      setOrderId(item.id)
-      setShopId(item.shopId)
-    }
-    // navigation(`/order/${item.id}?shopId=${item.shopId}`)
+
+
+  function openHandleDialog(item: Order) {
+    dispatch(orderActions.setOrderDialog(true));
+    setOrderId(item.id)
+    setShopId(item.shopId)
   }
+
   function handleOrder() {
-    // dispatch(orderActions.setOrderDialog(true));
     setLoadingHandle(true)
     OrderApi.HandleOrder({ driverId: driverId, id: orderId }).then((data: { response: OrderDetails }) => {
       dispatch(orderActions.setOrderDto(data.response))
@@ -144,7 +143,7 @@ export default function ShippingOrder() {
       }}>
 
         {
-          isLoading ? <TableSkeleton headers={['', 'اسم الزبون', ' الوجهة', 'المصدر', 'حالة الطلب', 'اسم المتجر', 'تفاصيل']} />
+          isLoading ? <TableSkeleton headers={['', 'اسم الزبون', ' الوجهة', 'المصدر', 'اسم المتجر', 'حالة الطلب', 'وقت الطلب', 'معالجة الطلب', 'تفاصيل']} />
 
             : <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
@@ -173,6 +172,7 @@ export default function ShippingOrder() {
                   <TableCell align="center">اسم المتجر</TableCell>
                   <TableCell align="center">حالة الطلب</TableCell>
                   <TableCell align="center">وقت الطلب</TableCell>
+                  <TableCell align="center">معالجة الطلب</TableCell>
                   <TableCell align="center">تفاصيل</TableCell>
                 </TableRow>
               </TableHead>
@@ -205,7 +205,10 @@ export default function ShippingOrder() {
                       <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>
 
                       <TableCell align="center">
-                        <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => getDetails(row)} />
+                        <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row)} />
+                      </TableCell>
+                      <TableCell align="center">
+                        <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => navigation(`/orderDetails/${row.id}?status=shipping&shopId=${row.shopId}`)} />
                       </TableCell>
                     </TableRow>
                   )

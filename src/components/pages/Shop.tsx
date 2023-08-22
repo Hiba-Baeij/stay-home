@@ -29,8 +29,8 @@ export default function ShopComponent() {
     const shopDto = useSelector<RootState>(state => state.shop.shopDto) as Shop;
     const { handleSubmit, control, reset } = useForm({ defaultValues: { ...new Shop() } });
     const { fields, append, remove } = useFieldArray({
-        control, // control props comes from useForm (optional: if you are using FormContext)
-        name: "workTimes", // unique name for your Field Array
+        control,
+        name: "workTimes",
     });
 
     const dispatch = useDispatch<AppDispatch>()
@@ -215,8 +215,7 @@ export default function ShopComponent() {
                                                             name={`workTimes.${index}.dayOfWeek`}
                                                             labelId={`workTimes.${index}.dayOfWeek`}
                                                             sx={{ marginTop: '10px' }}
-                                                            onChange={handleChange}
-                                                            value={day}
+
                                                         >
                                                             {
 
@@ -229,22 +228,13 @@ export default function ShopComponent() {
                                                         </FormHelperText>
                                                     </FormControl>
                                                 } />
-                                                {/* <Controller rules={{ required: ' اليوم مطلوب' }} name={`workTimes.${index}.dayOfWeek`} control={control} render={({ field, fieldState }) =>
-                                                    <TextField error={!!fieldState.error} fullWidth
-                                                        helperText={fieldState.error?.message}
-                                                        {...field} name={`workTimes.${index}.dayOfWeek`} id={`workTimes_dayOfWeek_${index}`}
-                                                        type='number'
-                                                        sx={{ marginTop: '10px' }}
 
-                                                    />
-
-                                                } /> */}
                                             </div>
 
                                         </div>
                                         <div className='md:col-span-1 col-span-3'>
                                             <label>وقت البدء :</label>
-                                            <Controller rules={{ required: 'وقت الفتح مطلوب' }} name={`workTimes.${index}.startTime.ticks`} control={control} render={({ field, fieldState }) =>
+                                            <Controller rules={{ required: 'وقت الفتح مطلوب' }} name={`workTimes.${index}.startTime`} control={control} render={({ field, fieldState }) =>
                                                 <TextField error={!!fieldState.error} fullWidth
                                                     helperText={fieldState.error?.message}
                                                     {...field} name={`workTimes.${index}.startTime.ticks`} id={`workTimes_startTime_${index}`}
@@ -261,7 +251,7 @@ export default function ShopComponent() {
                                         <div className='md:col-span-1 col-span-3'>
                                             <label>وقت الاغلاق :</label>
 
-                                            <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name={`workTimes.${index}.endTime.ticks`} control={control} render={({ field, fieldState }) =>
+                                            <Controller rules={{ required: 'وقت الاغلاق مطلوب' }} name={`workTimes.${index}.endTime`} control={control} render={({ field, fieldState }) =>
 
                                                 <TextField error={!!fieldState.error} fullWidth
                                                     helperText={fieldState.error?.message}

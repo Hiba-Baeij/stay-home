@@ -1,10 +1,11 @@
 
-import { Order, OrderDetails } from "@/api/order/dto"
+import { Order, OrderDetails, RejectOrder } from "@/api/order/dto"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface initialState {
     shippingOrders: Order[],
     passengerOrders: Order[],
     deliveryOrders: Order[],
+    rejectedOrders: RejectOrder[],
     openDialogOrder: boolean,
     orderDto: OrderDetails,
 }
@@ -13,6 +14,7 @@ const state: initialState = {
     shippingOrders: [],
     passengerOrders: [],
     deliveryOrders: [],
+    rejectedOrders: [],
     orderDto: { ...new OrderDetails() },
     openDialogOrder: false
 }
@@ -29,6 +31,9 @@ const orderSlice = createSlice({
         },
         setPassengerOrder(state: initialState, action: PayloadAction<Order[]>) {
             state.passengerOrders = action.payload
+        },
+        setRejectOrder(state: initialState, action: PayloadAction<RejectOrder[]>) {
+            state.rejectedOrders = action.payload
         },
 
 

@@ -10,13 +10,9 @@ export class Shop {
 
 }
 export class WorkTimes {
-    dayOfWeek = 1;
-    startTime = {
-        ticks: 0
-    };
-    endTime = {
-        ticks: 0
-    }
+    dayOfWeek = 'Saturday';
+    startTime = '00:00:00';
+    endTime = '00:00:00';
 }
 export class Products {
     id = '';

@@ -38,3 +38,9 @@ class Cart {
     productId = "";
     quantity = 0
 }
+export class RejectOrder {
+    id = "";
+    customerId = "";
+    driverId = "";
+    cancelReason = "";
+}

@@ -2,6 +2,7 @@ import React from 'react'
 import ShippingOrder from '@/components/pages/order/ShippingOrder'
 import DeliveryOrder from '@/components/pages/order/DeliveryOrder'
 import PassengerOrder from '@/components/pages/order/PassengerOrder'
+import RejectedOrder from '@/components/pages/order/RejectedOrder'
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -15,8 +16,10 @@ function SwitchComponent(props: { value: number }) {
             return <PassengerOrder />;
         case 1:
             return <ShippingOrder />;
-        default:
+        case 2:
             return <DeliveryOrder />;
+        default:
+            return <RejectedOrder />;
     }
 }
 
@@ -46,6 +49,7 @@ export default function Setting() {
                     <Tab label="توصيل الاشخاص" value={0} />
                     <Tab label="توصيل البضائع" value={1} />
                     <Tab label="توصيل الاغراض" value={2} />
+                    <Tab label="الطلبات المبلغ عنها" value={3} />
                 </Tabs>
             </Box>
             <div className='mt-4'>

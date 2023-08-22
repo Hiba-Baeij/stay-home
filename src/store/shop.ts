@@ -27,13 +27,14 @@ const shopSlice = createSlice({
 
             delete action.payload.imageFile;
 
-            state.shopDto = { ...action.payload }
-
+            // state.shopDto = { ...action.payload }
+            Object.assign(state.shopDto, action.payload)
 
 
         },
         addShopDto(state: initialState, action: PayloadAction<Shop>) {
             delete action.payload.imageFile;
+
             state.shops.unshift(action.payload)
 
         },

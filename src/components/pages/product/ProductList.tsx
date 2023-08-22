@@ -41,14 +41,16 @@ export default function product(props: { shopId: string }) {
     }, [isLoading])
 
 
-    function getByIdProduct(id: string) {
-        ProductApi.getProductDetails(id).then((res) => {
-            dispatch(productActions.setProductDto({ ...res.response }))
+    function getByIdProduct(item: Product) {
+        console.log(item);
+        ProductApi.getProductDetails(item.id).then((res) => {
+            dispatch(productActions.setProductDto(res.response))
             dispatch(productActions.setProductDialog(true))
 
         })
 
     }
+
     const deleteEmployee = (id: string) => {
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
@@ -90,7 +92,7 @@ export default function product(props: { shopId: string }) {
                             products.map(product =>
                             (
                                 <div className='col-span-5 md:col-span-1 relative' key={product.id}>
-                                    {/* {getImageUrl(product.imageUrl)} */}
+                                    {product.id}
                                     <div className='absolute top-2 left-3'>
                                         <IconButton
                                             aria-label="more"
@@ -116,7 +118,7 @@ export default function product(props: { shopId: string }) {
 
                                         >
 
-                                            <MenuItem onClick={() => getByIdProduct(product.id)}>
+                                            <MenuItem onClick={() => getByIdProduct(product)}>
                                                 <ListItemIcon>
                                                     <Edit fontSize="small" />
                                                 </ListItemIcon>
@@ -131,6 +133,8 @@ export default function product(props: { shopId: string }) {
 
                                         </Menu>
                                     </div>
+                                    <div className={product.isAvailable ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute right-3 top-2'} ></div>
+
 
                                     <Card sx={{ borderRadius: '30px' }}>
                                         <CardMedia
