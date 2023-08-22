@@ -44,9 +44,8 @@ export default function ProductPage(props: { shopId: string }) {
     }, [isLoading])
 
 
-    function getByIdProduct(item: Product) {
-        console.log(item);
-        ProductApi.getProductDetails(item.id).then((res) => {
+    function getByIdProduct(id:string) {
+        ProductApi.getProductDetails(id).then((res) => {
             dispatch(productActions.setProductDto(res.response))
             dispatch(productActions.setProductDialog(true))
 
@@ -137,7 +136,7 @@ export default function ProductPage(props: { shopId: string }) {
 
                                         </Menu>
                                     </div>
-                                    <div className={product.isAvailable ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute right-3 top-2'} ></div>
+                                    <div className={item.isAvailable ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute right-3 top-2'} ></div>
 
 
                                     <Card sx={{ borderRadius: '30px' }}>
