@@ -1,10 +1,10 @@
 import { Box, Button, Card, CardActions, CardContent, CardMedia, IconButton, LinearProgress, ListItemIcon, Menu, MenuItem, Paper, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IMAGE_URL } from '@/../app.config';
 import { ProductApi } from '@/api/Product/endpoints';
 import { Product } from '@/api/Product/dto';
 import { useQuery } from '@tanstack/react-query';
-import { productActions } from '@/store/product';
+import product, { productActions } from '@/store/product';
 import { AppDispatch, RootState } from '@/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Edit } from '@mui/icons-material';
@@ -16,13 +16,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getImageUrl } from '@/global/auth';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function product(props: { shopId: string }) {
+export default function ProductPage(props: { shopId: string }) {
     const dispatch = useDispatch<AppDispatch>()
     const products = useSelector<RootState>(state => state.product.products) as Product[];
     const swal = withReactContent(Swal)
+    const [menuItemId, setmenuItemId] = useState(null)
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const { isLoading } = useQuery({
+    const { isLoading, data } = useQuery({
         queryKey: ["product"],
         queryFn: () => ProductApi.fetchProduct(props.shopId as string),
         onSuccess: (data: { response: Product[] }) => {
@@ -30,11 +31,13 @@ export default function product(props: { shopId: string }) {
 
         },
     })
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (event: React.MouseEvent<HTMLElement>, i: number, item: any) => {
         setAnchorEl(event.currentTarget);
+        setmenuItemId(item.id)
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setmenuItemId(null)
     };
     useEffect(() => {
         dispatch(productActions.setLoading(isLoading))
@@ -50,6 +53,7 @@ export default function product(props: { shopId: string }) {
 
     }
     const deleteEmployee = (id: string) => {
+        console.log(id)
         swal.fire({
             title: 'هل انت متأكد من الحذف؟ ',
             text: "لن تتمكن من التراجع عن هذا!",
@@ -87,9 +91,9 @@ export default function product(props: { shopId: string }) {
                     <div className='grid grid-cols-5 gap-5 mx-4 my-4' >
 
                         {
-                            products.map(product =>
+                            products.map((item, i) =>
                             (
-                                <div className='col-span-5 md:col-span-1 relative' key={product.id}>
+                                <div className='col-span-5 md:col-span-1 relative' key={i}>
                                     {/* {getImageUrl(product.imageUrl)} */}
                                     <div className='absolute top-2 left-3'>
                                         <IconButton
@@ -98,7 +102,7 @@ export default function product(props: { shopId: string }) {
                                             aria-controls={open ? 'long-menu' : undefined}
                                             aria-expanded={open ? 'true' : undefined}
                                             aria-haspopup="true"
-                                            onClick={handleClick}
+                                            onClick={(e) => handleClick(e, i, item)}
                                             color='primary'
                                             sx={{ backgroundColor: 'white', borderRadius: '20px', height: '30px', width: '30px' }}
                                         >
@@ -116,13 +120,13 @@ export default function product(props: { shopId: string }) {
 
                                         >
 
-                                            <MenuItem onClick={() => getByIdProduct(product.id)}>
+                                            <MenuItem onClick={(e) => { getByIdProduct(menuItemId ?? item.id) }}>
                                                 <ListItemIcon>
                                                     <Edit fontSize="small" />
                                                 </ListItemIcon>
                                                 تعديل
                                             </MenuItem>
-                                            <MenuItem onClick={() => deleteEmployee(product.id)}>
+                                            <MenuItem onClick={() => deleteEmployee(menuItemId??item.id)}>
                                                 <ListItemIcon>
                                                     <DeleteOutlineIcon fontSize="small" />
                                                 </ListItemIcon>
@@ -136,7 +140,7 @@ export default function product(props: { shopId: string }) {
                                         <CardMedia
                                             sx={{ height: "180px", borderRadius: "22px" }}
                                             component="img"
-                                            image={getImageUrl(product.imageUrl)}
+                                            image={getImageUrl(item.imageUrl)}
 
                                             alt="green iguana"
                                         />
@@ -152,7 +156,7 @@ export default function product(props: { shopId: string }) {
                                                     margin={0}
                                                     component="div"
                                                 >
-                                                    {product.name}
+                                                    {item.name}
                                                 </Typography>
                                                 <Typography
                                                     className="text-gray-700"
@@ -163,7 +167,7 @@ export default function product(props: { shopId: string }) {
                                                     margin={0}
                                                     component="div"
                                                 >
-                                                    {product.cost} ل.س
+                                                    {item.cost} ل.س
 
                                                 </Typography>
                                             </div>
