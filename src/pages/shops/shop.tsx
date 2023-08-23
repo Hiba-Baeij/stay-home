@@ -101,7 +101,7 @@ export default function Shop() {
                                 key={shop.id}
                                 sx={{ borderRadius: "10px", position: 'relative' }}
                             >
-                                <div className={shop.isOnline ? 'bg-green' : 'bg-red' + ' ' + 'h-5 w-5 rounded-full absolute left-5 top-5'} ></div>
+                                <div className={[shop.isOnline ? 'bg-green' : 'bg-red', 'h-5 w-5 rounded-full absolute left-5 top-5'].join(' ')} ></div>
                                 {shop.imageUrl && (
 
 

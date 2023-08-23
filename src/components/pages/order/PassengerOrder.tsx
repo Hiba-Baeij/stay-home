@@ -17,23 +17,27 @@ import { usePagination } from '@/global/usePagination';
 import { Shop } from '@/api/shop/dto';
 import { useNavigate } from 'react-router-dom';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import { DriverApi } from '@/api/driver/endpoints';
+import { driverActions } from '@/store/driver';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
 
 export default function PassengerOrder() {
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
     const passengerOrders = useSelector<RootState>(state => state.order.passengerOrders) as Order[];
-    const driverNames = useSelector<RootState>(state => state.driver.driverNames) as { fullName: string, id: string }[];
     const customerNames = useSelector<RootState>(state => state.customer.customerNames) as { fullName: string, id: string }[];
+    const driverAvailableNames = useSelector<RootState>(state => state.driver.driverAvailableNames) as { fullName: string, id: string }[];
     const getCustomerName = (id: string) => customerNames.find(ele => ele.id === id)?.fullName
     const [driverId, setDriverId] = React.useState('');
     const [orderId, setOrderId] = React.useState('');
     const [loadingHandle, setLoadingHandle] = React.useState(false);
     const [selected, setSelected] = React.useState<string[]>([]);
     const navigation = useNavigate();
-
+    const swal = withReactContent(Swal)
     const { paginate, pagination, setPagination } = usePagination(6, 1)
     const dispatch = useDispatch<AppDispatch>()
 
-    const { isLoading } = useQuery(['order'], OrderApi.getAllPassengerOrder, {
+    const { isLoading } = useQuery(['passengerOder'], OrderApi.getAllPassengerOrder, {
         onSuccess: (data: { response: Order[]; }) => {
             dispatch(orderActions.setPassengerOrder(data.response))
         },
@@ -48,6 +52,8 @@ export default function PassengerOrder() {
     function openHandleDialog(item: string) {
         dispatch(orderActions.setOrderDialog(true));
         setOrderId(item)
+        console.log(orderId);
+
     }
     function handleOrder() {
 
@@ -86,6 +92,38 @@ export default function PassengerOrder() {
         }
         setSelected(newSelected);
     };
+
+    const deleteOrder = () => {
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                OrderApi.DeleteOrder(selected).then(() => {
+                    dispatch(orderActions.deletePassengerOrder(selected))
+                    toast('تم الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                    setSelected([])
+                }
+                )
+            }
+
+        })
+
+    }
     return (
         <div> <Dialog open={isOpen}>
             <div className="flex justify-between items-center pl-4 ">
@@ -105,7 +143,7 @@ export default function PassengerOrder() {
                     value={driverId}
                     onChange={handleSelectChange}
                 >
-                    {driverNames.map((ele) => <MenuItem key={ele.id} value={ele.id}>{ele.fullName}</MenuItem>)}
+                    {driverAvailableNames.map((ele) => <MenuItem key={ele.id} value={ele.id}>{ele.fullName}</MenuItem>)}
 
                 </Select>
             </DialogContent>
@@ -119,7 +157,7 @@ export default function PassengerOrder() {
                             </Button>
                     }
 
-                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء الطلب</Button>
+                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء </Button>
                 </Box>
             </DialogActions>
 
@@ -144,7 +182,7 @@ export default function PassengerOrder() {
                                                     <div className='flex justify-start items-center w-full px-2 mt-2'>
 
                                                         <Tooltip title="Delete">
-                                                            <IconButton>
+                                                            <IconButton onClick={deleteOrder}>
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                         </Tooltip>
@@ -190,8 +228,11 @@ export default function PassengerOrder() {
                                             <TableCell align="center">{row.isHandled ? <Chip label="معالج" color="primary" variant='outlined' /> : <Chip label="غير معالج" color="secondary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>
 
-                                            <TableCell align="center">
-                                                <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row.shopId)} />
+                                            <TableCell align="center" >
+                                                {row.isHandled ? <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px', opacity: '0.5' }} /> : (
+                                                    <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row.id)} />
+                                                )}
+
                                             </TableCell>
                                             <TableCell align="center">
                                                 <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => navigation(`/orderDetails/${row.id}?status=passenger`)} />

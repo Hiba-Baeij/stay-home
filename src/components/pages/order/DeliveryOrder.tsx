@@ -18,11 +18,13 @@ import { Shop } from '@/api/shop/dto';
 import { useNavigate } from 'react-router-dom';
 import { FaBoxes } from 'react-icons/fa';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 export default function DeliveryOrder() {
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
     const deliveryOrders = useSelector<RootState>(state => state.order.deliveryOrders) as Order[];
-    const driverNames = useSelector<RootState>(state => state.driver.driverNames) as { fullName: string, id: string }[];
+    const driverAvailableNames = useSelector<RootState>(state => state.driver.driverAvailableNames) as { fullName: string, id: string }[];
     const customerNames = useSelector<RootState>(state => state.customer.customerNames) as { fullName: string, id: string }[];
     const shops = useSelector<RootState>(state => state.shop.shops) as Shop[];
     const getCustomerName = (id: string) => customerNames.find(ele => ele.id === id)?.fullName
@@ -33,7 +35,7 @@ export default function DeliveryOrder() {
     const [loadingHandle, setLoadingHandle] = React.useState(false);
     const [selected, setSelected] = React.useState<string[]>([]);
     const navigation = useNavigate();
-
+    const swal = withReactContent(Swal)
     const { paginate, pagination, setPagination } = usePagination(6, 1)
     const dispatch = useDispatch<AppDispatch>()
 
@@ -90,6 +92,39 @@ export default function DeliveryOrder() {
         }
         setSelected(newSelected);
     };
+    const deleteOrder = () => {
+        swal.fire({
+            title: 'هل انت متأكد من الحذف؟ ',
+            text: "لن تتمكن من التراجع عن هذا!",
+            icon: 'warning',
+            confirmButtonText: 'نعم',
+            cancelButtonText: 'الغاء',
+            showCancelButton: true,
+            showCloseButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                OrderApi.DeleteOrder(selected).then(() => {
+                    dispatch(orderActions.deleteDeliveryOrder(selected))
+                    toast('تم الحذف بنجاح', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        progress: undefined,
+                        theme: "light",
+                        type: 'success'
+                    })
+                    setSelected([])
+                }
+                )
+            }
+
+        })
+
+    }
+
+
     return (
         <div> <Dialog open={isOpen}>
             <div className="flex justify-between items-center pl-4 ">
@@ -109,7 +144,7 @@ export default function DeliveryOrder() {
                     value={driverId}
                     onChange={handleSelectChange}
                 >
-                    {driverNames.map((ele) => <MenuItem key={ele.id} value={ele.id}>{ele.fullName}</MenuItem>)}
+                    {driverAvailableNames.map((ele) => <MenuItem key={ele.id} value={ele.id}>{ele.fullName}</MenuItem>)}
 
                 </Select>
             </DialogContent>
@@ -123,7 +158,7 @@ export default function DeliveryOrder() {
                             </Button>
                     }
 
-                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء الطلب</Button>
+                    <Button variant='outlined' onClick={() => dispatch(orderActions.setOrderDialog(false))} >الغاء </Button>
                 </Box>
             </DialogActions>
 
@@ -148,7 +183,7 @@ export default function DeliveryOrder() {
                                                     <div className='flex justify-start items-center w-full px-2 mt-2'>
 
                                                         <Tooltip title="Delete">
-                                                            <IconButton>
+                                                            <IconButton onClick={deleteOrder}>
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                         </Tooltip>
@@ -195,9 +230,11 @@ export default function DeliveryOrder() {
                                             <TableCell align="center">{row.shopId ? getShopName(row.shopId) : '-------'}</TableCell>
                                             <TableCell align="center">{row.isHandled ? <Chip label="معالج" color="primary" variant='outlined' /> : <Chip label="غير معالج" color="secondary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>
-
                                             <TableCell align="center">
-                                                <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row)} />
+
+                                                {row.isHandled ? <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px', opacity: '0.5' }} /> : (
+                                                    <InventoryIcon sx={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => openHandleDialog(row)} />
+                                                )}
                                             </TableCell>
                                             <TableCell align="center">
                                                 <MoreVertIcon sx={{ cursor: 'pointer' }} onClick={() => navigation(`/orderDetails/${row.id}?status=delivery&shopId=${row.shopId}`)} />

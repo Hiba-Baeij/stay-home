@@ -8,6 +8,9 @@ import { AppDispatch } from '@/store';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Tab, Tabs, Box, TextField } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useQuery } from '@tanstack/react-query'
+import { DriverApi } from '@/api/driver/endpoints'
+import { driverActions } from '@/store/driver'
 
 
 function SwitchComponent(props: { value: number }) {
@@ -29,7 +32,11 @@ export default function Setting() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
+    useQuery(['availableDriver'], DriverApi.getAvailableDriver, {
+        onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+            dispatch(driverActions.setDriverAvailableNames(data.response))
+        },
+    })
 
     return (
         <Box>

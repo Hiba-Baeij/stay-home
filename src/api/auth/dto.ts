@@ -8,5 +8,6 @@ export interface LoginResponse {
     refreshToken: string,
     id: string,
     email: string
+    fullName: string
 }
 

@@ -137,7 +137,7 @@ export default function ProductPage(props: { shopId: string }) {
                                         </Menu>
                                     </div>
                                     <div className={[item.isAvailable ? 'bg-green' : 'bg-red', 'h-5 w-5 rounded-full absolute right-3 top-2'].join(' ')} ></div>
- 
+
                                     <Card sx={{ borderRadius: '30px' }}>
                                         <CardMedia
                                             sx={{ height: "180px", borderRadius: "22px" }}
@@ -154,7 +154,7 @@ export default function ProductPage(props: { shopId: string }) {
                                                     fontWeight={600}
                                                     gutterBottom
                                                     variant="h6"
-                                                    fontSize={20}
+                                                    fontSize={18}
                                                     margin={0}
                                                     component="div"
                                                 >

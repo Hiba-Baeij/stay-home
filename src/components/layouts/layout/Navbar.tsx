@@ -6,6 +6,7 @@ import { IoMenu, IoMenuOutline, IoNotificationsOutline, IoSearchOutline } from "
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi2";
 import { useDarkMode } from "usehooks-ts";
 import { BsChevronCompactRight, BsMenuApp } from 'react-icons/bs'
+import { GetUserData, GetUserRoles } from "@/global/auth";
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
@@ -128,8 +129,8 @@ export default function Navbar({
                             >
                                 <IoMenuOutline />
                             </IconButton>
-
-                            <TextField
+                            <div></div>
+                            {/* <TextField
                                 sx={{
                                     width: {
                                         sm: 300,
@@ -148,7 +149,7 @@ export default function Navbar({
                                     ),
                                 }}
 
-                            />
+                            /> */}
 
 
 
@@ -186,7 +187,7 @@ export default function Navbar({
                                     <Box display={'flex'} alignItems={'center'} gap="10px">
 
                                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                            <Avatar alt="Remy Sharp" src="/user.jpg" />
+                                            <Avatar alt="Remy Sharp" src="/download.png" />
                                         </IconButton>
                                         <Box sx={{
                                             display: {
@@ -195,8 +196,8 @@ export default function Navbar({
                                             },
                                             flexDirection: 'column'
                                         }}>
-                                            <Typography>User Name</Typography>
-                                            <Typography fontSize={10} color='GrayText' >Admin</Typography>
+                                            <Typography>{GetUserData()?.fullName}</Typography>
+                                            <Typography fontSize={10} color='GrayText' >{GetUserRoles()}</Typography>
                                         </Box>
 
 

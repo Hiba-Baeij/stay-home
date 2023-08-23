@@ -10,6 +10,7 @@ interface initialState {
     openDialogDriver: boolean,
     driverDto: DriverDto,
     driverNames: DriverName[],
+    driverAvailableNames: DriverName[],
 
 }
 
@@ -17,7 +18,8 @@ const state: initialState = {
     drivers: [],
     driverDto: { ...new DriverDto() },
     openDialogDriver: false,
-    driverNames: []
+    driverNames: [],
+    driverAvailableNames: []
 
 }
 
@@ -31,6 +33,9 @@ const driverSlice = createSlice({
 
         setDriverNames(state: initialState, action: PayloadAction<DriverName[]>) {
             state.driverNames = action.payload
+        },
+        setDriverAvailableNames(state: initialState, action: PayloadAction<DriverName[]>) {
+            state.driverAvailableNames = action.payload
         },
 
         setBlocked(state: initialState, action: PayloadAction<boolean>) {

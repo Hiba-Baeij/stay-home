@@ -98,7 +98,7 @@ export class OrderApi {
 
     static HandleOrder = async (payload: { id: string, driverId: string }) => {
         try {
-            const res = await axiosIns.post(API_ORDER.Handle, payload);
+            const res = await axiosIns.post(API_ORDER.Handle, { id: payload.id, driverId: payload.driverId });
             return res.data
         }
 

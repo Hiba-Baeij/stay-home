@@ -177,7 +177,7 @@ export default function orderDetails() {
                     <Button color='error' variant='outlined' onClick={deleteOrder}>حذف</Button>
 
                     <Button color='secondary' variant='outlined' onClick={() => navigation('/orders')}>تراجع</Button>
-                    <Button color='primary' variant='contained' onClick={cancelOrder}>إلغاء</Button>
+                    <Button color='primary' variant='contained' onClick={cancelOrder}>إلغاء الطلب</Button>
                 </Box>
             </div>
             <div className='grid grid-cols-4 gap-5'>
