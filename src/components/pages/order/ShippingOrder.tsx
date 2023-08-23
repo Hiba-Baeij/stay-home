@@ -22,6 +22,8 @@ import { FaBoxes } from 'react-icons/fa';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
+import { DriverApi } from '@/api/driver/endpoints';
+import { driverActions } from '@/store/driver';
 
 export default function ShippingOrder() {
   const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
@@ -48,6 +50,11 @@ export default function ShippingOrder() {
   useQuery(['shop'], ShopApi.fetchShop, {
     onSuccess: (data: { response: Shop[]; }) => {
       dispatch(shopActions.setShop(data.response))
+    },
+  })
+  useQuery(['availableDriver'], DriverApi.getAvailableDriver, {
+    onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+      dispatch(driverActions.setDriverAvailableNames(data.response))
     },
   })
 

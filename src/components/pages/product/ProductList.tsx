@@ -45,9 +45,11 @@ export default function ProductPage(props: { shopId: string }) {
 
 
     function getByIdProduct(id: string) {
+        dispatch(productActions.setProductDialog(true))
+
         ProductApi.getProductDetails(id).then((res) => {
             dispatch(productActions.setProductDto(res.response))
-            dispatch(productActions.setProductDialog(true))
+            // dispatch(productActions.setProductDialog(false))
 
         })
 
@@ -120,6 +122,7 @@ export default function ProductPage(props: { shopId: string }) {
                                             onClick={handleClose}
 
                                         >
+                                            {/* {menuItemId} */}
 
                                             <MenuItem onClick={(e) => { getByIdProduct(menuItemId ?? item.id) }}>
                                                 <ListItemIcon>

@@ -32,11 +32,7 @@ export default function Setting() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    useQuery(['availableDriver'], DriverApi.getAvailableDriver, {
-        onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
-            dispatch(driverActions.setDriverAvailableNames(data.response))
-        },
-    })
+
 
     return (
         <Box>
@@ -54,7 +50,7 @@ export default function Setting() {
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="توصيل الاشخاص" value={0} />
-                    <Tab label="توصيل البضائع" value={1} />
+                    <Tab label="شحن البضائع" value={1} />
                     <Tab label="توصيل الاغراض" value={2} />
                     <Tab label="الطلبات المبلغ عنها" value={3} />
                 </Tabs>

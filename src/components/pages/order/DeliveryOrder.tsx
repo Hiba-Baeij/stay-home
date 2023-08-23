@@ -20,6 +20,8 @@ import { FaBoxes } from 'react-icons/fa';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { driverActions } from '@/store/driver';
+import { DriverApi } from '@/api/driver/endpoints';
 
 export default function DeliveryOrder() {
     const isOpen = useSelector<RootState>(state => state.order.openDialogOrder) as boolean;
@@ -74,6 +76,11 @@ export default function DeliveryOrder() {
             navigation(`/orderDetails/${orderId}?status=delivery&shopId=${shopId}`)
         })
     }
+    useQuery(['availableDriver'], DriverApi.getAvailableDriver, {
+        onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+            dispatch(driverActions.setDriverAvailableNames(data.response))
+        },
+    })
 
     const handleClick = (id: string) => {
         const selectedIndex = selected.indexOf(id);
@@ -226,7 +233,7 @@ export default function DeliveryOrder() {
                                                 {getCustomerName(row.customerId)}
                                             </TableCell>
                                             <TableCell align="center">{row.destination}</TableCell>
-                                            <TableCell align="center">{row.source} </TableCell>
+                                            <TableCell align="center">{row.source ? row.source : '------'} </TableCell>
                                             <TableCell align="center">{row.shopId ? getShopName(row.shopId) : '-------'}</TableCell>
                                             <TableCell align="center">{row.isHandled ? <Chip label="معالج" color="primary" variant='outlined' /> : <Chip label="غير معالج" color="secondary" variant='outlined' />}</TableCell>
                                             <TableCell align="center">{row.isScheduled ? <Chip label="مجدول" color="primary" variant='outlined' /> : <Chip label="غير مجدول" color="secondary" variant='outlined' />}</TableCell>

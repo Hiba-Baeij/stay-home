@@ -42,6 +42,11 @@ export default function PassengerOrder() {
             dispatch(orderActions.setPassengerOrder(data.response))
         },
     })
+    useQuery(['availableDriver'], DriverApi.getAvailableDriver, {
+        onSuccess: (data: { response: { fullName: string, id: string }[]; }) => {
+            dispatch(driverActions.setDriverAvailableNames(data.response))
+        },
+    })
 
 
     const handleSelectChange = (event: any) => {

@@ -74,7 +74,7 @@ export default function DialogCustomer() {
         else {
             setIsLoading(true)
             CustomerApi.AddCustomer(data).then(() => {
-                dispatch(customerActions.setCustomerFormDto(data))
+                dispatch(customerActions.addCustomer(data))
                 setIsLoading(false)
                 resetForm();
                 toast('تمت الاضافة بنجاح', {

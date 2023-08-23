@@ -29,14 +29,13 @@ const customerSlice = createSlice({
 
         setCustomerFormDto(state: initialState, action: PayloadAction<Customer>) {
             state.customerDto = { ...action.payload }
-            console.log(state.customerDto);
 
-            if (action.payload.id) {
-                state.customerDto = { ...action.payload }
-            }
-            else {
-                state.customers.unshift({ ...action.payload, orderCount: 0 })
-            }
+
+        },
+        addCustomer(state: initialState, action: PayloadAction<Customer>) {
+
+            state.customers.unshift({ ...action.payload, orderCount: 0 })
+
 
         },
         setCustomerNames(state: initialState, action: PayloadAction<CustomerName[]>) {
